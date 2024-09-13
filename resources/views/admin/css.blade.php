@@ -34,6 +34,9 @@
 
 		<!--(remove-empty-lines-end)-->
 
+		{{-- css buat elusive icon --}}
+		<link rel="stylesheet" href="{{asset('admintemp/vendor/elusive-icons/css/elusive-icons.css')}}" />
+
 
 
 		<!-- Skin CSS -->
@@ -44,3 +47,8 @@
 
 		<!-- Head Libs -->
 		<script src="{{asset('admintemp/vendor/modernizr/modernizr.js')}}"></script>
+
+		{{-- css buat notif --}}
+		#alert {
+			transition: opacity 0.6s ease-out;
+		}

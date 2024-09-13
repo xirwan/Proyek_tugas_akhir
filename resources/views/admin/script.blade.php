@@ -50,3 +50,18 @@
 
 <!-- Examples -->
 <script src="{{asset('admintemp/js/examples/examples.dashboard.js')}}"></script>
+
+{{-- script buat notif --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alert = document.getElementById('alert');
+        if (alert) {
+            setTimeout(function () {
+                alert.style.opacity = 0; // Fade out effect
+                setTimeout(function () {
+                    alert.remove(); // Remove element from DOM
+                }, 600); // Match the duration of the fade out effect
+            }, 3000); // Delay before auto-close (10 seconds)
+        }
+    });
+</script>

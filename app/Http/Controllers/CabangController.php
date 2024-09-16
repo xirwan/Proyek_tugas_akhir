@@ -43,8 +43,9 @@ class CabangController extends Controller
 
     }
 
-    public function show(string $id): View
+    public function show($encryptedId): View
     {
+        $id = decrypt($encryptedId);
         //get product by ID
         $cabangs = Cabang::findOrFail($id);
 
@@ -52,8 +53,10 @@ class CabangController extends Controller
         return view('cabang.tampil', compact('cabangs'));
     }
     
-    public function update(Request $request, $id) : RedirectResponse
+    public function update(Request $request, $encryptedId) : RedirectResponse
     {
+        $id = decrypt($encryptedId);
+        
         $request->validate([
             'nama'         => 'required|string',
             'alamat'       => 'required|string',
@@ -72,8 +75,9 @@ class CabangController extends Controller
 
     }
 
-    public function destroy($id): RedirectResponse
+    public function destroy($encryptedId): RedirectResponse
     {
+        $id = decrypt($encryptedId);
         //get product by ID
         $cabangs = Cabang::findOrFail($id);
 

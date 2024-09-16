@@ -3,7 +3,7 @@
         <header class="card-header">   
             <h2 class="card-title">Detail Cabang</h2>
         </header>
-        <form action="{{ route('cabang.update', $cabangs->id) }}" class="form-horizontal form-bordered" method="POST">
+        <form action="{{ route('cabang.update', encrypt($cabangs->id)) }}" class="form-horizontal form-bordered" method="POST">
             @csrf
             @method('PUT')
             <div class="card-body">
@@ -18,7 +18,7 @@
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-success">Edit</button>
             </form>
-            <form action="{{ route('cabang.destroy', $cabangs->id) }}" method="POST" style="display:inline;">
+            <form action="{{ route('cabang.destroy', encrypt($cabangs->id)) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data cabang ini?');">Hapus</button>

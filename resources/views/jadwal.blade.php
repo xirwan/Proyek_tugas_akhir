@@ -6,41 +6,41 @@
     @endif
     <x-card>
         <x-slot name="header">
-            List Cabang
+            List Jadwal
         </x-slot>
-        
-        <a href="{{ route('cabang.create') }}" class="btn btn-md btn-success mb-3">Tambah Cabang</a>
+
+        <a href="{{ route('jadwal.create') }}" class="btn btn-md btn-success mb-3">Tambah Jadwal</a>
 
         <table class="table table-responsive-md mb-0">
             <thead>
                 <tr class="text-center">
                     <th>No</th>
+                    <th>Hari</th>
                     <th>Nama</th>
                     <th>Deskripsi</th>
-                    <th>Status</th>
                     <th>Detail</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($cabangs as $index => $cabang)
+                @forelse($jadwal as $index => $itemjadwal)
                     <tr>
-                        <td>{{ $cabangs->firstItem() + $index }}</td>
-                        <td>{{ $cabang->nama }}</td>
-                        <td>{{ $cabang->deskripsi }}</td>
-                        <td>{{ $cabang->status }}</td>
+                        <td>{{ $jadwal->firstItem() + $index }}</td>
+                        <td>{{ $itemjadwal->hari }}</td>
+                        <td>{{ $itemjadwal->nama }}</td>
+                        <td>{{ $itemjadwal->deskripsi }}</td>
                         <td class="actions text-center">
-                            <a href="{{ route('cabang.show', encrypt($cabang->id)) }}"><i class="el el-info-circle"></i></a>
+                            <a href="{{ route('jadwal.show', encrypt($itemjadwal->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>
                     </tr>
                 @empty
                 <div class="alert alert-danger">
-                    Data Cabang belum tersedia.
+                    Data Jadwal belum tersedia.
                 </div>
                 @endforelse
             </tbody>
         </table>
         <div class="mt-5">
-            {{ $cabangs->links() }}
+            {{ $jadwal->links() }}
         </div>
     </x-card>
 </x-app-layout>

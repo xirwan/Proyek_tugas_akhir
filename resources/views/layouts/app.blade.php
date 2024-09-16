@@ -21,23 +21,23 @@
                     </li>
                     
                     <x-side-link href="{{url ('cabang')}}" :active="request()->is('cabang')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
+                        <i class="bx bx-building-house" aria-hidden="true"></i>
                         <span>Cabang</span>
                     </x-side-link>
                     
                     <x-side-link href="{{url ('role')}}" :active="request()->is('role')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
+                        <i class="bx bx-user-plus" aria-hidden="true"></i>
                         <span>Role</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
+                    <x-side-link href="{{url ('anggota')}}" :active="request()->is('anggota')">
+                        <i class="bx bx-user" aria-hidden="true"></i>
                         <span>Anggota</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                    <x-side-link href="{{url ('jadwal')}}" :active="request()->is('jadwal')">
+                        <i class="bx bx-calendar" aria-hidden="true"></i>
+                        <span>Jadwal</span>
                     </x-side-link>
         
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">

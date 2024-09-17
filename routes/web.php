@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\RoleController;
+use illuminate\Auth\Middleware\Authorize;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,10 +14,6 @@ Route::get('/', function () {
 Route::get('/coba', function () {
     return view('coba');
 });
-
-Route::get('/role', function () {
-    return view('role');
-})->middleware(['auth', 'verified']);
 
 Route::get('/anggota', function () {
     return view('anggota');
@@ -27,7 +25,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::resource('/cabang', CabangController::class)->middleware(['auth', 'verified']);
+Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
+    Route::resource('/cabang', CabangController::class);
+    Route::resource('/role', RoleController::class);
+
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

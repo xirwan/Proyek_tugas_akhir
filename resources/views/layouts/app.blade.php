@@ -29,6 +29,11 @@
                         <i class="bx bx-user-plus" aria-hidden="true"></i>
                         <span>Role</span>
                     </x-side-link>
+
+                    {{-- <x-side-link href="{{url ('permission')}}" :active="request()->is('permission')">
+                        <i class="bx bx-user-plus" aria-hidden="true"></i>
+                        <span>Permission</span>
+                    </x-side-link> --}}
         
                     <x-side-link href="{{url ('anggota')}}" :active="request()->is('anggota')">
                         <i class="bx bx-user" aria-hidden="true"></i>

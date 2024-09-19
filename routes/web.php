@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AnggotaController;
 use illuminate\Auth\Middleware\Authorize;
+use App\Http\Controllers\PositionController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +23,8 @@ Route::get('/anggota', function () {
 
 Route::resource('/jadwal', JadwalController::class)->middleware(['auth', 'verified']);
 
+Route::resource('/posisi', PositionController::class)->middleware(['auth', 'verified']);
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -28,7 +32,7 @@ Route::get('/dashboard', function () {
 Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
     Route::resource('/cabang', CabangController::class);
     Route::resource('/role', RoleController::class);
-
+    Route::resource('/anggota', AnggotaController::class);
 });
 
 Route::middleware('auth')->group(function () {

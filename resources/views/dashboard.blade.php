@@ -88,7 +88,7 @@
 								</div>
 								<div class="widget-summary-col">
 									<div class="summary">
-										<h4 class="title">Today's Visitors</h4>
+										<h4 class="title">Jumlah anggota</h4>
 										<div class="info">
 											<strong class="amount">3765</strong>
 										</div>

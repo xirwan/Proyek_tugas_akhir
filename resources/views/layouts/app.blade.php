@@ -30,10 +30,10 @@
                         <span>Role</span>
                     </x-side-link>
 
-                    {{-- <x-side-link href="{{url ('permission')}}" :active="request()->is('permission')">
+                    <x-side-link href="{{url ('posisi')}}" :active="request()->is('posisi')">
                         <i class="bx bx-user-plus" aria-hidden="true"></i>
-                        <span>Permission</span>
-                    </x-side-link> --}}
+                        <span>Posisi</span>
+                    </x-side-link>
         
                     <x-side-link href="{{url ('anggota')}}" :active="request()->is('anggota')">
                         <i class="bx bx-user" aria-hidden="true"></i>

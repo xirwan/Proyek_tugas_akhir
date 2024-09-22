@@ -13,4 +13,10 @@ class Position extends Model
         'status',
         'deskripsi',
     ];
+
+    public function anggotas()
+    {
+        return $this->hasMany(Anggota::class);
+    }
+
 }

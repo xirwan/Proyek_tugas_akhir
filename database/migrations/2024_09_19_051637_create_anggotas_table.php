@@ -21,8 +21,15 @@ return new class extends Migration
             $table->foreignId('cabang_id') // Foreign key untuk tabel cabang
                 ->constrained('cabang', 'id') // Hubungkan ke primary key tabel cabang (id)
                 ->onDelete('cascade');
-            $table->foreignId('roles_id') // Foreign key untuk tabel cabang
+            $table->foreignId('roles_id') // Foreign key untuk tabel roles
                 ->constrained('roles', 'id') // Hubungkan ke primary key tabel roles (id)
+                ->onDelete('cascade');
+            $table->foreignId('positions_id') // Foreign key untuk tabel positions
+                ->constrained('positions', 'id') // Hubungkan ke primary key tabel positions (id)
+                ->onDelete('cascade');
+            $table->foreignId('users_id') // Foreign key untuk tabel users
+                ->nullable()
+                ->constrained('users', 'id') // Hubungkan ke primary key tabel users (id)
                 ->onDelete('cascade');
             $table->timestamps();
         });

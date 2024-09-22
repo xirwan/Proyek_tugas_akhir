@@ -1,6 +1,16 @@
 <x-app-layout>
     <form action="{{ route('anggota.store') }}" class="form-horizontal form-bordered" method="POST">
         @csrf
+                @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <section class="card">
             <header class="card-header">   
                 <h2 class="card-title">Tambah Anggota</h2>
@@ -20,8 +30,16 @@
                 <x-select-box 
                 label="Nama Role" 
                 name="role_id" 
-                :options="$rolesoptions" 
-                placeholder="Pilih Roles" 
+                :options="$roleoptions" 
+                placeholder="Pilih Role" 
+                :required="true" 
+                />
+
+                <x-select-box 
+                label="Nama Posisi" 
+                name="posisi_id" 
+                :options="$positionoptions" 
+                placeholder="Pilih Posisi" 
                 :required="true" 
                 />
 
@@ -37,7 +55,7 @@
 
                 <x-input-text name="email" id="inputnamabelakang" label="Email" placeholder="Masukan email" :required="true"/>
 
-                <x-input-password label="Password" name="password" placeholder="Masukkan password" :required="true" />
+                <x-input-password name="password" label="Password"  placeholder="Masukkan password" :required="true" />
 
             </div>
 

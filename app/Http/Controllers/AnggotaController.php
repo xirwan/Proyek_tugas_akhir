@@ -53,8 +53,8 @@ class AnggotaController extends Controller
     public function store(Request $request) : RedirectResponse
     {
         $request->validate([
-            'namadepan'         => 'required|string',
-            'namabelakang'      => 'required|string',
+            'namadepan'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'namabelakang'      => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'tanggal_lahir'     => 'required|date',
             'status'            => 'required|in:Aktif,Tidak Aktif',
             'deskripsi'         => 'required|string',
@@ -119,8 +119,8 @@ class AnggotaController extends Controller
         $user = User::findOrFail($anggota->users_id);
         
         $request->validate([
-            'namadepan'         => 'required|string',
-            'namabelakang'      => 'required|string',
+            'namadepan'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'namabelakang'      => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'tanggal_lahir'     => 'required|date',
             'status'            => 'required|in:Aktif,Tidak Aktif',
             'deskripsi'         => 'required|string',

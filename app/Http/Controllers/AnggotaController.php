@@ -65,6 +65,9 @@ class AnggotaController extends Controller
             'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'          => ['required', Rules\Password::defaults()],
 
+        ], [
+            'namadepan.regex'           => 'Harap hanya memasukan huruf saja.',
+            'namabelakang.regex'        => 'Harap hanya memasukan huruf saja.',
         ]);
 
         $user = User::create([

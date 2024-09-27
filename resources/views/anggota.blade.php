@@ -11,7 +11,7 @@
         
         <a href= "{{ route('anggota.create') }}" class="btn btn-md btn-success mb-3">Tambah Anggota</a>
 
-        <table class="table table-responsive-md mb-0">
+        <table class="table table-responsive mb-0">
             <thead>
                 <tr class="text-center">
                     <th>No</th>

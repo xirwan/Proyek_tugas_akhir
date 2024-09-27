@@ -6,9 +6,7 @@
     'value' => '',           // Nilai default untuk input
     'required' => false      // Required default false
 ])
-<div class="form-group row col-lg-6">
-    <label class="col-lg-3 control-label text-lg-right pt-2" for="{{ $id }}">{{ $label }}</label>
-    <div class="col-lg-9">
-        <textarea class="form-control" rows="3" name="{{ $name }}" id="{{ $id }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}>{{ old($name, $value) }}</textarea>
-    </div>
+<div class="form-group">
+    <label class="form-label" for="{{ $id }}">{{ $label }}</label>
+    <textarea class="form-control" name="{{ $name }}" id="{{ $id }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}>{{ old($name, $value) }}</textarea>
 </div>

@@ -6,9 +6,9 @@
     'required' => false              // Menentukan apakah tombol radio harus required
 ])
 
-<div class="form-group row col-lg-6">
-    <label class="col-lg-3 control-label text-lg-right pt-2">{{ $label }}</label>
-    <div class="col-lg-9">
+<div class="form-group">
+    <label class="form-label">{{ $label }}</label>
+    {{-- <div class="col-lg-9 pt-3"> --}}
         @foreach ($options as $optionValue => $optionLabel)
             <div class="radio">
                 <label>
@@ -20,5 +20,5 @@
                 </label>
             </div>
         @endforeach
-    </div>
+    {{-- </div> --}}
 </div>

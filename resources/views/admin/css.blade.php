@@ -47,8 +47,3 @@
 
 		<!-- Head Libs -->
 		<script src="{{asset('admintemp/vendor/modernizr/modernizr.js')}}"></script>
-
-		{{-- css buat notif --}}
-		#alert {
-			transition: opacity 0.6s ease-out;
-		}

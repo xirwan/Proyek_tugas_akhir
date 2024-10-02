@@ -17,9 +17,9 @@ Route::get('/coba', function () {
     return view('coba');
 });
 
-Route::get('/anggota', function () {
-    return view('anggota');
-})->middleware(['auth', 'verified']);
+// Route::get('/anggota', function () {
+//     return view('anggota');
+// })->middleware(['auth', 'verified']);
 
 Route::resource('/jadwal', JadwalController::class)->middleware(['auth', 'verified']);
 
@@ -27,7 +27,7 @@ Route::resource('/posisi', PositionController::class)->middleware(['auth', 'veri
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'role:SuperAdmin'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
     Route::resource('/cabang', CabangController::class);
@@ -39,7 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    Route::get('/pembaptisan', function () {
+        return view('pembaptisan');
+    })->name('pembaptisan');
+}); 
 
 
 require __DIR__.'/auth.php';

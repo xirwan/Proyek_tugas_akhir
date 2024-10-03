@@ -18,11 +18,13 @@
                     </div>
                     <div class="col-lg-6">
 
-                        <x-input-text name="nama" id="inputnama" label="Username" placeholder="Masukan username" :required="true"/>
+                        {{-- <x-input-text name="nama" id="inputnama" label="Username" placeholder="Masukan username" :required="true"/> --}}
 
                         <x-input-text name="email" id="email" label="Email" placeholder="Masukan email" :required="true" :errorMessage="$errors->first('email')"/>
 
                         <x-input-password name="password" label="Password" placeholder="Masukan password" :required="true" :errorMessage="$errors->get('password')"/>
+
+                        <x-radio name="status" label="Status" :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']" :required="true"/>
 
                     </div>
                 </div>
@@ -67,11 +69,11 @@
 
                     </div>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
 
                     <x-radio name="status" label="Status" :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']" :required="true"/>
                         
-                </div>
+                </div> --}}
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Simpan</button>

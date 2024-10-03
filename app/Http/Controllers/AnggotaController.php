@@ -61,7 +61,7 @@ class AnggotaController extends Controller
             'role_id'           => 'required|exists:roles,id',
             'posisi_id'         => 'required|exists:positions,id',
             'cabang_id'         => 'required|exists:cabang,id',
-            'nama'              => 'required|string|max:255',
+            // 'nama'              => 'required|string|max:255',
             'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'          => ['required', Rules\Password::defaults()],
 
@@ -70,9 +70,11 @@ class AnggotaController extends Controller
             'namabelakang.regex'        => 'Harap hanya memasukan huruf saja.',
         ]);
 
+        $namalengkap = $request->input('namadepan') . ' ' . $request->input('namabelakang');
+
         $user = User::create([
             'email' => $request->email,
-            'name'  => $request->nama,
+            'name'  => $namalengkap,
             'password' => Hash::make($request->password),
         ]);
 

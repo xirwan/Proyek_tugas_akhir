@@ -15,9 +15,9 @@ class Seedpositions extends Seeder
     {
         //
         Position::create([
-            "nama"=> "Penggurus Umum",
-            "deskripsi"=> "Penggurus Umum gereja",
-            "status"=> "Aktif",
+            "name"=> "Penggurus Umum",
+            "description"=> "Penggurus Umum gereja",
+            "status"=> "Active",
 
         ]);
     }

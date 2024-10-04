@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Cabang;
+use App\Models\Branch;
 
 class Seedcabang extends Seeder
 {
@@ -14,10 +14,10 @@ class Seedcabang extends Seeder
     public function run(): void
     {
         //
-        Cabang::create([
-            "nama"=> "GBI Sungai Yordan (Ratu Melati)",
-            "deskripsi"=> "Jl. Ratu Melati No.7 Blok D3, RT.7/RW.13, Duri Kepa, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11510",
-            "status"=> "Aktif",
+        Branch::create([
+            "name"=> "GBI Sungai Yordan (Ratu Melati)",
+            "address"=> "Jl. Ratu Melati No.7 Blok D3, RT.7/RW.13, Duri Kepa, Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11510",
+            "status"=> "Active",
         ]);
     }
 }

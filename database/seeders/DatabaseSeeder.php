@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,8 +19,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            Seedakun::class,        // Seeder untuk tabel users
-            Seedsuperadmin::class,
+            Seedakun::class,        
+            Seedrole::class,
             Seedpermission::class,
             Seedcabang::class,
             Seedpositions::class,

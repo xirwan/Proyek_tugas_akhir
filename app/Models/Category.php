@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cabang extends Model
+class Category extends Model
 {
-    protected $table = "cabang";
     use HasFactory;
     protected $fillable = [
-        'nama',
+        'name',
+        'description',
         'status',
-        'deskripsi',
     ];
 
-    public function anggotas()
+    public function schedules()
     {
-        return $this->hasMany(Anggota::class);
+        return $this->hasMany(Schedule::class);
     }
 
 }

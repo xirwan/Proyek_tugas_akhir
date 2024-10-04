@@ -47,9 +47,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function Anggota()
+    public function member()
     {
-        return $this->hasOne(Anggota::class);
+        return $this->hasOne(Member::class);
     }
 
 }

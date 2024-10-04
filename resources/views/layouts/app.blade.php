@@ -20,7 +20,7 @@
                         </a>                        
                     </li>
                     
-                    <x-side-link href="{{url ('cabang')}}" :active="request()->is('cabang')">
+                    <x-side-link href="{{url ('branch')}}" :active="request()->is('branch*')">
                         <i class="bx bx-building-house" aria-hidden="true"></i>
                         <span>Cabang</span>
                     </x-side-link>
@@ -30,17 +30,21 @@
                         <span>Role</span>
                     </x-side-link>
 
-                    <x-side-link href="{{url ('posisi')}}" :active="request()->is('posisi')">
+                    <x-side-link href="{{url ('position')}}" :active="request()->is('position')">
                         <i class="bx bx-user-plus" aria-hidden="true"></i>
                         <span>Posisi</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('anggota')}}" :active="request()->is('anggota')">
+                    <x-side-link href="{{url ('member')}}" :active="request()->is('member*')">
                         <i class="bx bx-user" aria-hidden="true"></i>
                         <span>Anggota</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('jadwal')}}" :active="request()->is('jadwal')">
+                    <x-side-link href="#" :active="request()->is('schedule*')" class="nav-parent" :items="[
+                        ['url' => url('schedule'), 'label' => 'List Jadwal'],
+                        ['url' => url('type'), 'label' => 'Tipe Jadwal'],
+                        ['url' => url('category'), 'label' => 'Kategori Jadwal'],
+                    ]">
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Jadwal</span>
                     </x-side-link>

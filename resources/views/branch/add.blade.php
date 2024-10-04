@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form action="{{ route('cabang.store') }}" class="form-horizontal form-bordered" method="POST">
+    <form action="{{ route('branch.store') }}" class="form-horizontal form-bordered" method="POST">
         @csrf
         <section class="card">
             <header class="card-header">   
@@ -7,11 +7,9 @@
             </header>
             <div class="card-body">
 
-                    <x-input-text name="nama" id="inputnama" label="Nama" placeholder="Masukan nama cabang" :required="true"/>
+                    <x-input-text name="name" id="inputnama" label="Nama" placeholder="Masukan nama cabang" :required="true"/>
 
-                    <x-input-area name="alamat" id="inputalamat" label="Alamat" placeholder="Masukan alamat cabang" :required="true"/>
-
-                    <x-radio name="status" label="Status" :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']" :required="true"/>
+                    <x-input-area name="address" id="inputalamat" label="Alamat" placeholder="Masukan alamat cabang" :required="true"/>
 
             </div>
 

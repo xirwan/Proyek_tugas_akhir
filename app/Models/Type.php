@@ -5,12 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Jadwal extends Model
+class Type extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'nama',
-        'deskripsi',
-        'hari',
+        'name',
+        'description',
+        'status',
     ];
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
 }

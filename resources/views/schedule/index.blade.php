@@ -9,7 +9,7 @@
             List Jadwal
         </x-slot>
 
-        <a href="{{ route('jadwal.create') }}" class="btn btn-md btn-success mb-3">Tambah Jadwal</a>
+        <a href="{{ route('schedule.create') }}" class="btn btn-md btn-success mb-3">Tambah Jadwal</a>
 
         <table class="table table-responsive-md mb-0">
             <thead>
@@ -17,19 +17,27 @@
                     <th>No</th>
                     <th>Hari</th>
                     <th>Nama</th>
+                    <th>Kategori</th>
+                    <th>Tipe</th>
+                    <th>Mulai</th>
+                    <th>Selesai</th>
                     <th>Deskripsi</th>
                     <th>Detail</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($jadwal as $index => $itemjadwal)
+                @forelse($schedules as $index => $schedule)
                     <tr>
-                        <td>{{ $jadwal->firstItem() + $index }}</td>
-                        <td>{{ $itemjadwal->hari }}</td>
-                        <td>{{ $itemjadwal->nama }}</td>
-                        <td>{{ $itemjadwal->deskripsi }}</td>
+                        <td>{{ $schedules->firstItem() + $index }}</td>
+                        <td>{{ $schedule->day }}</td>
+                        <td>{{ $schedule->name }}</td>
+                        <td>{{ $schedule->category->name }}</td>
+                        <td>{{ $schedule->type->name }}</td>
+                        <td>{{ $schedule->start }}</td>
+                        <td>{{ $schedule->end }}</td>
+                        <td>{{ $schedule->description }}</td>
                         <td class="actions text-center">
-                            <a href="{{ route('jadwal.show', encrypt($itemjadwal->id)) }}"><i class="el el-info-circle"></i></a>
+                            <a href="{{ route('schedule.show', encrypt($schedule->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>
                     </tr>
                 @empty
@@ -40,7 +48,7 @@
             </tbody>
         </table>
         <div class="mt-5">
-            {{ $jadwal->links() }}
+            {{ $schedules->links() }}
         </div>
     </x-card>
 </x-app-layout>

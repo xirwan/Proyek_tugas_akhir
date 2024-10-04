@@ -7,7 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\User;
 
-class Seedsuperadmin extends Seeder
+class Seedrole extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +16,8 @@ class Seedsuperadmin extends Seeder
     {
         //seed role superadmin
         $superAdminRole = Role::create(['name' => 'SuperAdmin']);
-
+        Role::create(['name' => 'Jemaat']);
+        Role::create(['name' => 'Admin']);
         $user = User::find(1);
         if ($user) {
             $user->assignRole($superAdminRole);

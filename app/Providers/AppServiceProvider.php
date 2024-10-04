@@ -30,7 +30,6 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('SuperAdmin') ? true : null;
         });
         
-        //
         Paginator::useBootstrapFive();
 
         

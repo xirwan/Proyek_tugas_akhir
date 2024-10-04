@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use App\Models\Position;
-
-use Illuminate\View\View;
-
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use App\Models\Position;
 
 class PositionController extends Controller
 {
@@ -17,29 +14,28 @@ class PositionController extends Controller
     {   
         $positions = Position::orderBy('nama', 'asc')->paginate(3);
         
-        return view('posisi', compact('positions'));
+        return view('position.index', compact('positions'));
     }
 
     public function create() : View
     {
-        return view('posisi.tambah');
+        return view('position.add');
     }
 
     public function store(Request $request) : RedirectResponse
     {
         $request->validate([
-            'nama'         => 'required|string',
-            'deskripsi'    => 'required|string',
-            'status'       => 'required|in:Aktif,Tidak Aktif',  
+            'name'          => 'required|string',
+            'description'   => 'required|string',  
         ]);
 
         Position::create([
-            'nama'         => $request->input('nama'),
-            'deskripsi'    => $request->input('deskripsi'),
-            'status'       => $request->input('status'),
+            'name'          => $request->input('name'),
+            'description'   => $request->input('description'),
+            'status'        => 'Active',
         ]);
 
-        return redirect()->route('posisi.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Disimpan!']);
 
     }
 
@@ -50,7 +46,7 @@ class PositionController extends Controller
         $positions = Position::findOrFail($id);
 
         //render view with product
-        return view('posisi.tampil', compact('positions'));
+        return view('position.show', compact('positions'));
     }
 
     public function update(Request $request, $encryptedId) : RedirectResponse
@@ -58,20 +54,20 @@ class PositionController extends Controller
         $id = decrypt($encryptedId);
         
         $request->validate([
-            'nama'         => 'required|string',
-            'deskripsi'       => 'required|string',
-            'status'       => 'required|in:Aktif,Tidak Aktif',  
+            'name'          => 'required|string',
+            'description'   => 'required|string',
+            'status'        => 'required|in:Active,Inactive',  
         ]);
 
         $positions = Position::findOrFail($id);
 
         $positions->update([
-            'nama'         => $request->input('nama'),
-            'deskripsi'    => $request->input('deskripsi'),
-            'status'       => $request->input('status'),
+            'name'          => $request->input('name'),
+            'description'   => $request->input('description'),
+            'status'        => $request->input('status'),
         ]);
 
-        return redirect()->route('posisi.index')->with(['success' => 'Data Berhasil Diubah!']);
+        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Diubah!']);
 
     }
 
@@ -85,7 +81,7 @@ class PositionController extends Controller
         $positions->delete();
 
         //redirect to index
-        return redirect()->route('posisi.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
 
 }

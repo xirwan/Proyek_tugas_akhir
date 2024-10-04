@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jadwals', function (Blueprint $table) {
+        Schema::create('types', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->timestamps();
-            $table->string('nama');
-            $table->string('deskripsi');
-            $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jadwals');
+        Schema::dropIfExists('types');
     }
 };

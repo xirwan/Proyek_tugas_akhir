@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CabangController;
-use App\Http\Controllers\JadwalController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\AnggotaController;
 use illuminate\Auth\Middleware\Authorize;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\TypeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,22 +19,22 @@ Route::get('/coba', function () {
     return view('coba');
 });
 
-// Route::get('/anggota', function () {
-//     return view('anggota');
-// })->middleware(['auth', 'verified']);
+Route::resource('/schedule', ScheduleController::class)->middleware(['auth', 'verified']);
 
-Route::resource('/jadwal', JadwalController::class)->middleware(['auth', 'verified']);
+Route::resource('/category', CategoryController::class)->middleware(['auth', 'verified']);
 
-Route::resource('/posisi', PositionController::class)->middleware(['auth', 'verified']);
+Route::resource('/type', TypeController::class)->middleware(['auth', 'verified']);
+
+Route::resource('/position', PositionController::class)->middleware(['auth', 'verified']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', 'role:SuperAdmin'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
-    Route::resource('/cabang', CabangController::class);
+    Route::resource('/branch', BranchController::class);
     Route::resource('/role', RoleController::class);
-    Route::resource('/anggota', AnggotaController::class);
+    Route::resource('/member', MemberController::class);
 });
 
 Route::middleware('auth')->group(function () {

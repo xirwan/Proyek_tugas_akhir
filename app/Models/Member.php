@@ -43,4 +43,16 @@ class Member extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    public function relations()
+    {
+        return $this->hasMany(MemberRelation::class, 'member_id');
+    }
+
+    // Relasi ke anggota lain melalui member_relation
+    public function relatedMembers()
+    {
+        return $this->belongsToMany(Member::class, 'member_relation', 'member_id', 'related_member_id')
+                    ->withPivot('relation_id');
+    }
+
 }

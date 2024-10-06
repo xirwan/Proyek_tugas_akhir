@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form action="{{ route('posisi.store') }}" class="form-horizontal form-bordered" method="POST">
+    <form action="{{ route('position.store') }}" class="form-horizontal form-bordered" method="POST">
         @csrf
         <section class="card">
             <header class="card-header">   
@@ -7,11 +7,11 @@
             </header>
             <div class="card-body">
 
-                    <x-input-text name="nama" id="inputnama" label="Nama" placeholder="Masukan nama posisi" :required="true"/>
+                    <x-input-text name="name" id="inputnama" label="Nama" placeholder="Masukan nama posisi" :required="true"/>
 
-                    <x-input-area name="deskripsi" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :required="true"/>
+                    <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :required="true"/>
 
-                    <x-radio name="status" label="Status" :options="['Aktif' => 'Aktif', 'Tidak Aktif' => 'Tidak Aktif']" :required="true"/>
+                    <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :required="true"/>
 
             </div>
 

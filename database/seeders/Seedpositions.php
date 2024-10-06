@@ -18,7 +18,11 @@ class Seedpositions extends Seeder
             "name"=> "Penggurus Umum",
             "description"=> "Penggurus Umum gereja",
             "status"=> "Active",
-
+        ]);
+        Position::create([
+            "name"=> "Jemaat",
+            "description"=> "Jemaat gereja",
+            "status"=> "Active",
         ]);
     }
 }

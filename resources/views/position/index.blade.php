@@ -9,7 +9,7 @@
             List Posisi
         </x-slot>
 
-        <a href="{{ route('posisi.create') }}" class="btn btn-md btn-success mb-3">Tambah Posisi</a>
+        <a href="{{ route('position.create') }}" class="btn btn-md btn-success mb-3">Tambah Posisi</a>
 
         <table class="table table-responsive-md mb-0">
             <thead>
@@ -25,11 +25,11 @@
                 @forelse($positions as $index => $position)
                     <tr>
                         <td>{{ $positions->firstItem() + $index }}</td>
-                        <td>{{ $position->nama }}</td>
-                        <td>{{ $position->deskripsi }}</td>
+                        <td>{{ $position->name }}</td>
+                        <td>{{ $position->description }}</td>
                         <td>{{ $position->status }}</td>
                         <td class="actions text-center">
-                            <a href="{{ route('posisi.show', encrypt($position->id)) }}"><i class="el el-info-circle"></i></a>
+                            <a href="{{ route('position.show', encrypt($position->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>
                     </tr>
                 @empty

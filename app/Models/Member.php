@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Role;
+// use Spatie\Permission\Traits\HasRoles;
+// use Spatie\Permission\Models\Role;
 
 class Member extends Model
 {
-    use HasFactory, HasRoles;
+    use HasFactory;
 
     protected $fillable = [
         'firstname',
@@ -18,7 +18,7 @@ class Member extends Model
         'status',
         'address',
         'branch_id',
-        'role_id',
+        // 'role_id',
         'position_id',
         'user_id',
     ];
@@ -33,10 +33,10 @@ class Member extends Model
         return $this->belongsTo(Position::class, 'position_id', 'id');
     }
 
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role_id'); // Role model dari Spatie\Permission
-    }
+    // public function role()
+    // {
+    //     return $this->belongsTo(Role::class, 'role_id');
+    // }
 
     public function user()
     {

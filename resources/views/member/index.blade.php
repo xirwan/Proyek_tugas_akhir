@@ -8,49 +8,61 @@
         <x-slot name="header">
             List Anggota
         </x-slot>
-        
         <a href= "{{ route('member.create') }}" class="btn btn-md btn-success mb-3">Tambah Anggota</a>
-
-        <table class="table table-responsive mb-0">
-            <thead>
-                <tr class="text-center">
-                    <th>No</th>
-                    <th>Nama depan</th>
-                    <th>Nama belakang</th>
-                    <th>Tanggal lahir</th>
-                    <th>Alamat</th>
-                    <th>Email</th>
-                    <th>Cabang</th>
-                    <th>Role</th>
-                    <th>Posisi</th>
-                    <th>Status</th>
-                    <th>Detail</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($members as $index => $member)
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead class="text-center">
                     <tr>
-                        <td>{{ $members->firstItem() + $index }}</td>
-                        <td>{{ $member->firstname }}</td>
-                        <td>{{ $member->lastname }}</td>
-                        <td>{{ $member->dateofbirth }}</td>
-                        <td>{{ $member->user->email }}</td>
-                        <td>{{ $member->branch->name }}</td>
-                        <td>{{ $member->role->name }}</td>
-                        <td>{{ $member->position->name }}</td>
-                        <td>{{ $member->status }}</td>
-                        <td>{{ $member->address }}</td>
-                        <td class="actions text-center">
-                            <a href="{{ route('member.show', encrypt($member->id)) }}"><i class="el el-info-circle"></i></a>
-                        </td>
+                        <th>No</th>
+                        <th>Nama Depan</th>
+                        <th>Nama Belakang</th>
+                        <th>Tanggal Lahir</th>
+                        <th>Email</th>
+                        <th>Cabang</th>
+                        <th>Role</th>
+                        <th>Posisi</th>
+                        <th>Status</th>
+                        <th>Alamat</th>
+                        <th>Detail</th>
                     </tr>
-                @empty
-                <div class="alert alert-danger">
-                    Data Anggota belum tersedia.
-                </div>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($members as $index => $member)
+                        <tr class="text-center">
+                            <td>{{ $members->firstItem() + $index }}</td>
+                            <td>{{ $member->firstname }}</td>
+                            <td>{{ $member->lastname }}</td>
+                            <td>{{ $member->dateofbirth }}</td>
+                            <td>{{ $member->user->email }}</td>
+                            <td>{{ $member->branch->name }}</td>
+                            <td>
+                                @if($member->user && $member->user->roles->isNotEmpty())
+                                    {{ $member->user->roles->pluck('name')->join(', ') }}
+                                @else
+                                    <span class="text-danger">Role tidak ditemukan</span>
+                                @endif
+                            </td>
+                            <td>{{ $member->position->name }}</td>
+                            <td>{{ $member->status }}</td>
+                            <td>{{ $member->address }}</td>
+                            <td class="actions text-center">
+                                <a href="{{ route('member.show', encrypt($member->id)) }}">
+                                    <i class="el el-info-circle"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="11" class="text-center">
+                                <div class="alert alert-danger mb-0">
+                                    Data Anggota belum tersedia.
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>    
         <div class="mt-5">
             {{ $members->links() }}
         </div>

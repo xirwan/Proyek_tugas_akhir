@@ -15,13 +15,15 @@ use App\Models\Branch;
 use App\Models\Position;
 use App\Models\Relation;
 use App\Models\MemberRelation;
+use Spatie\Permission\Traits\HasRoles;
+use Carbon\Carbon;
 
 class MemberController extends Controller
 {
     public function index() : View
     {   
         // Mengambil semua data anggota beserta cabang-nya menggunakan eager loading (dengan relasi cabang)
-        $members = Member::with('branch', 'role', 'user', 'position')->paginate(3);
+        $members = Member::with('branch', 'user', 'position')->paginate(3);
         
         return view('member.index', compact('members'));
     }
@@ -69,6 +71,12 @@ class MemberController extends Controller
             'name'  => $fullname,
             'password' => Hash::make($request->password),
         ]);
+
+        // Assign role ke user menggunakan Spatie Permission
+        $role = Role::find($request->role_id); // Ambil role berdasarkan ID dari request
+        if ($role) {
+            $user->assignRole($role); // Berikan role ke user
+        }
 
         Member::create([
             'firstname'         => $request->input('firstname'),
@@ -144,6 +152,12 @@ class MemberController extends Controller
             'password' => $request->password ? Hash::make($request->password) : $user->password,  // Update password hanya jika diisi
         ]);
 
+        // Ambil nama role berdasarkan ID dari request
+        $role = Role::findOrFail($request->role_id)->name;
+
+        // Sinkronisasi role user
+        $user->syncRoles([$role]);  // Memastikan role user diperbarui
+
         // Update data anggota
         $member->update([
             'firstname'         => $request->input('firstname'),
@@ -151,7 +165,6 @@ class MemberController extends Controller
             'dateofbirth'       => $request->input('dateofbirth'),
             'status'            => $request->input('status'),
             'address'           => $request->input('address'),
-            'role_id'           => $request->input('role_id'),
             'position_id'       => $request->input('position_id'),
             'branch_id'         => $request->input('branch_id'),
             'user_id'           => $user->id,
@@ -186,7 +199,7 @@ class MemberController extends Controller
         $branches = Branch::where('status', 'Active')->get();
         $branchoptions = $branches->pluck('name', 'id');
 
-        return view('register_child', compact('branchoptions'));
+        return view('childrens.register_child', compact('branchoptions'));
     }
 
     public function storeChild(Request $request) : RedirectResponse
@@ -195,18 +208,16 @@ class MemberController extends Controller
             'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'dateofbirth'       => 'required|date',
-            'address'           => 'required|string',
-            'branch_id'         => 'required|exists:branches,id',
+            // 'address'           => 'required|string',
+            // 'branch_id'         => 'required|exists:branches,id',
+        ], [
+            'firstname.regex'       => 'Harap hanya memasukan huruf saja.',
+            'lastname.regex'        => 'Harap hanya memasukan huruf saja.',
         ]);
 
         // Temukan user (orang tua) yang sedang login
         $parent = Auth::user();
         $parentMember = Member::where('user_id', $parent->id)->first();
-
-        $role = Role::where('name', 'Jemaat')->first();
-        if (!$role) {
-            return redirect()->back()->withErrors('Role "Jemaat" tidak ditemukan.');
-        }
 
         // Dapatkan position_id berdasarkan nama "Jemaat"
         $position = Position::where('name', 'Jemaat')->first();
@@ -219,9 +230,8 @@ class MemberController extends Controller
             'lastname'          => $request->input('lastname'),
             'dateofbirth'       => $request->input('dateofbirth'),
             'status'            => 'Active',
-            'address'           => $request->input('address'),
-            'branch_id'         => $request->input('branch_id'),
-            'role_id'           => $role->id, // Isi role_id secara manual
+            'address'           => $parentMember->address,
+            'branch_id'         => $parentMember->branch_id,
             'position_id'       => $position->id, // Isi position_id secara manual
             'user_id'           => null,  // Anak tidak memiliki akun user
         ]);
@@ -235,7 +245,7 @@ class MemberController extends Controller
             'relation_id'       => $childRelation->id, // Relasi: Anak
         ]);
 
-        return redirect()->route('home')->with('success', 'Anak berhasil didaftarkan!');
+        return redirect()->route('member.childrenList')->with('success', 'Anak berhasil didaftarkan!');
     }
 
     public function showChildrenList() : View
@@ -252,10 +262,11 @@ class MemberController extends Controller
             ->whereHas('relation', function ($query) {
                 $query->where('name', 'Anak'); // Hanya relasi anak
             })
-            ->get();
+            ->paginate(3);
 
         // Kirim data anak ke view
-        return view('children_list', compact('children'));
+
+        return view('childrens.children_list', compact('children'));
     }
 
 
@@ -272,38 +283,46 @@ class MemberController extends Controller
         }
 
         // Kirim data anak ke view untuk menampilkan form pendaftaran akun
-        return view('register_child_account', compact('child'));
+        return view('childrens.register_child_account', compact('child'));
     }
-
 
     public function storeChildAccount(Request $request, $encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
 
-        // Validasi email dan password (tidak memerlukan validasi nama lagi)
+        // Validasi email
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         // Cari data anak berdasarkan member_id
         $child = Member::findOrFail($id);
 
+        // Konversi tanggal lahir menjadi Carbon instance
+        $dateOfBirth = Carbon::parse($child->dateofbirth);
+
+        // Format password berdasarkan tanggal lahir (YYYYMMDD)
+        $password = $dateOfBirth->format('Ymd');
+
         // Buat akun user untuk anak
         $user = User::create([
             'name' => $child->firstname . ' ' . $child->lastname, // Gabungkan nama depan dan belakang
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($password),  // Gunakan password dari tanggal lahir
         ]);
 
-        // Perbarui data anak dengan user_id yang baru dibuat
+        // Berikan role "Jemaat" ke anak
+        $role = Role::where('name', 'Jemaat')->first();
+        if ($role) {
+            $user->assignRole($role);
+        }
+
+        // Perbarui data anak dengan user_id
         $child->update([
             'user_id' => $user->id,
         ]);
 
-        return redirect()->route('home')->with('success', 'Akun untuk anak berhasil dibuat.');
+        return redirect()->route('portal')->with('success', 'Akun untuk anak berhasil dibuat dengan password tanggal lahir.');
     }
-
-
 
 }

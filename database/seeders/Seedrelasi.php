@@ -16,11 +16,6 @@ class Seedrelasi extends Seeder
         //
         Relation::insert([
             [
-                "name"=> "Orang tua",
-                "description"=> "Orang tua",
-                "status"=> "Active",
-            ],
-            [
                 "name"=> "Anak",
                 "description"=> "Anak",
                 "status"=> "Active",

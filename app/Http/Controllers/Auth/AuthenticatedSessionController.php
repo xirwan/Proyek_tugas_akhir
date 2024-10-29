@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
         if ($user->hasRole('SuperAdmin')) {
             return redirect()->intended(route('dashboard', absolute: false));
         } elseif ($user->hasRole('Jemaat')) {
-            return redirect()->intended(route('welcome', absolute: false));
+            return redirect()->intended(route('portal', absolute: false));
         }
 
         // Jika tidak ada role yang sesuai kembali ke halaman welcome

@@ -20,6 +20,10 @@ Route::get('/coba', function () {
     return view('coba');
 });
 
+Route::get('/portal', function () {
+    return view('userdashboard');
+})->name('portal')->middleware(['auth', 'verified', 'role:Jemaat']);
+
 Route::resource('/schedule', ScheduleController::class)->middleware(['auth', 'verified']);
 
 Route::resource('/category', CategoryController::class)->middleware(['auth', 'verified']);

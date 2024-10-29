@@ -79,6 +79,10 @@ class RegisteredUserController extends Controller
             return redirect()->back()->withErrors('Posisi "Jemaat" tidak ditemukan.');
         }
 
+        if ($role) {
+            $user->assignRole($role); // Berikan role ke user
+        }
+
         // Membuat data anggota di tabel members
         Member::create([
             'firstname'         => $request->firstname,
@@ -87,7 +91,6 @@ class RegisteredUserController extends Controller
             'status'            => 'Active',
             'address'           => $request->address,
             'branch_id'         => $request->branch_id,
-            'role_id'           => $role->id, // Isi role_id secara manual
             'position_id'       => $position->id, // Isi position_id secara manual
             'user_id'           => $user->id, // Isi user_id dari user yang baru dibuat
         ]);
@@ -96,6 +99,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home', absolute: false));
+        return redirect(route('portal', absolute: false));
     }
 }

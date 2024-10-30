@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('dateofbirth');
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->string('address');
+            $table->string('qr_code')->unique()->nullable(); // Kolom QR Code
             $table->foreignId('branch_id') // Foreign key untuk tabel cabang
                 ->constrained('branches', 'id') // Hubungkan ke primary key tabel cabang (id)
                 ->onDelete('cascade');

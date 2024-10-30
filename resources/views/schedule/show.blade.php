@@ -7,7 +7,6 @@
             @csrf
             @method('PUT')
             <div class="card-body">
-
                 <x-select-box
                 name="day"
                 label="Pilih Hari"
@@ -16,7 +15,6 @@
                 placeholder="Pilih Hari"
                 :required="true"
                 />
-
                 <x-select-box 
                 label="Tipe" 
                 name="type_id" 
@@ -25,7 +23,6 @@
                 :required="true"
                 :selected="$schedule->type_id" 
                 />
-
                 <x-select-box 
                 label="Kategori" 
                 name="category_id" 
@@ -34,15 +31,10 @@
                 :required="true"
                 :selected="$schedule->category_id" 
                 />
-
                 <x-input-text name="name" id="inputnama" label="Nama" :value="$schedule->name" :required="true"/>
-
                 <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" :value="$schedule->description" :required="true"/>
-
                 <x-time-picker name="start" label="Jam Mulai" :value="$schedule->start" :required="true" />
-                
                 <x-time-picker name="end" label="Jam Selesai (optional)" :value="$schedule->end" />
-
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-success">Edit</button>

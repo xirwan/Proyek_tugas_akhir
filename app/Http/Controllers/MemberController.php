@@ -115,64 +115,132 @@ class MemberController extends Controller
         return view('member.show', compact('member', 'branchoptions', 'roleoptions', 'positionoptions'));
     }
 
+    // public function update(Request $request, $encryptedId) : RedirectResponse
+    // {
+    //     $id = decrypt($encryptedId);
+
+    //     // Ambil data anggota dan user
+    //     $member = Member::findOrFail($id);
+    //     $user = User::findOrFail($member->user_id);
+        
+    //     $request->validate([
+    //         'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+    //         'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+    //         'dateofbirth'       => 'required|date',
+    //         'status'            => 'required|in:Active,Inactive',
+    //         'address'           => 'required|string',
+    //         'role_id'           => 'required|exists:roles,id',
+    //         'position_id'       => 'required|exists:positions,id',
+    //         'branch_id'         => 'required|exists:branches,id',
+    //         'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],  // Pastikan email unik, kecuali untuk user saat ini
+    //         'password'          => ['nullable', Rules\Password::defaults()],  // Password bersifat opsional saat update
+    //     ], [
+    //         'firstname.regex'       => 'Harap hanya memasukan huruf saja.',
+    //         'lastname.regex'        => 'Harap hanya memasukan huruf saja.',
+    //     ]);
+
+    //     $fullname = $request->input('firstname') . ' ' . $request->input('lastname');
+
+    //     // Temukan user yang terkait dengan anggota menggunakan ID
+    //     $member = Member::findOrFail($id);
+    //     $user = User::findOrFail($member->user_id);
+
+    //     // Update data user
+    //     $user->update([
+    //         'email' => $request->email,
+    //         'name'  => $fullname,
+    //         'password' => $request->password ? Hash::make($request->password) : $user->password,  // Update password hanya jika diisi
+    //     ]);
+
+    //     // Ambil nama role berdasarkan ID dari request
+    //     $role = Role::findOrFail($request->role_id)->name;
+
+    //     // Sinkronisasi role user
+    //     $user->syncRoles([$role]);  // Memastikan role user diperbarui
+
+    //     // Update data anggota
+    //     $member->update([
+    //         'firstname'         => $request->input('firstname'),
+    //         'lastname'          => $request->input('lastname'),
+    //         'dateofbirth'       => $request->input('dateofbirth'),
+    //         'status'            => $request->input('status'),
+    //         'address'           => $request->input('address'),
+    //         'position_id'       => $request->input('position_id'),
+    //         'branch_id'         => $request->input('branch_id'),
+    //         'user_id'           => $user->id,
+    //     ]);
+
+    //     return redirect()->route('member.index')->with(['success' => 'Data Berhasil Diubah!']);
+
+    // }
+
     public function update(Request $request, $encryptedId) : RedirectResponse
     {
         $id = decrypt($encryptedId);
-
-        // Ambil data anggota dan user
         $member = Member::findOrFail($id);
-        $user = User::findOrFail($member->user_id);
-        
-        $request->validate([
-            'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
-            'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
-            'dateofbirth'       => 'required|date',
-            'status'            => 'required|in:Active,Inactive',
-            'address'           => 'required|string',
-            'role_id'           => 'required|exists:roles,id',
-            'position_id'       => 'required|exists:positions,id',
-            'branch_id'         => 'required|exists:branches,id',
-            'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],  // Pastikan email unik, kecuali untuk user saat ini
-            'password'          => ['nullable', Rules\Password::defaults()],  // Password bersifat opsional saat update
-        ], [
-            'firstname.regex'       => 'Harap hanya memasukan huruf saja.',
-            'lastname.regex'        => 'Harap hanya memasukan huruf saja.',
+
+        // Validasi umum
+        $rules = [
+            'firstname'   => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'lastname'    => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'dateofbirth' => 'required|date',
+            'status'      => 'required|in:Active,Inactive',
+            'address'     => 'required|string',
+            'position_id' => 'required|exists:positions,id',
+            'branch_id'   => 'required|exists:branches,id',
+        ];
+
+        // Tambahkan validasi email dan password jika user ada
+        if ($member->user) {
+            $rules = array_merge($rules, [
+                'email'   => [
+                    'required', 
+                    'string', 
+                    'email', 
+                    'max:255', 
+                    'unique:users,email,' . $member->user->id,
+                ],
+                'password' => ['nullable', \Illuminate\Validation\Rules\Password::defaults()],
+                'role_id'  => 'required|exists:roles,id',
+            ]);
+        }
+
+        $request->validate($rules, [
+            'firstname.regex' => 'Harap hanya memasukkan huruf saja.',
+            'lastname.regex'  => 'Harap hanya memasukkan huruf saja.',
         ]);
 
-        $fullname = $request->input('firstname') . ' ' . $request->input('lastname');
+        // Update user jika ada
+        if ($member->user) {
+            $user = $member->user;
+            $fullname = $request->input('firstname') . ' ' . $request->input('lastname');
 
-        // Temukan user yang terkait dengan anggota menggunakan ID
-        $member = Member::findOrFail($id);
-        $user = User::findOrFail($member->user_id);
+            $user->update([
+                'email'    => $request->input('email'),
+                'name'     => $fullname,
+                'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
+            ]);
 
-        // Update data user
-        $user->update([
-            'email' => $request->email,
-            'name'  => $fullname,
-            'password' => $request->password ? Hash::make($request->password) : $user->password,  // Update password hanya jika diisi
-        ]);
+            // Sinkronisasi role
+            $role = Role::findOrFail($request->role_id)->name;
+            $user->syncRoles([$role]);
+        }
 
-        // Ambil nama role berdasarkan ID dari request
-        $role = Role::findOrFail($request->role_id)->name;
-
-        // Sinkronisasi role user
-        $user->syncRoles([$role]);  // Memastikan role user diperbarui
-
-        // Update data anggota
+        // Update data member
         $member->update([
-            'firstname'         => $request->input('firstname'),
-            'lastname'          => $request->input('lastname'),
-            'dateofbirth'       => $request->input('dateofbirth'),
-            'status'            => $request->input('status'),
-            'address'           => $request->input('address'),
-            'position_id'       => $request->input('position_id'),
-            'branch_id'         => $request->input('branch_id'),
-            'user_id'           => $user->id,
+            'firstname'   => $request->input('firstname'),
+            'lastname'    => $request->input('lastname'),
+            'dateofbirth' => $request->input('dateofbirth'),
+            'status'      => $request->input('status'),
+            'address'     => $request->input('address'),
+            'position_id' => $request->input('position_id'),
+            'branch_id'   => $request->input('branch_id'),
         ]);
 
-        return redirect()->route('member.index')->with(['success' => 'Data Berhasil Diubah!']);
-
+        return redirect()->route('member.index')->with('success', 'Data Berhasil Diubah!');
     }
+
+
 
     public function destroy($encryptedId) : RedirectResponse
     {

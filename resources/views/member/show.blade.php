@@ -18,22 +18,24 @@
             <div class="card-body">
                 <div class="row form-group">
                     <div class="col-lg-4">
-                        {{-- <x-select-box 
-                        label="Nama Role" 
-                        name="role_id" 
-                        :options="$roleoptions"
-                        :selected="$member->role_id" 
-                        placeholder="Pilih Role" 
-                        :required="true" 
-                        /> --}}
-                        <x-select-box 
-                        label="Nama Role" 
-                        name="role_id" 
-                        :options="$roleoptions"
-                        :selected="$member->user->roles->pluck('id')->first()" 
-                        placeholder="Pilih Role" 
-                        :required="true" 
-                        />
+                        @if($member->user)
+                            <x-select-box 
+                                label="Nama Role" 
+                                name="role_id" 
+                                :options="$roleoptions"
+                                :selected="$member->user->roles->pluck('id')->first()" 
+                                placeholder="Pilih Role" 
+                                :required="true" 
+                            />
+                        @else
+                            <x-input-text 
+                            name="warning" 
+                            id="warning" 
+                            label="Role" 
+                            placeholder="Informasi" 
+                            :value="'Member ini belum memiliki akun.'" 
+                            :readonly="true" />
+                        @endif
                     </div>
                     <div class="col-lg-4">
                         <x-select-box 
@@ -63,8 +65,19 @@
                         <x-date-picker label="Tanggal Lahir" name="dateofbirth" :value="$member->dateofbirth" :required="true" max="{{ date('Y-m-d') }}"/>
                     </div>
                     <div class="col-lg-6">
-                        <x-input-text name="email" id="email" label="Email" placeholder="Masukan email" :required="true" :value="$member->user->email" :errorMessage="$errors->first('email')"/>
-                        <x-input-password name="password" label="Password" placeholder="Perbaharui password (opsional)" :errorMessage="$errors->get('password')"/> 
+                        @if($member->user)
+                            <x-input-text name="email" id="email" label="Email" placeholder="Masukan email" :required="true" :value="$member->user->email" :errorMessage="$errors->first('email')"/>
+                            <x-input-password name="password" label="Password" placeholder="Perbaharui password (opsional)" :errorMessage="$errors->get('password')"/> 
+                        @else
+                            <x-input-text name="email" id="email" label="Email" placeholder="Masukan email" :required="true" :value="'Member ini belum memiliki akun. Email tidak bisa diubah'" :readonly="true" :errorMessage="$errors->first('email')"/>
+                            <x-input-text 
+                            name="warning" 
+                            id="warning" 
+                            label="Password" 
+                            placeholder="Informasi" 
+                            :value="'Member ini belum memiliki akun. Password tidak bisa diubah.'" 
+                            :readonly="true" />
+                        @endif
                         <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$member->status" :required="true"/>
                     </div>
                 </div>
@@ -78,7 +91,7 @@
             <form action="{{ route('member.destroy', encrypt($member->id)) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data posisi ini?');">Hapus</button>
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data member ini?');">Hapus</button>
             </form>
                 <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
             </footer>

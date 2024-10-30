@@ -17,6 +17,7 @@ class Member extends Model
         'dateofbirth',
         'status',
         'address',
+        'qr_code',
         'branch_id',
         // 'role_id',
         'position_id',
@@ -49,7 +50,27 @@ class Member extends Model
     }
 
     // Relasi ke anggota lain melalui member_relation
-    public function relatedMembers()
+    // public function relatedMembers()
+    // {
+    //     return $this->belongsToMany(Member::class, 'member_relation', 'member_id', 'related_member_id')
+    //                 ->withPivot('relation_id');
+    // }
+
+    // Relasi ke absensi sekolah minggu
+    public function sundaySchoolPresence()
+    {
+        return $this->hasMany(SundaySchoolPresence::class, 'member_id');
+    }
+
+    // Relasi untuk mendapatkan orang tua dari anggota ini (jika anggota adalah anak)
+    public function parents()
+    {
+        return $this->belongsToMany(Member::class, 'member_relation', 'related_member_id', 'member_id')
+                    ->withPivot('relation_id');
+    }
+
+    // Relasi untuk mendapatkan anak-anak dari anggota ini (jika anggota adalah orang tua)
+    public function children()
     {
         return $this->belongsToMany(Member::class, 'member_relation', 'member_id', 'related_member_id')
                     ->withPivot('relation_id');

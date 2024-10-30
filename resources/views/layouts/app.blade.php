@@ -49,14 +49,14 @@
                         <span>Jadwal</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{url ('sunday-classes')}}" :active="request()->is('sunday-classes')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>List Kelas Sekolah Minggu</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{url ('qr-code/children')}}" :active="request()->is('qr-code/children')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Generate QR Anak Sekolah Minggu</span>
                     </x-side-link>
         
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
@@ -79,6 +79,9 @@
 				<section role="main" class="content-body">
 					<header class="page-header">
 						<h2 style="border-bottom: none">{{ ucfirst(request()->segment(1)) }}</h2>
+                        {{-- <h2 style="border-bottom: none">
+                            {{ Str::title(str_replace('-', ' ', count(request()->segments()) > 1 ? request()->segment(2) : request()->segment(1))) }}
+                        </h2> --}}
 						<div class="right-wrapper text-right" style="padding-right: 20px">
 							<ol class="breadcrumbs">
 								<li>

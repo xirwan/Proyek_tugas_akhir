@@ -33,13 +33,13 @@
                             <td>{{ $member->firstname }}</td>
                             <td>{{ $member->lastname }}</td>
                             <td>{{ $member->dateofbirth }}</td>
-                            <td>{{ $member->user->email }}</td>
+                            <td>{{ optional($member->user)->email ?? '-' }}</td>
                             <td>{{ $member->branch->name }}</td>
                             <td>
                                 @if($member->user && $member->user->roles->isNotEmpty())
                                     {{ $member->user->roles->pluck('name')->join(', ') }}
                                 @else
-                                    <span class="text-danger">Role tidak ditemukan</span>
+                                    <span class="text-danger">Belum memiliki akun</span>
                                 @endif
                             </td>
                             <td>{{ $member->position->name }}</td>

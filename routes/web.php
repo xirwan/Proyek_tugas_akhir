@@ -36,6 +36,12 @@ Route::resource('position', PositionController::class)->middleware(['auth', 'ver
 
 Route::resource('sunday-classes', SundaySchoolClassController::class)->middleware(['auth', 'verified']);
 
+Route::get('/sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents')->middleware(['auth', 'verified']);
+
+Route::get('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'showAdjustClassForm'])->name('sundayschoolclass.showAdjustClassForm')->middleware(['auth', 'verified']);
+
+Route::post('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'adjustClass'])->name('sundayschoolclass.adjustClass')->middleware(['auth', 'verified']);
+
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -57,9 +63,21 @@ Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->
 Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])
 ->name('qr-code.children.generate.qr');
 
-Route::get('/qr-code/generate-all-qr', [AttendanceController::class, 'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
+Route::get('/qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
 
-Route::get('/qr-codde/checkin/{id}', [AttendanceController::class, 'checkIn'])->name('qr-code.checkin');
+// Route::get('/qr-code/checkin/{id}', [AttendanceController::class, 'checkIn'])->name('qr-code.checkin');
+
+// Route::post('/qr-code/checkin', [AttendanceController::class, 'processCheckIn'])->name('attendance.processCheckIn');
+
+Route::get('/attendance/class', [AttendanceController::class, 'classList'])->name('attendance.classList');
+
+Route::get('/attendance/class/{class_id}', [AttendanceController::class, 'attendanceListByClass'])->name('attendance.classAttendance');
+
+Route::post('/attendance/class/{class_id}/manual-checkin', [AttendanceController::class, 'manualCheckin'])->name('attendance.manualCheckin');
+
+Route::get('/attendance/class/{class_id}/checkin-qr', [AttendanceController::class, 'showCheckinQr'])->name('attendance.showCheckinQr');
+
+Route::post('/attendance/class/{class_id}/checkin', [AttendanceController::class, 'checkinByClass'])->name('attendance.checkinByClass');
 
 
 

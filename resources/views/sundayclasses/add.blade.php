@@ -1,4 +1,4 @@
-<x-user>
+<x-app-layout>
     <form method="POST" action="{{ route('sunday-classes.store') }}">
         @csrf
         <section class="card">
@@ -20,4 +20,4 @@
             </footer>
         </section>
     </form>
-</x-user>
+</x-app-layout>

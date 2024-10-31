@@ -8,7 +8,6 @@
         <x-slot name="header">
             List Kelas Sekolah Minggu
         </x-slot>
-        <a href="{{ route('sunday-classes.create') }}" class="btn btn-md btn-success mb-3">Tambah Kelas Sekolah Minggu</a>
         <table class="table table-responsive-md mb-0">
             <thead>
                 <tr class="text-center">
@@ -16,8 +15,8 @@
                     <th>Nama</th>
                     <th>Deskripsi</th>
                     <th>Status</th>
-                    <th>Detail Murid</th>
-                    <th>Detail Kelas</th>
+                    <th>Absensi</th>
+                    <th>Scan QR</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,11 +26,15 @@
                         <td>{{ $class->name }}</td>
                         <td>{{ $class->description }}</td>
                         <td>{{ $class->status }}</td>
-                        <td class="actions text-center">
-                            <a href="{{ route('sundayschoolclass.viewClassStudents', encrypt($class->id)) }}"><i class="el el-info-circle"></i></a>
+                        <td class="text-center">
+                            <a href="{{ route('attendance.classAttendance', $class->id) }}" class="btn btn-primary">
+                                Lihat Absensi
+                            </a>
                         </td>
-                        <td class="actions text-center">
-                            <a href="{{ route('sunday-classes.show', encrypt($class->id)) }}"><i class="el el-info-circle"></i></a>
+                        <td class="text-center">
+                            <a href="{{ route('attendance.showCheckinQr', $class->id) }}" class="btn btn-primary">
+                                Scan QR
+                            </a>
                         </td>
                     </tr>
                 @empty

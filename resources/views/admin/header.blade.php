@@ -8,22 +8,17 @@
             <i class="fas fa-bars" aria-label="Toggle sidebar"></i>
         </div>
     </div>
-
     <!-- start: search & user box -->
     <div class="header-right">
-
         <span class="separator"></span>
-
         <div id="userbox" class="userbox">
             <a href="#" data-toggle="dropdown">
                 <div class="profile-info"   >
                     <span class="name">{{ Auth::user()->name }}</span>
-                    <span class="role">Administrator</span>
+                    <span class="role">{{ Auth::user()->getRoleNames()->first() }}</span>
                 </div>
-
                 <i class="fa custom-caret"></i>
             </a>
-
             <div class="dropdown-menu">
                 <ul class="list-unstyled mb-2">
                     <li class="divider"></li>

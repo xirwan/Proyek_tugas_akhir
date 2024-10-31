@@ -17,7 +17,6 @@
                         <th>Nama Lengkap</th>
                         <th>Tanggal Lahir</th>
                         <th>Status QR Code</th>
-                        <th>QR Code</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -27,13 +26,6 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $child->firstname }} {{ $child->lastname }}</td>
                             <td>{{ $child->dateofbirth }}</td>
-                            <td>
-                                @if ($child->qr_code)
-                                    <span class="text-success">Sudah ada QR Code</span>
-                                @else
-                                    <span class="text-danger">Belum ada QR Code</span>
-                                @endif
-                            </td>
                             <td>
                                 @if ($child->qr_code)
                                     <img src="{{ asset('storage/' . $child->qr_code) }}" alt="QR Code {{ $child->firstname }}" class="img-fluid mb-2" style="max-width: 150px;">

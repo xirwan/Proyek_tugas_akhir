@@ -76,4 +76,11 @@ class Member extends Model
                     ->withPivot('relation_id');
     }
 
+    // Relasi untuk kelas yang diikuti oleh murid
+    public function sundaySchoolClasses()
+    {
+        return $this->belongsToMany(SundaySchoolClass::class, 'sunday_school_members', 'member_id', 'sunday_school_class_id');
+    }
+
+
 }

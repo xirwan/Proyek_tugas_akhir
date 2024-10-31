@@ -41,8 +41,7 @@
                             </td>
                             <td>
                                 @if(!$child->relatedMember->user_id)
-                                    <a href="{{ route('member.createChildAccount', encrypt($child->relatedMember->id)) }}" 
-                                        class="btn btn-sm btn-primary">
+                                    <a href="{{ route('member.createChildAccount', encrypt($child->relatedMember->id)) }}" class="btn btn-sm btn-primary">
                                         Buatkan Akun
                                     </a>
                                 @else
@@ -65,7 +64,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-4 d-flex justify-content-center">
+        <div class="mt-5">
             {{ $children->links() }}
         </div>
     </x-card>    

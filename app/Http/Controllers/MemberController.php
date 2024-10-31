@@ -15,6 +15,7 @@ use App\Models\Branch;
 use App\Models\Position;
 use App\Models\Relation;
 use App\Models\MemberRelation;
+use App\Models\SundaySchoolClass;
 use Spatie\Permission\Traits\HasRoles;
 use Carbon\Carbon;
 
@@ -313,7 +314,31 @@ class MemberController extends Controller
             'relation_id'       => $childRelation->id, // Relasi: Anak
         ]);
 
+        // Tentukan kelas berdasarkan usia dan tambahkan anak ke kelas jika cocok
+        $classId = $this->assignClassByAge($childMember);
+        if ($classId) {
+            $childMember->sundaySchoolClasses()->attach($classId);
+        }
+
         return redirect()->route('member.childrenList')->with('success', 'Anak berhasil didaftarkan!');
+    }
+
+    public function assignClassByAge($child)
+    {
+        $age = \Carbon\Carbon::parse($child->dateofbirth)->age;
+
+        // Tentukan kelas berdasarkan usia
+        if ($age >= 1 && $age <= 5) {
+            $classId = SundaySchoolClass::where('name', 'Kelas Yakobus')->first()->id;
+        } elseif ($age >= 5 && $age <= 10) {
+            $classId = SundaySchoolClass::where('name', 'Kelas Petrus')->first()->id;
+        } elseif ($age >= 10 && $age <= 15) {
+            $classId = SundaySchoolClass::where('name', 'Kelas Yohanes')->first()->id;
+        } else {
+            $classId = null; // Tidak ada kelas yang cocok
+        }
+
+        return $classId;
     }
 
     public function showChildrenList() : View

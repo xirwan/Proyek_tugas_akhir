@@ -2,7 +2,8 @@
 <html class="fixed">
 	<head>
         <title>{{ config('app.name', 'Laravel') }}</title>
-		@include('admin.css')        
+		<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+        @include('admin.css')        
 	</head>
 	<body>
         <section class="body">
@@ -49,7 +50,7 @@
                         <span>Jadwal</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('sunday-classes')}}" :active="request()->is('sunday-classes')">
+                    <x-side-link href="{{url ('sunday-classes')}}" :active="request()->is('sunday-classes*')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
                         <span>List Kelas Sekolah Minggu</span>
                     </x-side-link>
@@ -59,14 +60,14 @@
                         <span>Generate QR Anak Sekolah Minggu</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{url ('attendance.classList')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Scan QR Absen</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{url ('/attendance/class')}}" :active="request()->is('attendance/class')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Absensi</span>
                     </x-side-link>
         
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">

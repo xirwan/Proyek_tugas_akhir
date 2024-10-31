@@ -15,6 +15,7 @@ class SundaySchoolPresence extends Model
         'member_id',
         'check_in',
         'admin_check_in',
+        'week_of',  
     ];
 
     // Relasi: Absensi ini terkait dengan satu anggota (member)

@@ -20,6 +20,6 @@ class SundaySchoolClass extends Model
     // Relasi: Kelas ini memiliki banyak anggota melalui sunday_school_member
     public function members()
     {
-        return $this->belongsToMany(Member::class, 'sunday_school_member', 'sunday_school_class_id', 'member_id');
+        return $this->belongsToMany(Member::class, 'sunday_school_members', 'sunday_school_class_id', 'member_id');
     }
 }

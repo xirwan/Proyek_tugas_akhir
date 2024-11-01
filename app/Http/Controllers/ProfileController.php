@@ -19,6 +19,24 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
+        // $user = $request->user();
+
+        // if ($user->hasRole('Jemaat')) {
+        //     return view('profile.useredit', [
+        //         'user' => $user,
+        //     ]);
+        // } else {
+        //     return view('profile.edit', [
+        //         'user' => $user,
+        //     ]);
+        // }
+    }
+
+    public function useredit(Request $request): View
+    {
+        return view('profile.useredit', [
+            'user' => $request->user(),
+        ]);
     }
 
     /**
@@ -34,7 +52,22 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with(['success' => 'Data Berhasil Diubah!']);
+        // ->with('status', 'profile-updated');
+    }
+
+    public function userupdate(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $request->user()->fill($request->validated());
+
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+        }
+
+        $request->user()->save();
+
+        return Redirect::route('userprofile.edit')->with(['success' => 'Data Berhasil Diubah!']);
+        // ->with('status', 'profile-updated');
     }
 
     /**

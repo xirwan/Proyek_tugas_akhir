@@ -79,8 +79,9 @@ Route::get('/attendance/class/{class_id}/checkin-qr', [AttendanceController::cla
 
 Route::post('/attendance/class/{class_id}/checkin', [AttendanceController::class, 'checkinByClass'])->name('attendance.checkinByClass');
 
+Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
 
-
+Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -100,6 +101,5 @@ Route::middleware('auth')->group(function () {
         return view('pembaptisan');
     })->name('pembaptisan');
 }); 
-
 
 require __DIR__.'/auth.php';

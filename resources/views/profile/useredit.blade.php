@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-user>
     @if (session('success'))
         <div id="alert" class="alert alert-success">
             {{ session('success') }}
@@ -10,7 +10,7 @@
                 <x-slot name="header">
                     Profile Update Email
                 </x-slot>
-                <form action="{{ route('profile.update') }}" class="form-horizontal form-bordered" method="POST">
+                <form action="{{ route('userprofile.update') }}" class="form-horizontal form-bordered" method="POST">
                     @csrf
                     @method('patch')
                     <div class="card-body">
@@ -47,7 +47,7 @@
             </x-card>
         </div>
     </div>
-</x-app-layout>
+</x-user>
 
 {{-- @include('profile.partials.update-profile-information-form')
 @include('profile.partials.delete-user-form') --}}

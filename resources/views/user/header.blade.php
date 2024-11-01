@@ -23,7 +23,6 @@
                             <div class="header-nav-main header-nav-main-mobile-dark header-nav-main-effect-1 header-nav-main-sub-effect-1">
                                 <nav>
                                     <ul class="nav nav-pills" id="mainNav">
-                                     
                                         <li>
                                             <a class="nav-link" href="#" data-hash data-hash-offset="120">
                                                 Home
@@ -62,7 +61,6 @@
                                                 
                                             </ul>
                                         </li>
-                                        
                                         <li class="dropdown">
                                             <a class="nav-link dropdown-toggle" href="#">
                                                 Layanan
@@ -111,9 +109,36 @@
                                                 </li>
                                                 
                                             </ul>
+                                        </li>                                               
+                                        @if (Route::has('login'))
+                                        @auth
+                                        <li class="dropdown">
+                                            <a class="nav-link dropdown-toggle" href="#">
+                                                {{ Auth::user()->name }}
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="nav-link" href="{{ route('userprofile.edit') }}">My Profile</a>
+                                                </li>
+                                                <li>
+                                                    <form method="POST" action="{{ route('logout') }}" style="display: none;" id="logout-form">
+                                                        @csrf
+                                                    </form>
+                                                    <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                                                </li>
+                                            </ul>
                                         </li>
-
-                                                                                            
+                                        @else
+                                        <li>
+                                            <a href="{{ route('login') }}" class="nav-link">Log In</a>
+                                        </li>
+                                        <li>
+                                            @if (Route::has('register'))
+                                                <a href="{{ route('register') }}" class="nav-link">Register</a>
+                                            @endif
+                                        </li>
+                                        @endauth
+                                        @endif
                                     </ul>
                                     
                                 </nav>
@@ -121,60 +146,6 @@
                         </div>
 
                         
-                        @if (Route::has('login'))
-                            
-                                @auth
-                                    {{-- <a
-                                        href="{{ url('/dashboard') }}"
-                                        class="nav-link"
-                                    >
-                                        Dashboard
-                                    </a> --}}
-                                    <div id="userbox" class="userbox">
-                                        <a href="#" data-toggle="dropdown">
-                                            <div class="profile-info">
-                                                <span class="name text-white">{{ Auth::user()->name }}</span>
-                                            </div>
-                            
-                                            <i class="fa custom-caret text-white"></i>
-                                        </a>
-                            
-                                        <div class="dropdown-menu bg-dark shadow" style="opacity: 0.9">
-                                            <ul class="list-unstyled mb-2">
-                                                <li class="divider"></li>
-                                                <li>
-                                                    <a role="menuitem" tabindex="-1" href="{{route('profile.edit')}}"><i class="bx bx-user-circle"></i> My Profile</a>
-                                                </li>
-                                                <li>
-                                                    <form method="POST" action="{{ route('logout') }}" style="display: none;" id="logout-form">
-                                                        @csrf
-                                                    </form>
-                                                    <a role="menuitem" tabindex="-1" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off"></i> Logout</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                @else
-                                    
-                                        <a
-                                            href="{{ route('login') }}"
-                                            class="nav-link btn btn-primary btn-rounded text-3 ml-3 d-none d-sm-block"
-                                        >
-                                            Log In
-                                        </a>
-                                    
-
-                                    @if (Route::has('register'))
-                                        <a
-                                            href="{{ route('register') }}"
-                                            class="nav-link btn btn-primary btn-rounded text-3 ml-2 d-none d-sm-block bg-dark"
-                                        >
-                                            Register
-                                        </a>
-                                    @endif
-                                @endauth
-                           
-                        @endif
                         <!-- end: header nav menu -->
                     </div>
                 </div>

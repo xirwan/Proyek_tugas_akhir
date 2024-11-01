@@ -23,7 +23,11 @@
                 <ul class="list-unstyled mb-2">
                     <li class="divider"></li>
                     <li>
-                        <a role="menuitem" tabindex="-1" href="{{route('profile.edit')}}"><i class="bx bx-user-circle"></i> My Profile</a>
+                        @if(auth()->user()->hasRole('Jemaat'))
+                            <a role="menuitem" tabindex="-1" href="{{ route('userprofile.edit') }}"><i class="bx bx-user-circle"></i> My Profile</a>
+                        @else
+                            <a role="menuitem" tabindex="-1" href="{{ route('profile.edit') }}"><i class="bx bx-user-circle"></i> My Profile</a>
+                        @endif
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" style="display: none;" id="logout-form">

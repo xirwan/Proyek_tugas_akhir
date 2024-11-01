@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('member_id')->constrained('members')->onDelete('cascade');
             $table->timestamp('check_in')->nullable();
+            $table->date('week_of')->nullable();
             $table->foreignId('admin_check_in')->nullable()->constrained('members')->onDelete('set null');
             $table->timestamps();
         });

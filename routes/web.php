@@ -13,6 +13,9 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\SundaySchoolClassController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\BaptistController;
+use App\Http\Controllers\BaptistClassesController;
+use App\Http\Controllers\BaptistClassDetailController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,6 +38,20 @@ Route::resource('type', TypeController::class)->middleware(['auth', 'verified'])
 Route::resource('position', PositionController::class)->middleware(['auth', 'verified']);
 
 Route::resource('sunday-classes', SundaySchoolClassController::class)->middleware(['auth', 'verified']);
+
+Route::resource('baptist', BaptistController::class);
+
+Route::resource('baptist-classes', BaptistClassesController::class);
+
+Route::resource('baptist-class-detail', BaptistClassDetailController::class)->only(['index']);
+
+Route::get('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndRescheduleForm'])->name('baptist-class-detail.cancelAndRescheduleForm');
+
+Route::post('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndReschedule'])->name('baptist-class-detail.cancelAndReschedule');
+
+Route::get('baptist-class-detail/create/{encryptedId}', [BaptistClassDetailController::class, 'create'])->name('baptist-class-detail.create');
+
+Route::post('baptist-class-detail/store/{encryptedId}', [BaptistClassDetailController::class, 'store'])->name('baptist-class-detail.store');
 
 Route::get('/sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents')->middleware(['auth', 'verified']);
 

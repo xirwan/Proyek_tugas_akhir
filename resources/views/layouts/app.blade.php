@@ -41,7 +41,7 @@
                         <span>Anggota</span>
                     </x-side-link>
         
-                    <x-side-link href="#" :active="request()->is('schedule*')" class="nav-parent" :items="[
+                    <x-side-link href="#" :active="request()->is('schedule*') || request()->is('type*') || request()->is('category*')" class="nav-parent" :items="[
                         ['url' => url('schedule'), 'label' => 'List Jadwal'],
                         ['url' => url('type'), 'label' => 'Tipe Jadwal'],
                         ['url' => url('category'), 'label' => 'Kategori Jadwal'],
@@ -59,10 +59,14 @@
                         <i class="bx bx-layout" aria-hidden="true"></i>
                         <span>Generate QR Anak Sekolah Minggu</span>
                     </x-side-link>
-        
-                    <x-side-link href="{{url ('attendance.classList')}}" :active="request()->is('coba')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Scan QR Absen</span>
+
+                    <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
+                        ['url' => url('baptist'), 'label' => 'List Jadwal Pembaptisan'],
+                        ['url' => url('baptist-classes'), 'label' => 'List Kelas Pembaptisan'],
+                        ['url' => url('baptist-class-detail'), 'label' => 'List Pertemuan Kelas Pembaptisan'],
+                    ]">
+                        <i class="bx bx-calendar" aria-hidden="true"></i>
+                        <span>Pembaptisan</span>
                     </x-side-link>
         
                     <x-side-link href="{{url ('/attendance/class')}}" :active="request()->is('attendance/class')">

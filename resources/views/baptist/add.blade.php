@@ -1,13 +1,13 @@
 <x-app-layout>
-    <form action="{{ route('category.store') }}" class="form-horizontal form-bordered" method="POST">
+    <form action="{{ route('baptist.store') }}" class="form-horizontal form-bordered" method="POST">
         @csrf
         <section class="card">
             <header class="card-header">   
-                <h2 class="card-title">Tambah Kategori Jadwal</h2>
+                <h2 class="card-title">Tambah Jadwal Pembaptisan</h2>
             </header>
             <div class="card-body">
-                    <x-input-text name="name" id="inputnama" label="Nama" placeholder="Masukan nama kategori jadwal" :required="true"/>
-                    <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi kategori jadwal" :required="true"/>
+                <x-date-picker label="Jadwal Pembaptisan" name="date" :required="true" min="{{ date('Y-m-d') }}"/>
+                <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi Pembaptisan" :required="false"/>
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Simpan</button>

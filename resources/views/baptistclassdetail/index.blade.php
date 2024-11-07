@@ -14,20 +14,16 @@
                 <tr class="text-center">
                     <th>No</th>
                     <th>Tanggal</th>
-                    <th>Deskripsi</th>
-                    <th>Status</th>
-                    <th>Detail</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($classdetails as $index => $classdetail)
-                    <tr>
-                        <td>{{ $classdetails->firstItem() + $index }}</td>
-                        <td>{{ $classdetail->date }}</td>
-                        <td>{{ $classdetail->description }}</td>
-                        <td>{{ $classdetail->status }}</td>
-                        <td class="actions text-center">
-                            {{-- <a href="{{ route('baptist-class-detail.show', encrypt($classdetail->id)) }}"><i class="el el-info-circle"></i></a> --}}
+                @forelse($details as $index => $detail)
+                    <tr class="text-center">
+                        <td>{{ $details->firstItem() + $index }}</td>
+                        <td>{{ $detail->date }}</td>
+                        <td>
+                            <a href="#" class="btn btn-success">Absensi</a>
                         </td>
                     </tr>
                 @empty
@@ -38,7 +34,8 @@
             </tbody>
         </table>
         <div class="mt-5">
-            {{ $classdetails->links() }}
+            {{ $details->links() }}
+            <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
         </div>
     </x-card>
 </x-app-layout>

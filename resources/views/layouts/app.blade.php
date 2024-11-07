@@ -63,7 +63,6 @@
                     <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
                         ['url' => url('baptist'), 'label' => 'List Jadwal Pembaptisan'],
                         ['url' => url('baptist-classes'), 'label' => 'List Kelas Pembaptisan'],
-                        ['url' => url('baptist-class-detail'), 'label' => 'List Pertemuan Kelas Pembaptisan'],
                     ]">
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Pembaptisan</span>

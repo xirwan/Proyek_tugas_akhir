@@ -49,6 +49,8 @@ Route::get('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClass
 
 Route::post('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndReschedule'])->name('baptist-class-detail.cancelAndReschedule');
 
+Route::get('baptist-class-detail/index/{encryptedId}', [BaptistClassDetailController::class, 'index'])->name('baptist-class-detail.index');
+
 Route::get('baptist-class-detail/create/{encryptedId}', [BaptistClassDetailController::class, 'create'])->name('baptist-class-detail.create');
 
 Route::post('baptist-class-detail/store/{encryptedId}', [BaptistClassDetailController::class, 'store'])->name('baptist-class-detail.store');

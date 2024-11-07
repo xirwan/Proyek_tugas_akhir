@@ -22,7 +22,7 @@
                     <th>Deskripsi</th>
                     <th>Status</th>
                     <th>Detail</th>
-                    <th>Pertemuan</th>
+                    <th>Jumlah Pertemuan</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@
                         </td>
                         <td class="text-center">
                             @if($class->details->count() > 0)
-                                <span>{{ $class->details->count() }} Pertemuan</span>
+                                <a href="{{ route('baptist-class-detail.index', encrypt($class->id)) }}" class="btn btn-success w-50">{{ $class->details->count() }}</a>
                             @else
                                 <a href="{{ route('baptist-class-detail.create', encrypt($class->id)) }}" class="btn btn-primary">
                                     Buat pertemuan

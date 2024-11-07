@@ -12,10 +12,12 @@ class BaptistClassDetailController extends Controller
     /**
      * Tampilkan daftar semua pertemuan kelas.
      */
-    public function index()
+    public function index($encryptedId)
     {
-        $classdetails = BaptistClassDetail::with('baptistClass')->paginate(10);
-        return view('baptistclassdetail.index', compact('classdetails'));
+        $id = decrypt($encryptedId);
+        $baptistclass = BaptistClass::findOrFail($id);
+        $details = BaptistClassDetail::where('id_baptist_class', $id)->paginate(10);
+        return view('baptistclassdetail.index', compact('baptistclass', 'details'));
     }
 
     /**

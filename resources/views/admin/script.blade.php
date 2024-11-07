@@ -54,14 +54,26 @@
 {{-- script buat notif --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const alert = document.getElementById('alert');
-        if (alert) {
+        // Notifikasi sukses
+        const successAlert = document.getElementById('alert');
+        if (successAlert) {
             setTimeout(function () {
-                alert.style.opacity = 0; // Fade out effect
+                successAlert.style.opacity = 0; // Fade out effect
                 setTimeout(function () {
-                    alert.remove(); // Remove element from DOM
+                    successAlert.remove(); // Remove element from DOM
                 }, 600); // Match the duration of the fade out effect
-            }, 3000); // Delay before auto-close (10 seconds)
+            }, 3000); // Delay before auto-close (3 seconds)
+        }
+
+        // Notifikasi error
+        const errorAlert = document.querySelector('.alert-danger');
+        if (errorAlert) {
+            setTimeout(function () {
+                errorAlert.style.opacity = 0; // Fade out effect
+                setTimeout(function () {
+                    errorAlert.remove(); // Remove element from DOM
+                }, 600); // Match the duration of the fade out effect
+            }, 3000); // Delay before auto-close (3 seconds)
         }
     });
 </script>

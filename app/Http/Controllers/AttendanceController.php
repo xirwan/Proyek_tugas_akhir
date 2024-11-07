@@ -38,8 +38,8 @@ class AttendanceController extends Controller
         // Cek apakah QR code sudah ada
         if (!file_exists($filePath)) {
             // Generate URL untuk QR code hanya dengan ID anak
-            $url = route('qr-code.checkin', ['id' => $child->id]);
-
+            // $url = route('qr-code.checkin', ['id' => $child->id]);
+            $url = route('qr-code.children.generate.qr', ['id' => $child->id]);
             // Generate dan simpan QR code sebagai gambar PNG
             QrCode::format('png')->size(300)->generate($url, $filePath);
 
@@ -70,7 +70,8 @@ class AttendanceController extends Controller
             $filePath = storage_path('app/public/qr-codes/' . $fileName);
 
             // Generate URL untuk QR code hanya dengan ID anak
-            $qrUrl = route('qr-code.checkin', ['id' => $child->id]);
+            // $qrUrl = route('qr-code.checkin', ['id' => $child->id]);
+            $qrUrl = route('qr-code.children.generate.qr', ['id' => $child->id]);
 
             // Generate dan simpan QR code sebagai gambar PNG
             QrCode::format('png')->size(300)->generate($qrUrl, $filePath);
@@ -141,9 +142,41 @@ class AttendanceController extends Controller
 
     public function showCheckinQr($class_id)
     {
+        // $class = SundaySchoolClass::findOrFail($class_id);
+        // // Ambil semua murid di kelas
+        // $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
+        //     $query->where('sunday_school_classes.id', $class_id);
+        // })->get();
+
+        // // Ambil murid yang sudah absen minggu ini
+        // // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        // $weekOf = Carbon::now()->toDateString();
+        // $absentStudentIds = SundaySchoolPresence::where('week_of', $weekOf)
+        //     ->pluck('member_id')
+        //     ->toArray();
+        // $absentStudents = Member::whereIn('id', $absentStudentIds)->get();
+
+        // return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
         $class = SundaySchoolClass::findOrFail($class_id);
 
-        return view('attendance.checkin-qr', compact('class'));
+        // Ambil semua murid yang terdaftar di kelas ini
+        $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
+            $query->where('sunday_school_classes.id', $class_id);
+        })->get();
+
+        // Tentukan minggu aktif (mulai dari hari Minggu)
+        // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        $weekOf = Carbon::now()->toDateString();
+
+        // Ambil ID murid yang sudah absen di kelas ini untuk minggu ini
+        $absentStudentIds = SundaySchoolPresence::where('week_of', $weekOf)
+            ->whereIn('member_id', $students->pluck('id')->toArray()) // Pastikan hanya murid di kelas ini
+            ->pluck('member_id')
+            ->toArray();
+
+        // Ambil data murid yang sudah absen di kelas ini
+        $absentStudents = $students->whereIn('id', $absentStudentIds);
+        return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
     }
 
     public function checkinByClass(Request $request, $class_id)
@@ -177,23 +210,37 @@ class AttendanceController extends Controller
         }
 
         // Tentukan minggu aktif (mulai hari Minggu ini)
-        $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        // $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        $weekOf = Carbon::now()->toDateString();
+
 
         // Cek apakah murid sudah absen minggu ini
         $alreadyCheckedIn = SundaySchoolPresence::where('member_id', $memberId)
             ->whereDate('week_of', $weekOf)
-            ->exists();
+            ->first();
 
-        if (!$alreadyCheckedIn) {
-            // Catat absensi untuk minggu ini tanpa class_id
-            SundaySchoolPresence::create([
-                'member_id' => $memberId,
-                'check_in' => now(),
-                'week_of' => $weekOf,
-            ]);
+        // if (!$alreadyCheckedIn) {
+        //     // Catat absensi untuk minggu ini tanpa class_id
+        //     SundaySchoolPresence::create([
+        //         'member_id' => $memberId,
+        //         'check_in' => now(),
+        //         'week_of' => $weekOf,
+        //     ]);
+        // }
+
+        if ($alreadyCheckedIn !== null) { // Pastikan hanya memicu jika $alreadyCheckedIn tidak null
+            return back()->withErrors('Murid ini sudah absen minggu ini.');
         }
+    
+        // Jika belum absen, catat absensi untuk minggu ini
+        SundaySchoolPresence::create([
+            'member_id' => $memberId,
+            'check_in' => now(),
+            'week_of' => $weekOf,
+        ]);
 
-        return redirect()->route('attendance.showCheckinQr', $class_id)->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
+        // return redirect()->route('attendance.showCheckinQr', $class_id)->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
+        return back()->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
     }
 
 
@@ -202,8 +249,8 @@ class AttendanceController extends Controller
         // Tentukan minggu aktif (mulai hari Minggu ini) untuk menampilkan absensi mingguan
         // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         // Untuk testing, gunakan tanggal hari ini sebagai minggu aktif
-        // $weekOf = Carbon::now()->toDateString();
-        $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        $weekOf = Carbon::now()->toDateString();
+        // $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
 
         // Dapatkan murid yang terdaftar di kelas ini dengan menyertakan alias untuk `id`
         $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {

@@ -82,5 +82,10 @@ class Member extends Model
         return $this->belongsToMany(SundaySchoolClass::class, 'sunday_school_members', 'member_id', 'sunday_school_class_id');
     }
 
+    public function memberBaptists()
+    {
+        return $this->hasMany(MemberBaptist::class, 'id_member'); // 'id_member' adalah foreign key pada tabel member_baptists
+    }
+
 
 }

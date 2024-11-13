@@ -1,4 +1,9 @@
 <x-user>
+	@if (session('success'))
+        <div id="alert" class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 	<div class="row">
 		<div class="col-lg-10">
 			<div class="row mb-3">

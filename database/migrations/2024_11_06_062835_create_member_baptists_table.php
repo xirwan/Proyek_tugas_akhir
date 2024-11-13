@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('member_baptists', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_member')->constrained('members')->onDelete('cascade');
-            $table->foreignId('id_baptist')->constrained('baptists')->onDelete('cascade');
+            $table->foreignId('id_baptist_class')->constrained('baptist_classes')->onDelete('cascade');
             $table->string('description')->nullable();
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->timestamps();

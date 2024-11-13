@@ -103,9 +103,15 @@ Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userp
 
 Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
 
-Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
+// Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
 
-Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
+// Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
+
+Route::get('/member-baptist', [MemberBaptistController::class, 'index'])->name('memberbaptist.index');
+
+// Route::get('/member-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('memberbaptist.classes');
+
+Route::post('/member-baptist/register', [MemberBaptistController::class, 'register'])->name('memberbaptist.register');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

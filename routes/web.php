@@ -16,6 +16,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BaptistController;
 use App\Http\Controllers\BaptistClassesController;
 use App\Http\Controllers\BaptistClassDetailController;
+use App\Http\Controllers\MemberBaptistController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -101,6 +102,10 @@ Route::post('/attendance/class/{class_id}/checkin', [AttendanceController::class
 Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
 
 Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
+
+Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
+
+Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

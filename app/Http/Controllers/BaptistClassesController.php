@@ -24,7 +24,7 @@ class BaptistClassesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_baptist'  => 'required|exists:baptists,id',
+                'id_baptist'  => 'required|exists:baptists,id',
             'day'         => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
             'start'       => 'required',
             'end'         => 'required',

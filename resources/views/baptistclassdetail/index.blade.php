@@ -1,14 +1,14 @@
 <x-app-layout>
     @if (session('success'))
-        <div id="alert" class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    <div id="alert" class="alert alert-success">
+        {{ session('success') }}
+    </div>
     @endif
     <x-card>
         <x-slot name="header">
             List Detail Pertemuan Kelas Pembaptisan
         </x-slot>
-
+        
         <table class="table table-responsive-md mb-0">
             <thead>
                 <tr class="text-center">
@@ -33,9 +33,9 @@
                 @endforelse
             </tbody>
         </table>
-        <div class="mt-5">
-            {{ $details->links() }}
-            <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
-        </div>
     </x-card>
+    <div class="mt-4">
+        {{ $details->links() }}
+        <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+    </div>
 </x-app-layout>

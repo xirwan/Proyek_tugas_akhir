@@ -22,9 +22,9 @@
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Anak</span>
                     </x-side-link>
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{route ('member-baptist.index')}}" :active="request()->is('register-baptist*')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Daftar Pembaptisan</span>
                     </x-side-link>
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>

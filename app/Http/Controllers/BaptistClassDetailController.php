@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BaptistClass;
 use App\Models\BaptistClassDetail;
+use App\Models\BaptistAttendance;
 use Carbon\Carbon;
 
 class BaptistClassDetailController extends Controller
@@ -124,4 +125,49 @@ class BaptistClassDetailController extends Controller
 
         return redirect()->route('baptist_class_detail.index')->with('success', 'Pertemuan berhasil dibatalkan dan dijadwal ulang.');
     }
+
+    public function attendanceForm($encryptedClassDetailId)
+    {
+        // Dekripsi ID pertemuan kelas
+        $classDetailId = decrypt($encryptedClassDetailId);
+
+        // Ambil detail pertemuan dengan data peserta
+        $classDetail = BaptistClassDetail::with('baptistClass.members.member')->findOrFail($classDetailId);
+
+        return view('baptistclassdetail.attendance', compact('classDetail'));
+    }
+
+    public function markAttendance(Request $request, $encryptedClassDetailId)
+    {
+        // Dekripsi ID pertemuan kelas
+        $classDetailId = decrypt($encryptedClassDetailId);
+
+        // Validasi input
+        $request->validate([
+            'attendance' => 'required|array',
+            'attendance.*' => 'in:Hadir,Tidak Hadir',
+        ]);
+
+        // Cari detail kelas berdasarkan ID yang didekripsi
+        $classDetail = BaptistClassDetail::findOrFail($classDetailId);
+
+        // Update atau buat data absensi untuk setiap peserta
+        foreach ($request->attendance as $memberId => $status) {
+            BaptistAttendance::updateOrCreate(
+                [
+                    'id_member' => $memberId,
+                    'id_baptist_class_detail' => $classDetail->id,
+                ],
+                [
+                    'status' => $status
+                ]
+            );
+        }
+
+        // Redirect dengan ID yang terenkripsi kembali
+        return redirect()->route('baptist-class-detail.index', encrypt($classDetail->id_baptist_class))->with('success', 'Absensi berhasil disimpan.');
+    }
+
+
+
 }

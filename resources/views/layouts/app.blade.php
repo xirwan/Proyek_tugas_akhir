@@ -67,9 +67,12 @@
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Pembaptisan</span>
                     </x-side-link>
-        
-                    <x-side-link href="{{url ('/attendance/class')}}" :active="request()->is('attendance/class')">
-                        <i class="bx bx-layout" aria-hidden="true"></i>
+
+                    <x-side-link href="#" :active="request()->is('attendance*')" class="nav-parent" :items="[
+                        ['url' => url('/attendance/class'), 'label' => 'Absensi Sekolah Minggu'],
+                        ['url' => url('/attendance/history'), 'label' => 'Riwayat Absensi Sekolah Minggu'],
+                    ]">
+                        <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Absensi</span>
                     </x-side-link>
         

@@ -1,5 +1,3 @@
-{{-- resources/views/memberbaptist/index.blade.php --}}
-
 <x-user>
     <!-- Notifikasi Pendaftaran -->
     @if ($isAlreadyRegistered)
@@ -27,9 +25,9 @@
                 <div class="card-body">
                     {{-- Pilih Baptist --}}
                     <div class="form-group">
-                        <label for="baptist_id" class="form-label">Pilih Baptist</label>
+                        <label for="baptist_id" class="form-label">Pilih Tanggal Pembaptisan</label>
                         <select name="baptist_id" id="baptist_id" class="form-control" required onchange="displayBaptistClasses(this)">
-                            <option value="" disabled selected>Pilih Baptist</option>
+                            <option value="" disabled selected>Pilih Tanggal Pembaptisan</option>
                             @foreach($baptists as $baptist)
                                 <option value="{{ $baptist->id }}">{{ $baptist->date }}</option>
                             @endforeach

@@ -92,71 +92,8 @@ class AttendanceController extends Controller
         return view('attendance.class-list', ['classes' => $classes]);
     }
 
-
-    // Fungsi check-in otomatis dengan QR code
-    // public function checkIn($id)
-    // {
-    //     // Temukan member berdasarkan ID
-    //     $member = Member::findOrFail($id);
-
-    //     // Cek apakah member sudah check-in hari ini
-    //     $alreadyCheckedIn = SundaySchoolPresence::where('member_id', $id)
-    //         ->whereDate('check_in', now()->toDateString())
-    //         ->exists();
-
-    //     if ($alreadyCheckedIn) {
-    //         return redirect()->route('attendance.children.list')
-    //             ->with('info', 'Anak ini sudah melakukan check-in hari ini.');
-    //     }
-
-    //     // Simpan data kehadiran baru
-    //     SundaySchoolPresence::create([
-    //         'member_id' => $id,
-    //         'check_in' => now(),
-    //     ]);
-
-    //     return redirect()->route('attendance.children.list')
-    //         ->with('success', 'Check-in berhasil!');
-    // }
-
-    // public function checkin($id)
-    // {
-
-    //     // Untuk testing, abaikan minggu aktif dan gunakan minggu ini sebagai acuan
-    //     $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
-
-    //     $alreadyCheckedIn = SundaySchoolPresence::where('member_id', $id)
-    //         ->whereDate('week_of', $weekOf)
-    //         ->exists();
-
-    //     if (!$alreadyCheckedIn) {
-    //         SundaySchoolPresence::create([
-    //             'member_id' => $id,
-    //             'check_in' => now(),
-    //             'week_of' => $weekOf,
-    //         ]);
-    //     }
-
-    //     return redirect()->route('attendance.list')->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
-    // }
-
     public function showCheckinQr($class_id)
     {
-        // $class = SundaySchoolClass::findOrFail($class_id);
-        // // Ambil semua murid di kelas
-        // $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
-        //     $query->where('sunday_school_classes.id', $class_id);
-        // })->get();
-
-        // // Ambil murid yang sudah absen minggu ini
-        // // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
-        // $weekOf = Carbon::now()->toDateString();
-        // $absentStudentIds = SundaySchoolPresence::where('week_of', $weekOf)
-        //     ->pluck('member_id')
-        //     ->toArray();
-        // $absentStudents = Member::whereIn('id', $absentStudentIds)->get();
-
-        // return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
         $class = SundaySchoolClass::findOrFail($class_id);
 
         // Ambil semua murid yang terdaftar di kelas ini

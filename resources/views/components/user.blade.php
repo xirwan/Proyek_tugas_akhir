@@ -26,9 +26,9 @@
                         <i class="bx bx-layout" aria-hidden="true"></i>
                         <span>Daftar Pembaptisan</span>
                     </x-side-link>
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{route ('memberbaptist.details')}}" :active="request()->is('member-baptist/class-details')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Kelas Pembaptisan</span>
                     </x-side-link>
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
@@ -51,7 +51,7 @@
 						<div class="right-wrapper text-right" style="padding-right: 20px">
 							<ol class="breadcrumbs">
 								<li>
-									<a href="{{url ('dashboard')}}">
+									<a href="{{url ('/portal')}}">
 										<i class="bx bx-home-alt"></i>
 									</a>
 								</li>

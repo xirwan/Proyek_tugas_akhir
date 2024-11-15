@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Baptist;
 use App\Models\MemberBaptist;
 use Illuminate\Support\Facades\Auth;
+use App\Models\BaptistAttendance;
 
 class MemberBaptistController extends Controller
 {
@@ -57,6 +58,32 @@ class MemberBaptistController extends Controller
         ]);
 
         return redirect()->route('portal')->with('success', 'Pendaftaran berhasil.');
+    }
+
+    public function showDetails()
+    {
+        $user = Auth::user();
+        $member = $user->member;
+
+        // Dapatkan kelas baptis yang diikuti member ini
+        $memberBaptist = MemberBaptist::with(['baptistClass.details'])->where('id_member', $member->id)->first();
+
+        if (!$memberBaptist) {
+            return redirect()->back()->with('error', 'Anda belum terdaftar di kelas baptis.');
+        }
+
+        $class = $memberBaptist->baptistClass;
+        $details = $class->details()->paginate(10);
+
+        // Mengambil kehadiran untuk setiap pertemuan berdasarkan id_member dari tabel BaptistAttendance
+        $attendance = BaptistAttendance::where('id_member', $member->id)
+                                    ->whereIn('id_baptist_class_detail', $details->pluck('id'))
+                                    ->pluck('status', 'id_baptist_class_detail');
+
+        // Mengirim tanggal saat ini ke view
+        $today = now()->toDateString();
+
+        return view('memberbaptist.class', compact('class', 'details', 'attendance', 'today'));
     }
 
 }

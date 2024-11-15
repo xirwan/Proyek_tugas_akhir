@@ -15,9 +15,10 @@ class MemberBaptist extends Model
         'description',
         'status',
     ];
-    public function baptist()
+    
+    public function baptistClass()
     {
-        return $this->belongsTo(Baptist::class, 'id_baptist');
+        return $this->belongsTo(BaptistClass::class, 'id_baptist_class');
     }
 
     public function member()

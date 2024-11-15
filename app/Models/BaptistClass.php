@@ -27,4 +27,9 @@ class BaptistClass extends Model
         return $this->hasMany(BaptistClassDetail::class, 'id_baptist_class');
     }
 
+    public function members()
+    {
+        return $this->hasMany(MemberBaptist::class, 'id_baptist_class');
+    }
+
 }

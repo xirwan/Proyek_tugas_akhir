@@ -59,7 +59,7 @@
 					
 					<div class="container py-5 h-100">
 						<section id="cabang" class="pb-2">
-                        	<h1 class="m-0 pb-3 text-center">Cabang</h1>
+                        	<h1 class="m-0 pb-3 text-center text-color-dark">Cabang</h1>
 							<div class="row text-center">
 								
 								<div class="my-auto col-md-4 col-lg-4 py-3 text-center divider-left-border divider-right-border">

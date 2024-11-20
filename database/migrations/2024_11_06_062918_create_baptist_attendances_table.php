@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('id_member')->constrained('members')->onDelete('cascade');
             $table->foreignId('id_baptist_class_detail')->constrained('baptist_class_details')->onDelete('cascade');
             $table->string('description')->nullable();
-            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->enum('status', ['Hadir', 'Tidak Hadir']);
             $table->timestamps();
         });
     }

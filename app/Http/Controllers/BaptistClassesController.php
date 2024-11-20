@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BaptistClass;
 use App\Models\Baptist;
+use App\Models\MemberBaptist;
 
 class BaptistClassesController extends Controller
 {
     public function index()
     {
-        $classes = BaptistClass::with('baptist')->paginate(10); 
+        $classes = BaptistClass::with(['baptist', 'members', 'details'])->paginate(10); 
         return view('baptistclasses.index', compact('classes'));
     }
 
@@ -24,7 +25,7 @@ class BaptistClassesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-                'id_baptist'  => 'required|exists:baptists,id',
+            'id_baptist'  => 'required|exists:baptists,id',
             'day'         => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
             'start'       => 'required',
             'end'         => 'required',
@@ -81,4 +82,45 @@ class BaptistClassesController extends Controller
 
         return redirect()->route('baptist-classes.index')->with('success', 'Kelas berhasil diperbarui.');
     }
+
+    public function viewClassMembers($encryptedId)
+    {
+        $classId = decrypt($encryptedId);
+        $class = BaptistClass::with(['members.member', 'baptist'])->findOrFail($classId);
+        
+        return view('baptistclasses.members', compact('class'));
+    }
+
+    public function showAdjustClassForm($encryptedMemberId)
+    {
+        $memberId = decrypt($encryptedMemberId);
+        $memberBaptist = MemberBaptist::with('member')->findOrFail($memberId);
+
+        // Ambil semua kelas dan tambahkan informasi hari, jam mulai/selesai, dan tanggal baptis
+        $classes = BaptistClass::with('baptist')->get()->mapWithKeys(function ($class) {
+            // Format tampilan opsi dropdown: Hari, Jam Mulai - Jam Selesai, Tanggal Baptis
+            $formattedName = "{$class->day}, {$class->start} - {$class->end} | Tanggal Pembaptisan ({$class->baptist->date})";
+            return [$class->id => $formattedName];
+        });
+
+        return view('baptistclasses.adjust', compact('memberBaptist', 'classes'));
+    }
+
+    public function adjustClass(Request $request, $encryptedMemberId)
+    {
+        $memberId = decrypt($encryptedMemberId);
+        $memberBaptist = MemberBaptist::findOrFail($memberId);
+
+        $request->validate([
+            'class_id' => 'required|exists:baptist_classes,id',
+        ]);
+
+        // Update kelas baptis untuk member
+        $memberBaptist->update(['id_baptist_class' => $request->class_id]);
+
+        return redirect()->route('baptist-classes.viewClassMembers', encrypt($request->class_id))
+                        ->with('success', 'Kelas berhasil diperbarui.');
+    }
+
+
 }

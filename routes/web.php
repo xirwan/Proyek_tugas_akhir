@@ -17,6 +17,7 @@ use App\Http\Controllers\BaptistController;
 use App\Http\Controllers\BaptistClassesController;
 use App\Http\Controllers\BaptistClassDetailController;
 use App\Http\Controllers\MemberBaptistController;
+use App\Http\Controllers\AdminAttendanceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +47,12 @@ Route::resource('baptist-classes', BaptistClassesController::class);
 
 Route::resource('baptist-class-detail', BaptistClassDetailController::class)->only(['index']);
 
+Route::get('/baptist-classes/{id}/members', [BaptistClassesController::class, 'viewClassMembers'])->name('baptist-classes.viewClassMembers');
+
+Route::get('/baptist-classes/members/{id}/adjust', [BaptistClassesController::class, 'showAdjustClassForm'])->name('baptist-classes.showAdjustClassForm');
+
+Route::post('/baptist-classes/members/{id}/adjust', [BaptistClassesController::class, 'adjustClass'])->name('baptist-classes.adjustClass');
+
 Route::get('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndRescheduleForm'])->name('baptist-class-detail.cancelAndRescheduleForm');
 
 Route::post('baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndReschedule'])->name('baptist-class-detail.cancelAndReschedule');
@@ -55,6 +62,12 @@ Route::get('baptist-class-detail/index/{encryptedId}', [BaptistClassDetailContro
 Route::get('baptist-class-detail/create/{encryptedId}', [BaptistClassDetailController::class, 'create'])->name('baptist-class-detail.create');
 
 Route::post('baptist-class-detail/store/{encryptedId}', [BaptistClassDetailController::class, 'store'])->name('baptist-class-detail.store');
+
+// Route untuk menampilkan form absensi admin
+Route::get('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDetailController::class, 'attendanceForm'])->name('baptist-class-detail.attendanceForm');
+
+// Route untuk menyimpan absensi admin
+Route::post('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDetailController::class, 'markAttendance'])->name('baptist-class-detail.markAttendance');
 
 Route::get('/sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents')->middleware(['auth', 'verified']);
 
@@ -78,6 +91,12 @@ Route::get('/member/{id}/create-child-account', [MemberController::class, 'creat
 // Menyimpan akun anak
 Route::post('/member/{id}/store-child-account', [MemberController::class, 'storeChildAccount'])->name('member.storeChildAccount')->middleware(['auth', 'verified']);
 
+Route::get('/member/children/{child}/edit', [MemberController::class, 'editChild'])->name('member.editChild');
+
+Route::patch('/member/children/{child}', [MemberController::class, 'updateChild'])->name('member.updateChild');
+
+Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
+
 Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
 
 Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])
@@ -99,13 +118,28 @@ Route::get('/attendance/class/{class_id}/checkin-qr', [AttendanceController::cla
 
 Route::post('/attendance/class/{class_id}/checkin', [AttendanceController::class, 'checkinByClass'])->name('attendance.checkinByClass');
 
+// Route untuk menampilkan riwayat absensi
+Route::get('/attendance/history', [AdminAttendanceController::class, 'attendanceHistory'])->name('admin.attendance.history');
+
+// Route untuk ekspor riwayat absensi ke PDF
+Route::post('/attendance/export', [AdminAttendanceController::class, 'exportToPdf'])->name('admin.attendance.export');
+
 Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
 
 Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
 
-Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
 
-Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
+// Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
+
+// Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
+
+Route::get('/member-baptist', [MemberBaptistController::class, 'index'])->name('memberbaptist.index');
+
+// Route::get('/member-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('memberbaptist.classes');
+
+Route::post('/member-baptist/register', [MemberBaptistController::class, 'register'])->name('memberbaptist.register');
+
+Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

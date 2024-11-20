@@ -23,6 +23,7 @@
                     <th>Status</th>
                     <th>Detail</th>
                     <th>Jumlah Pertemuan</th>
+                    <th>Jumlah Peserta</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +46,14 @@
                                 <a href="{{ route('baptist-class-detail.create', encrypt($class->id)) }}" class="btn btn-primary">
                                     Buat pertemuan
                                 </a>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            {{-- {{ $class->members->count() }} --}}
+                            @if($class->members->count() > 0)
+                                <a href="{{ route ('baptist-classes.viewClassMembers', encrypt($class->id)) }}" class="btn btn-success w-50">{{ $class->members->count() }}</a>
+                            @else
+                                    <p class="text-danger">Belum ada perserta</p>
                             @endif
                         </td>
                     </tr>

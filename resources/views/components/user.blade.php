@@ -30,9 +30,9 @@
                         <i class="bx bx-layout" aria-hidden="true"></i>
                         <span>Kelas Pembaptisan</span>
                     </x-side-link>
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{route ('attendance.parentView')}}" :active="request()->is('attendance/parent-view')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Absensi Anak</span>
                     </x-side-link>
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>

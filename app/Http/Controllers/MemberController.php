@@ -268,7 +268,7 @@ class MemberController extends Controller
         $branches = Branch::where('status', 'Active')->get();
         $branchoptions = $branches->pluck('name', 'id');
 
-        return view('childrens.register_child', compact('branchoptions'));
+        return view('childrens.register-child', compact('branchoptions'));
     }
 
     public function storeChild(Request $request) : RedirectResponse
@@ -323,6 +323,60 @@ class MemberController extends Controller
         return redirect()->route('member.childrenList')->with('success', 'Anak berhasil didaftarkan!');
     }
 
+    public function editChild(Member $child)
+    {
+        // Cek apakah anak terhubung dengan orang tua yang sedang login
+        $parent = Auth::user();
+        $parentMember = Member::where('user_id', $parent->id)->first();
+
+        if (!$parentMember || !$parentMember->children->contains($child)) {
+            return redirect()->route('member.childrenList')->withErrors('Anda tidak memiliki akses untuk mengedit data anak ini.');
+        }
+
+        return view('childrens.children-edit', compact('child'));
+    }
+
+    public function updateChild(Request $request, Member $child): RedirectResponse
+    {
+        // Validasi input
+        $request->validate([
+            'firstname'   => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'lastname'    => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'dateofbirth' => ['required', 'date'],
+            'address'     => ['nullable', 'string', 'max:255'], // Opsional jika ingin mengubah alamat anak
+        ], [
+            'firstname.regex' => 'Harap hanya memasukan huruf saja.',
+            'lastname.regex'  => 'Harap hanya memasukan huruf saja.',
+        ]);
+
+        // Temukan user (orang tua) yang sedang login
+        $parent = Auth::user();
+        $parentMember = Member::where('user_id', $parent->id)->first();
+
+        // Pastikan anak terhubung dengan orang tua yang sedang login
+        if (!$child || !$parentMember || !$parentMember->children->contains($child)) {
+            return redirect()->back()->withErrors('Anda tidak memiliki akses untuk mengedit data anak ini.');
+        }
+
+        // Update data anak
+        $child->update([
+            'firstname'   => $request->input('firstname'),
+            'lastname'    => $request->input('lastname'),
+            'dateofbirth' => $request->input('dateofbirth'),
+            'address'     => $request->input('address') ?? $parentMember->address, // Default ke alamat orang tua jika tidak diubah
+        ]);
+
+        // Jika umur berubah, cek kembali penugasan kelas
+        $classId = $this->assignClassByAge($child);
+        if ($classId) {
+            // Update kelas anak
+            $child->sundaySchoolClasses()->sync([$classId]);
+        }
+
+        return redirect()->route('member.childrenList')->with('success', 'Data anak berhasil diperbarui!');
+    }
+
+
     public function assignClassByAge($child)
     {
         $age = \Carbon\Carbon::parse($child->dateofbirth)->age;
@@ -359,7 +413,7 @@ class MemberController extends Controller
 
         // Kirim data anak ke view
 
-        return view('childrens.children_list', compact('children'));
+        return view('childrens.children-list', compact('children'));
     }
 
 
@@ -376,7 +430,7 @@ class MemberController extends Controller
         }
 
         // Kirim data anak ke view untuk menampilkan form pendaftaran akun
-        return view('childrens.register_child_account', compact('child'));
+        return view('childrens.register-child-account', compact('child'));
     }
 
     public function storeChildAccount(Request $request, $encryptedId): RedirectResponse

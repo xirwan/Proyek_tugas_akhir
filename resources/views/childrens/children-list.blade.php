@@ -19,6 +19,7 @@
                         <th>Tanggal Lahir</th>
                         <th>Alamat</th>
                         <th>Cabang</th>
+                        <th>Kelas</th>
                         <th>Status Akun</th>
                         <th>Aksi</th>
                     </tr>
@@ -32,6 +33,13 @@
                             <td>{{ $child->relatedMember->dateofbirth }}</td>
                             <td>{{ $child->relatedMember->address }}</td>
                             <td>{{ $child->relatedMember->branch->name }}</td>
+                            <td>
+                                @if($child->relatedMember->sundaySchoolClasses->isNotEmpty())
+                                    {{ $child->relatedMember->sundaySchoolClasses->first()->name }}
+                                @else
+                                    <span class="text-danger">Tidak ada kelas</span>
+                                @endif
+                            </td>
                             <td>
                                 @if($child->relatedMember->user_id)
                                     <span class="text-success">Sudah memiliki akun</span>
@@ -47,6 +55,9 @@
                                 @else
                                     <span class="text-muted">Akun sudah ada</span>
                                 @endif
+                                <a href="{{ route('member.editChild', $child->relatedMember->id) }}" class="btn btn-sm btn-primary mt-3">
+                                    Edit Data
+                                </a>
                             </td>
                         </tr>
                     @empty

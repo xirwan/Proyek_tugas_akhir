@@ -246,4 +246,40 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.classAttendance', $class_id)->with('success', 'Checklist manual berhasil disimpan untuk minggu ini!');
     }
 
+    public function parentViewAttendance(Request $request)
+    {
+        // Ambil ID user yang sedang login
+        $parent = Member::where('user_id', Auth::id())->first();
+
+        // Pastikan orang tua valid
+        if (!$parent) {
+            return back()->withErrors('Data orang tua tidak ditemukan.');
+        }
+
+        // Ambil daftar anak dari relasi children
+        $children = $parent->children;
+
+        // Dapatkan ID anak yang dipilih (jika ada)
+        $selectedChildId = $request->input('child_id');
+
+        // Ambil data anak yang dipilih
+        $selectedChild = $selectedChildId ? $children->where('id', $selectedChildId)->first() : null;
+
+        // Ambil absensi anak yang dipilih
+        $attendanceRecords = [];
+        if ($selectedChild) {
+            $attendanceRecords = SundaySchoolPresence::with('member.sundaySchoolClasses')
+                ->where('member_id', $selectedChild->id)
+                ->orderBy('week_of', 'desc')
+                ->get();
+        }
+
+        return view('childrens.attendance-view', [
+            'children' => $children,
+            'selectedChild' => $selectedChild,
+            'attendanceRecords' => $attendanceRecords,
+        ]);
+    }
+
+
 }

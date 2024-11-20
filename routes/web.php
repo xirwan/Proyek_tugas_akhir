@@ -91,6 +91,12 @@ Route::get('/member/{id}/create-child-account', [MemberController::class, 'creat
 // Menyimpan akun anak
 Route::post('/member/{id}/store-child-account', [MemberController::class, 'storeChildAccount'])->name('member.storeChildAccount')->middleware(['auth', 'verified']);
 
+Route::get('/member/children/{child}/edit', [MemberController::class, 'editChild'])->name('member.editChild');
+
+Route::patch('/member/children/{child}', [MemberController::class, 'updateChild'])->name('member.updateChild');
+
+Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
+
 Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
 
 Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])
@@ -121,6 +127,7 @@ Route::post('/attendance/export', [AdminAttendanceController::class, 'exportToPd
 Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
 
 Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
+
 
 // Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
 

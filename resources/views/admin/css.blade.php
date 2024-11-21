@@ -23,10 +23,10 @@
 		<link rel="stylesheet" href="{{asset('admintemp/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.css')}}" />
 
 		<!-- Specific Page Vendor CSS -->
-		<link rel="stylesheet" href="{{asset('admintemp/vendor/jquery-ui/jquery-ui.css')}}" />
+		{{-- <link rel="stylesheet" href="{{asset('admintemp/vendor/jquery-ui/jquery-ui.css')}}" />
 		<link rel="stylesheet" href="{{asset('admintemp/vendor/jquery-ui/jquery-ui.theme.css')}}" />
 		<link rel="stylesheet" href="{{asset('admintemp/vendor/bootstrap-multiselect/css/bootstrap-multiselect.css')}}" />
-		<link rel="stylesheet" href="{{asset('admintemp/vendor/morris/morris.css')}}" />
+		<link rel="stylesheet" href="{{asset('admintemp/vendor/morris/morris.css')}}" /> --}}
 
 		<!--(remove-empty-lines-end)-->
 

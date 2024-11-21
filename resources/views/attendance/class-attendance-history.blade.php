@@ -1,14 +1,10 @@
-{{-- <x-app-layout>
-    <x-card>
-        <x-slot name="header">
-            Riwayat Absensi
-        </x-slot>
-        <form action="{{ route('admin.attendance.history') }}" method="GET">
-            
-        </form>
-    </x-card>
-</x-app-layout> --}}
 <x-app-layout>
+    <!-- Notifikasi Error -->
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
     <form method="GET" action="{{ route('admin.attendance.history') }}" class="form-horizontal form-bordered">
         @csrf
         <section class="card">
@@ -21,8 +17,8 @@
                         <x-select-box 
                             label="Pilih Kelas" 
                             name="class_id" 
-                            :options="$classes->pluck('name', 'id')" 
-                            placeholder="Semua Kelas" 
+                            :options="$classes->pluck('name', 'id')->prepend('Semua Kelas', 'all')" 
+                            placeholder="Pilih Kelas" 
                             :required="false"
                             :selected="$selectedClassId" 
                         />
@@ -78,7 +74,7 @@
                     <input type="hidden" name="class_id" value="{{ $selectedClassId }}">
                     <input type="hidden" name="week_of" value="{{ $selectedWeek }}">
                     <button type="submit" class="btn btn-success">Ekspor ke PDF</button>
-                </form>
+                </form>                
             </footer>
         </section>
     @else

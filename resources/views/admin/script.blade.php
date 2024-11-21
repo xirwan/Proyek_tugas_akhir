@@ -10,7 +10,7 @@
 <script src="{{asset('admintemp/vendor/jquery-placeholder/jquery.placeholder.js')}}"></script>
 
 <!-- Specific Page Vendor -->
-<script src="{{asset('admintemp/vendor/jquery-ui/jquery-ui.js')}}"></script>
+{{-- <script src="{{asset('admintemp/vendor/jquery-ui/jquery-ui.js')}}"></script>
 <script src="{{asset('admintemp/vendor/jqueryui-touch-punch/jquery.ui.touch-punch.js')}}"></script>
 <script src="{{asset('admintemp/vendor/jquery-appear/jquery.appear.js')}}"></script>
 <script src="{{asset('admintemp/vendor/bootstrap-multiselect/js/bootstrap-multiselect.js')}}"></script>
@@ -34,7 +34,7 @@
 <script src="{{asset('admintemp/vendor/jqvmap/maps/continents/jquery.vmap.australia.js')}}"></script>
 <script src="{{asset('admintemp/vendor/jqvmap/maps/continents/jquery.vmap.europe.js')}}"></script>
 <script src="{{asset('admintemp/vendor/jqvmap/maps/continents/jquery.vmap.north-america.js')}}"></script>
-<script src="{{asset('admintemp/vendor/jqvmap/maps/continents/jquery.vmap.south-america.js')}}"></script>
+<script src="{{asset('admintemp/vendor/jqvmap/maps/continents/jquery.vmap.south-america.js')}}"></script> --}}
 
 
 <!--(remove-empty-lines-end)-->

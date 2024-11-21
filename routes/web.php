@@ -45,7 +45,7 @@ Route::resource('baptist', BaptistController::class);
 
 Route::resource('baptist-classes', BaptistClassesController::class);
 
-Route::resource('baptist-class-detail', BaptistClassDetailController::class)->only(['index']);
+// Route::resource('baptist-class-detail', BaptistClassDetailController::class)->only(['index']);
 
 Route::get('/baptist-classes/{id}/members', [BaptistClassesController::class, 'viewClassMembers'])->name('baptist-classes.viewClassMembers');
 

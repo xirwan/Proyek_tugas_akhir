@@ -18,6 +18,7 @@ use App\Http\Controllers\BaptistClassesController;
 use App\Http\Controllers\BaptistClassDetailController;
 use App\Http\Controllers\MemberBaptistController;
 use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -140,6 +141,23 @@ Route::get('/member-baptist', [MemberBaptistController::class, 'index'])->name('
 Route::post('/member-baptist/register', [MemberBaptistController::class, 'register'])->name('memberbaptist.register');
 
 Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
+
+use App\Http\Controllers\AdminReportController;
+use App\Http\Controllers\ParentReportController;
+
+// Admin routes
+Route::prefix('reports/sunday-class')->middleware('auth')->group(function () {
+    Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
+    Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');
+    Route::post('/store', [ReportController::class, 'store'])->name('admin.reports.store');
+    Route::get('/download/{id}', [ReportController::class, 'download'])->name('admin.reports.download');
+    Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
+});
+
+Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
+
+// Parent routes
+// Route::get('/reports', [ParentReportController::class, 'index'])->name('parent.reports.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

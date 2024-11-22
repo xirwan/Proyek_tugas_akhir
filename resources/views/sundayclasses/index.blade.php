@@ -16,6 +16,7 @@
                     <th>Nama</th>
                     <th>Deskripsi</th>
                     <th>Status</th>
+                    <th>Jadwal</th>
                     <th>Detail Murid</th>
                     <th>Detail Kelas</th>
                 </tr>
@@ -27,6 +28,11 @@
                         <td>{{ $class->name }}</td>
                         <td>{{ $class->description }}</td>
                         <td>{{ $class->status }}</td>
+                        <td>
+                            @foreach($class->schedules as $schedule)
+                                <p>{{ $schedule->name }} ({{ ucfirst($schedule->day) }}: {{ $schedule->start }} - {{ $schedule->end }})</p>
+                            @endforeach
+                        </td>
                         <td class="actions text-center">
                             <a href="{{ route('sundayschoolclass.viewClassStudents', encrypt($class->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>

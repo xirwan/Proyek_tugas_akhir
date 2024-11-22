@@ -27,20 +27,32 @@
                         <td>{{ $class->description }}</td>
                         <td>{{ $class->status }}</td>
                         <td class="text-center">
-                            <a href="{{ route('attendance.classAttendance', $class->id) }}" class="btn btn-primary">
-                                Lihat Absensi
-                            </a>
+                            @if($class->isActiveSchedule)
+                                <a href="{{ route('attendance.classAttendance', $class->id) }}" class="btn btn-primary">
+                                    Lihat Absensi
+                                </a>
+                            @else
+                                <span class="text-muted">Jadwal Tidak Aktif</span>
+                            @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('attendance.showCheckinQr', $class->id) }}" class="btn btn-primary">
-                                Scan QR
-                            </a>
+                            @if($class->isActiveSchedule)
+                                <a href="{{ route('attendance.showCheckinQr', $class->id) }}" class="btn btn-primary">
+                                    Scan QR
+                                </a>
+                            @else
+                                <span class="text-muted">Jadwal Tidak Aktif</span>
+                            @endif
                         </td>
                     </tr>
                 @empty
-                <div class="alert alert-danger">
-                    Data kelas sekolah minggu belum tersedia.
-                </div>
+                    <tr>
+                        <td colspan="6">
+                            <div class="alert alert-danger mb-0">
+                                Data kelas sekolah minggu belum tersedia.
+                            </div>
+                        </td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>

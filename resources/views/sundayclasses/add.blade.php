@@ -9,7 +9,19 @@
                 <div class="row form-group d-flex justify-content-center align-items-center">
                     <div class="col-lg-9">
                         <x-input-text name="name" id="inputnama" label="Nama kelas sekolah minggu" placeholder="Masukan nama kelas sekolah minggu" :required="true" :errorMessage="$errors->first('name')"/>
-                        <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :required="true"/> 
+                        <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :required="true"/>
+                        
+                        <!-- Dropdown untuk memilih jadwal -->
+                        <x-select-box 
+                            label="Pilih Jadwal" 
+                            name="schedule_id" 
+                            :options="$schedules->mapWithKeys(function($schedule) {
+                                $endTime = $schedule->end ? $schedule->end : '-';
+                                return [$schedule->id => $schedule->name . ' - ' . $schedule->day . ' (' . $schedule->start . ' - ' . $endTime . ')'];
+                            })" 
+                            placeholder="Pilih Jadwal" 
+                            :required="true" 
+                        />
                     </div>
                 </div>
             </div>

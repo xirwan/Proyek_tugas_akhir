@@ -1,4 +1,11 @@
 <x-app-layout>
+    @if ($errors->any())
+                <div class="alert alert-danger">
+                    @foreach ($errors->all() as $error)
+                        {{ $error }}
+                    @endforeach
+                </div>
+            @endif
     <section class="card">
         <header class="card-header">   
             <h2 class="card-title">Detail Jadwal</h2>

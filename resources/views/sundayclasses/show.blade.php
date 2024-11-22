@@ -20,7 +20,19 @@
                     <div class="col-lg-9">
                         <x-input-text name="name" id="inputnama" label="Nama kelas sekolah minggu" placeholder="Masukan nama kelas sekolah minggu" :value="$class->name" :required="true" :errorMessage="$errors->first('name')"/>
                         <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :value="$class->description" :required="true"/>
-                        <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$class->status" :required="true"/> 
+                        <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$class->status" :required="true"/>
+                        {{-- <x-select-box label="Pilih Jadwal" name="schedule_id" :options="$schedules->pluck('name', 'id')" placeholder="Pilih Jadwal" :required="true" :selected="$class->schedules->pluck('id')->first()"/>  --}}
+                        <x-select-box 
+                        label="Pilih Jadwal" 
+                        name="schedule_id" 
+                        :options="$schedules->mapWithKeys(function($schedule) {
+                            $endTime = $schedule->end ? $schedule->end : '-';
+                            return [$schedule->id => $schedule->name . ' - ' . $schedule->day . ' (' . $schedule->start . ' - ' . $endTime . ')'];
+                        })" 
+                        placeholder="Pilih Jadwal" 
+                        :required="true" 
+                        :selected="$class->schedule_id" 
+                        />
                     </div>
                 </div>
             </div>

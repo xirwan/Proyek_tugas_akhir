@@ -1,7 +1,7 @@
 <footer id="footer" class="bg-color-dark-scale-5 border border-right-0 border-left-0 border-bottom-0 border-color-light-3 mt-0">
     <div class="container text-center my-3 py-5">
         <a href="#" class="goto-top">
-            <img src="{{asset ('admintemp/img/logo.png')}}" alt="logo_GBI" width="75" class="rounded-circle mb-4 appear-animation" data-plugin-lazyload data-plugin-options="{'threshold': 500}" data-original="{{asset ('admintemp/img/logo.png')}}" data-appear-animation="fadeIn" data-appear-animation-delay="300">
+            <img src="{{asset ('admintemp/img/logo.png')}}" alt="logo_GBI" width="75">
         </a>
         <ul class="social-icons social-icons-big social-icons-dark-2">
             <li class="social-icons-instagram"><a href="http://www.instagram.com/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a></li>

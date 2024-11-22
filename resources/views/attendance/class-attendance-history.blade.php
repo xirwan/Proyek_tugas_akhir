@@ -1,10 +1,12 @@
 <x-app-layout>
     <!-- Notifikasi Error -->
     @if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
     @endif
+
+    <!-- Form Filter -->
     <form method="GET" action="{{ route('admin.attendance.history') }}" class="form-horizontal form-bordered">
         @csrf
         <section class="card">
@@ -41,6 +43,7 @@
         </section>
     </form>
 
+    <!-- Tabel Data Absensi -->
     @if($presences->isNotEmpty())
         <section class="card mt-3">
             <header class="card-header">
@@ -50,6 +53,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>Nama Murid</th>
                             <th>Kelas</th>
                             <th>Check-in</th>
@@ -57,8 +61,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($presences as $presence)
+                        @foreach ($presences as $index => $presence)
                             <tr>
+                                <td>{{ $presences->firstItem() + $index }}</td>
                                 <td>{{ $presence->member->firstname . ' ' . $presence->member->lastname }}</td>
                                 <td>{{ $presence->member->sundaySchoolClasses->first()->name ?? 'N/A' }}</td>
                                 <td>{{ $presence->check_in }}</td>
@@ -68,18 +73,24 @@
                     </tbody>
                 </table>
             </div>
-            <footer class="card-footer text-right">
+            <footer class="card-footer d-flex justify-content-between">
+                <!-- Pagination Links -->
+                {{ $presences->links() }}
+
+                <!-- Export to PDF -->
                 <form method="POST" action="{{ route('admin.attendance.export') }}">
                     @csrf
                     <input type="hidden" name="class_id" value="{{ $selectedClassId }}">
                     <input type="hidden" name="week_of" value="{{ $selectedWeek }}">
                     <button type="submit" class="btn btn-success">Ekspor ke PDF</button>
-                </form>                
+                </form>
             </footer>
         </section>
     @else
-        <div class="alert alert-warning mt-3">
-            Tidak ada data absensi untuk minggu dan kelas yang dipilih.
-        </div>
+        @if (!is_null($selectedClassId) && !is_null($selectedWeek))
+            <div class="alert alert-warning mt-3">
+                Tidak ada data absensi untuk minggu dan kelas yang dipilih.
+            </div>
+        @endif
     @endif
 </x-app-layout>

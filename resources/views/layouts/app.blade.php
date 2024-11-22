@@ -2,7 +2,7 @@
 <html class="fixed">
 	<head>
         <title>{{ config('app.name', 'Laravel') }}</title>
-		<script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+		{{-- <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> --}}
         @include('admin.css')        
 	</head>
 	<body>
@@ -76,9 +76,9 @@
                         <span>Absensi</span>
                     </x-side-link>
         
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{ route ('admin.reports.index')}}" :active="request()->is('reports*')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Laporan Sekolah Minggu</span>
                     </x-side-link>
                     
                 </x-sidebar>

@@ -29,4 +29,6 @@ class SundaySchoolPresence extends Model
     {
         return $this->belongsTo(Member::class, 'admin_check_in');
     }
+
+    
 }

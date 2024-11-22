@@ -104,12 +104,17 @@ class ScheduleController extends Controller
     {
         $id = decrypt($encryptedId);
         
+        $request->merge([
+            'start' => \Carbon\Carbon::parse($request->input('start'))->format('H:i'),
+            'end' => $request->input('end') ? \Carbon\Carbon::parse($request->input('end'))->format('H:i') : null,
+        ]);
+        
         $request->validate([
             'name'          => 'required|string',
             'description'   => 'required|string',
             'day'           => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'start'         => 'required|date_format:H:i',
-            'end'           => 'nullable|date_format:H:i',
+            'start'         => ['required', 'date_format:H:i'],
+            'end'           => ['nullable', 'date_format:H:i'],
             'category_id'   => 'required|exists:categories,id',
             'type_id'       => 'required|exists:types,id',
         ]);
@@ -120,8 +125,8 @@ class ScheduleController extends Controller
             'name'                  => $request->input('name'),
             'description'           => $request->input('description'),
             'day'                   => $request->input('day'),
-            'start'                 => $request->input('start'),
-            'end'                   => $request->input('end'),
+            'start'                 => $request->input('start', $schedule->start), // Gunakan nilai lama jika tidak diubah
+            'end'                   => $request->input('end', $schedule->end),     // Gunakan nilai lama jika tidak diubah
             'status'                => 'Active',
             'category_id'           => $request->input('category_id'),
             'type_id'               => $request->input('type_id'),

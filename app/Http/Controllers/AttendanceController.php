@@ -86,10 +86,39 @@ class AttendanceController extends Controller
 
     public function classList()
     {
-        // Ambil semua kelas sekolah minggu
-        $classes = SundaySchoolClass::paginate(3);
+        // Atur lokal untuk menghasilkan nama hari dalam bahasa Indonesia
+        Carbon::setLocale('id');
 
-        return view('attendance.class-list', ['classes' => $classes]);
+        // Ambil semua kelas sekolah minggu
+        $classes = SundaySchoolClass::with('schedules')->paginate(3);
+        $currentDay = strtolower(Carbon::now()->isoFormat('dddd')); // Ambil hari ini
+        $currentTime = Carbon::now()->toTimeString(); // Ambil waktu saat ini
+
+        // Cek apakah jadwal aktif untuk setiap kelas
+        foreach ($classes as $class) {
+            foreach ($class->schedules as $schedule) {
+                if (strtolower($schedule->day) === $currentDay) { // Ubah ke huruf kecil sebelum dibandingkan
+                    if ($currentTime >= $schedule->start && $currentTime <= $schedule->end) {
+                        $class->isActiveSchedule = true;
+                        break; // Jika jadwal aktif, tidak perlu cek lainnya
+                    }
+                }
+            }
+        }        
+        // foreach ($classes as $class) {
+        //     foreach ($class->schedules as $schedule) {
+        //         dd([
+        //             'current_day' => $currentDay,
+        //             'current_time' => $currentTime,
+        //             'schedule_day' => $schedule->day,
+        //             'schedule_start' => $schedule->start,
+        //             'schedule_end' => $schedule->end,
+        //             'is_active' => ($schedule->day === $currentDay) && ($currentTime >= $schedule->start && $currentTime <= $schedule->end),
+        //         ]);
+        //     }
+        // }
+
+        return view('attendance.class-list', compact('classes'));
     }
 
     public function showCheckinQr($class_id)

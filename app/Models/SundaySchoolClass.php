@@ -22,4 +22,10 @@ class SundaySchoolClass extends Model
     {
         return $this->belongsToMany(Member::class, 'sunday_school_members', 'sunday_school_class_id', 'member_id');
     }
+
+    public function schedules()
+    {
+        return $this->belongsToMany(Schedule::class, 'schedules_sunday_school_class', 'sunday_school_class_id', 'schedule_id');
+    }
+
 }

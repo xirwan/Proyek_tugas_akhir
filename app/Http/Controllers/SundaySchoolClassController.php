@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use App\Models\SundaySchoolClass;
 use App\Models\Member;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
 class SundaySchoolClassController extends Controller
@@ -19,7 +20,8 @@ class SundaySchoolClassController extends Controller
     // 2. Menampilkan form untuk membuat kelas baru
     public function create()
     {
-        return view('sundayclasses.add');
+        $schedules = Schedule::all();
+        return view('sundayclasses.add', compact('schedules'));
     }
 
     // 3. Menyimpan kelas baru ke database
@@ -28,13 +30,17 @@ class SundaySchoolClassController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'schedule_id' => 'required|exists:schedules,id', // Validasi jadwal harus ada
         ]);
 
-        SundaySchoolClass::create([
+        $class = SundaySchoolClass::create([
             'name'                  => $request->input('name'),
             'description'           => $request->input('description'),
             'status'                => 'Active',
         ]);
+
+        // Hubungkan kelas dengan jadwal melalui tabel pivot
+        $class->schedules()->attach($request->input('schedule_id'));
 
         return redirect()->route('sunday-classes.index')->with('success', 'Data Berhasil Disimpan!');
     }
@@ -44,7 +50,8 @@ class SundaySchoolClassController extends Controller
     {
         $id = decrypt($encryptedId);
         $class = SundaySchoolClass::findOrFail($id);
-        return view('sundayclasses.show', compact('class'));
+        $schedules = Schedule::all();
+        return view('sundayclasses.show', compact('class', 'schedules'));
     }
 
     // 5. Menampilkan form untuk mengedit kelas
@@ -63,6 +70,7 @@ class SundaySchoolClassController extends Controller
             'name'              => 'required|string|max:255',
             'description'       => 'nullable|string',
             'status'            => 'required|in:Active,Inactive',
+            'schedule_id'       => 'required|exists:schedules,id', // Validasi jadwal harus ada
         ]);
 
         $class = SundaySchoolClass::findOrFail($id);
@@ -71,6 +79,9 @@ class SundaySchoolClassController extends Controller
             'description'       => $request->input('description'),
             'status'            => $request->input('status'),
         ]);
+
+        // Perbarui relasi jadwal
+        $class->schedules()->sync([$request->input('schedule_id')]);
 
         return redirect()->route('sunday-classes.index')->with('success', 'Data Berhasil Diperbarui!');
     }

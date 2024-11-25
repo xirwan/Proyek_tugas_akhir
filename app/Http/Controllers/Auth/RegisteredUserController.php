@@ -74,7 +74,7 @@ class RegisteredUserController extends Controller
         }
 
         // Dapatkan position_id berdasarkan nama "Jemaat"
-        $position = Position::where('name', 'Jemaat')->first();
+        $position = Position::where('name', 'Jemaat Tamu')->first();
         if (!$position) {
             return redirect()->back()->withErrors('Posisi "Jemaat" tidak ditemukan.');
         }

@@ -34,9 +34,9 @@
                         <i class="bx bx-layout" aria-hidden="true"></i>
                         <span>Absensi Anak</span>
                     </x-side-link>
-                    <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
+                    <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>
-                        <span>Layouts</span>
+                        <span>Pengajuan Keanggotaan</span>
                     </x-side-link>
                     <x-side-link href="{{url ('coba')}}" :active="request()->is('coba')">
                         <i class="bx bx-layout" aria-hidden="true"></i>

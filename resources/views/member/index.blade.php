@@ -54,7 +54,7 @@
                     @empty
                         <tr>
                             <td colspan="11" class="text-center">
-                                <div class="alert alert-danger mb-0">
+                                <div class="p-3 mb-2 bg-danger text-white">
                                     Data Anggota belum tersedia.
                                 </div>
                             </td>

@@ -94,4 +94,6 @@ class ReportController extends Controller
         return response()->json(['weeks' => $weeks]);
     }
 
+    
+
 }

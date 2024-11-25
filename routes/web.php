@@ -19,6 +19,7 @@ use App\Http\Controllers\BaptistClassDetailController;
 use App\Http\Controllers\MemberBaptistController;
 use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\CertificationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,15 +33,70 @@ Route::get('/portal', function () {
     return view('userdashboard');
 })->name('portal')->middleware(['auth', 'verified', 'role:Jemaat']);
 
-Route::resource('schedule', ScheduleController::class)->middleware(['auth', 'verified']);
+Route::prefix('master-data')->middleware('auth')->group(function () {
 
-Route::resource('category', CategoryController::class)->middleware(['auth', 'verified']);
+    Route::resource('schedule', ScheduleController::class);
 
-Route::resource('type', TypeController::class)->middleware(['auth', 'verified']);
+    Route::resource('category', CategoryController::class)->middleware(['auth', 'verified']);
+    
+    Route::resource('type', TypeController::class)->middleware(['auth', 'verified']);
+    
+    Route::resource('position', PositionController::class)->middleware(['auth', 'verified']);
 
-Route::resource('position', PositionController::class)->middleware(['auth', 'verified']);
+    Route::resource('branch', BranchController::class);
 
-Route::resource('sunday-classes', SundaySchoolClassController::class)->middleware(['auth', 'verified']);
+    Route::resource('role', RoleController::class);
+
+    Route::resource('member', MemberController::class);
+
+    Route::get('certifications', [CertificationController::class, 'index'])->name('certifications.index');
+
+    Route::get('certifications/{id}', [CertificationController::class, 'show'])->name('certifications.show');
+
+    Route::post('certifications/{id}/verify', [CertificationController::class, 'verify'])->name('certifications.verify');
+
+    Route::post('certifications/{id}/reject', [CertificationController::class, 'reject'])->name('certifications.reject');
+
+    Route::post('certifications/create', [CertificationController::class, 'createForMember'])->name('certifications.createForMember');
+});
+
+Route::prefix('sunday-school')->middleware('auth')->group(function () {
+
+    Route::resource('sunday-classes', SundaySchoolClassController::class);
+    
+    Route::get('sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents');
+
+    Route::get('sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'showAdjustClassForm'])->name('sundayschoolclass.showAdjustClassForm');
+
+    Route::post('sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'adjustClass'])->name('sundayschoolclass.adjustClass');
+
+    Route::get('attendance/class', [AttendanceController::class, 'classList'])->name('attendance.classList');
+
+    Route::get('attendance/class/{class_id}', [AttendanceController::class, 'attendanceListByClass'])->name('attendance.classAttendance');
+
+    Route::post('attendance/class/{class_id}/manual-checkin', [AttendanceController::class, 'manualCheckin'])->name('attendance.manualCheckin');
+
+    Route::get('attendance/class/{class_id}/checkin-qr', [AttendanceController::class, 'showCheckinQr'])->name('attendance.showCheckinQr');
+
+    Route::post('attendance/class/{class_id}/checkin', [AttendanceController::class, 'checkinByClass'])->name('attendance.checkinByClass');
+
+    Route::get('attendance/history', [AdminAttendanceController::class, 'attendanceHistory'])->name('admin.attendance.history');
+
+    Route::post('attendance/export', [AdminAttendanceController::class, 'exportToPdf'])->name('admin.attendance.export');
+
+    Route::get('qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
+
+    Route::get('qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])
+    ->name('qr-code.children.generate.qr');
+
+    Route::get('qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
+    
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/certifications/upload', [CertificationController::class, 'showUploadForm'])->name('certifications.uploadForm');
+    Route::post('/certifications/upload', [CertificationController::class, 'uploadCertificate'])->name('certifications.upload');
+});
 
 Route::resource('baptist', BaptistController::class);
 
@@ -70,11 +126,7 @@ Route::get('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDeta
 // Route untuk menyimpan absensi admin
 Route::post('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDetailController::class, 'markAttendance'])->name('baptist-class-detail.markAttendance');
 
-Route::get('/sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents')->middleware(['auth', 'verified']);
 
-Route::get('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'showAdjustClassForm'])->name('sundayschoolclass.showAdjustClassForm')->middleware(['auth', 'verified']);
-
-Route::post('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'adjustClass'])->name('sundayschoolclass.adjustClass')->middleware(['auth', 'verified']);
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 
@@ -98,32 +150,10 @@ Route::patch('/member/children/{child}', [MemberController::class, 'updateChild'
 
 Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
 
-Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
-
-Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])
-->name('qr-code.children.generate.qr');
-
-Route::get('/qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
-
 // Route::get('/qr-code/checkin/{id}', [AttendanceController::class, 'checkIn'])->name('qr-code.checkin');
 
 // Route::post('/qr-code/checkin', [AttendanceController::class, 'processCheckIn'])->name('attendance.processCheckIn');
 
-Route::get('/attendance/class', [AttendanceController::class, 'classList'])->name('attendance.classList');
-
-Route::get('/attendance/class/{class_id}', [AttendanceController::class, 'attendanceListByClass'])->name('attendance.classAttendance');
-
-Route::post('/attendance/class/{class_id}/manual-checkin', [AttendanceController::class, 'manualCheckin'])->name('attendance.manualCheckin');
-
-Route::get('/attendance/class/{class_id}/checkin-qr', [AttendanceController::class, 'showCheckinQr'])->name('attendance.showCheckinQr');
-
-Route::post('/attendance/class/{class_id}/checkin', [AttendanceController::class, 'checkinByClass'])->name('attendance.checkinByClass');
-
-// Route untuk menampilkan riwayat absensi
-Route::get('/attendance/history', [AdminAttendanceController::class, 'attendanceHistory'])->name('admin.attendance.history');
-
-// Route untuk ekspor riwayat absensi ke PDF
-Route::post('/attendance/export', [AdminAttendanceController::class, 'exportToPdf'])->name('admin.attendance.export');
 
 Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
 
@@ -142,8 +172,6 @@ Route::post('/member-baptist/register', [MemberBaptistController::class, 'regist
 
 Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
-use App\Http\Controllers\AdminReportController;
-use App\Http\Controllers\ParentReportController;
 
 // Admin routes
 Route::prefix('reports/sunday-class')->middleware('auth')->group(function () {
@@ -156,18 +184,16 @@ Route::prefix('reports/sunday-class')->middleware('auth')->group(function () {
 
 Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
 
-// Parent routes
-// Route::get('/reports', [ParentReportController::class, 'index'])->name('parent.reports.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', 'role:SuperAdmin'])->name('dashboard');
 
-Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
-    Route::resource('branch', BranchController::class);
-    Route::resource('role', RoleController::class);
-    Route::resource('member', MemberController::class);
-});
+// Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
+//     Route::resource('branch', BranchController::class);
+//     Route::resource('role', RoleController::class);
+//     Route::resource('member', MemberController::class);
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

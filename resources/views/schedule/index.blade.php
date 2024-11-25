@@ -41,9 +41,9 @@
                         </td>
                     </tr>
                 @empty
-                <div class="alert alert-danger">
-                    Data Jadwal belum tersedia.
-                </div>
+                    <div class="p-3 mb-2 bg-danger text-white">
+                        Data Jadwal belum tersedia.
+                    </div>
                 @endforelse
             </tbody>
         </table>

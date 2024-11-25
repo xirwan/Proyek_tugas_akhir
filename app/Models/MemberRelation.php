@@ -25,6 +25,6 @@ class MemberRelation extends Model
     // Relasi ke jenis hubungan
     public function relation()
     {
-        return $this->belongsTo(Relation::class, 'relation_id');
+        return $this->belongsTo(Relation::class, 'relation_id', 'id');
     }
 }

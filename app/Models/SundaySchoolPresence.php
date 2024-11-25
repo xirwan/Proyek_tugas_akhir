@@ -30,5 +30,10 @@ class SundaySchoolPresence extends Model
         return $this->belongsTo(Member::class, 'admin_check_in');
     }
 
-    
+    public function report()
+    {
+        return $this->hasOne(Report::class, 'week_of', 'week_of')
+            ->whereColumn('sunday_school_class_id', 'member.sundaySchoolClasses.id');
+    }
+
 }

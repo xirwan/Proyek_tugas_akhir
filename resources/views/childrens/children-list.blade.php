@@ -18,6 +18,7 @@
                         <th>Nama Belakang</th>
                         <th>Tanggal Lahir</th>
                         <th>Alamat</th>
+                        <th>Jenis Relasi</th>
                         <th>Cabang</th>
                         <th>Kelas</th>
                         <th>Status Akun</th>
@@ -32,6 +33,7 @@
                             <td>{{ $child->relatedMember->lastname }}</td>
                             <td>{{ $child->relatedMember->dateofbirth }}</td>
                             <td>{{ $child->relatedMember->address }}</td>
+                            <td>{{ $child->relation->name }}</td>
                             <td>{{ $child->relatedMember->branch->name }}</td>
                             <td>
                                 @if($child->relatedMember->sundaySchoolClasses->isNotEmpty())

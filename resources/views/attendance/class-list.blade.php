@@ -48,7 +48,7 @@
                 @empty
                     <tr>
                         <td colspan="6">
-                            <div class="alert alert-danger mb-0">
+                            <div class="p-3 mb-2 bg-danger text-white">
                                 Data kelas sekolah minggu belum tersedia.
                             </div>
                         </td>

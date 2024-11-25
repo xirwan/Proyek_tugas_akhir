@@ -87,5 +87,9 @@ class Member extends Model
         return $this->hasMany(MemberBaptist::class, 'id_member'); // 'id_member' adalah foreign key pada tabel member_baptists
     }
 
+    public function certification()
+    {
+        return $this->hasOne(Certification::class);
+    }
 
 }

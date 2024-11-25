@@ -11,6 +11,8 @@
                         <x-input-text name="firstname" id="inputnamadepan" label="Nama depan" placeholder="Masukan nama depan" :required="true" :errorMessage="$errors->first('firstname')"/>
                         <x-input-text name="lastname" id="inputnamabelakang" label="Nama belakang" placeholder="Masukan nama belakang" :required="true" :errorMessage="$errors->first('lastname')"/>
                         <x-date-picker label="Tanggal Lahir" name="dateofbirth" :required="true" max="{{ date('Y-m-d') }}"/>
+                        <x-select-box label="Jenis Relasi" name="relation_id" :options="$relationoptions" placeholder="Pilih Relasi" :required="true" :selected="old('relation_id')" 
+                        />
                     </div>
                 </div>
             </div>

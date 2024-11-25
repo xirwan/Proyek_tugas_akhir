@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\SundaySchoolPresence;
 use App\Models\SundaySchoolClass;
+use App\Models\Report;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Carbon\Carbon;
@@ -295,20 +296,31 @@ class AttendanceController extends Controller
         $selectedChild = $selectedChildId ? $children->where('id', $selectedChildId)->first() : null;
 
         // Ambil absensi anak yang dipilih
+        $reports = [];
         $attendanceRecords = [];
         if ($selectedChild) {
             $attendanceRecords = SundaySchoolPresence::with('member.sundaySchoolClasses')
                 ->where('member_id', $selectedChild->id)
                 ->orderBy('week_of', 'desc')
                 ->get();
+
+                 // Ambil laporan berdasarkan kelas dan minggu
+            $classId = $selectedChild->sundaySchoolClasses->first()->id ?? null;
+            if ($classId) {
+                $reports = Report::where('sunday_school_class_id', $classId)
+                    ->whereIn('week_of', $attendanceRecords->pluck('week_of'))
+                    ->get();
+            }
         }
 
         return view('childrens.attendance-view', [
             'children' => $children,
             'selectedChild' => $selectedChild,
             'attendanceRecords' => $attendanceRecords,
+            'reports' => $reports,
         ]);
     }
+
 
 
 }

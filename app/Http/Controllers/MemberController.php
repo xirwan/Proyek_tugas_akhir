@@ -267,8 +267,10 @@ class MemberController extends Controller
 
         $branches = Branch::where('status', 'Active')->get();
         $branchoptions = $branches->pluck('name', 'id');
+        $relations = Relation::where('status', 'Active')->get();
+        $relationoptions = $relations->pluck('name', 'id');
 
-        return view('childrens.register-child', compact('branchoptions'));
+        return view('childrens.register-child', compact('branchoptions', 'relationoptions'));
     }
 
     public function storeChild(Request $request) : RedirectResponse
@@ -277,6 +279,7 @@ class MemberController extends Controller
             'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'dateofbirth'       => 'required|date',
+            'relation_id'       => 'required|exists:relations,id',
             // 'address'           => 'required|string',
             // 'branch_id'         => 'required|exists:branches,id',
         ], [
@@ -305,13 +308,14 @@ class MemberController extends Controller
             'user_id'           => null,  // Anak tidak memiliki akun user
         ]);
         // Dapatkan relation ID untuk "Anak"
-        $childRelation = Relation::where('name', 'Anak')->firstOrFail();
+        // $childRelation = Relation::where('name', 'Anak')->firstOrFail();
 
         // Simpan relasi orang tua dan anak di tabel member_relation
         MemberRelation::create([
             'member_id'         => $parentMember->id, // Orang tua
-            'related_member_id' => $childMember->id,  // Anak
-            'relation_id'       => $childRelation->id, // Relasi: Anak
+            'related_member_id' => $childMember->id,  // Anak/Keponakan
+            'relation_id'       => $request->input('relation_id'), // Relasi: Anak/Keponakan
+            // 'relation_id'       => $childRelation->id, 
         ]);
 
         // Tentukan kelas berdasarkan usia dan tambahkan anak ke kelas jika cocok
@@ -404,11 +408,8 @@ class MemberController extends Controller
         $parentMember = Member::where('user_id', $parent->id)->first();
 
         // Cari semua anak dari parentMember melalui tabel member_relation
-        $children = MemberRelation::with('relatedMember')
+        $children = MemberRelation::with(['relatedMember', 'relation'])
             ->where('member_id', $parentMember->id)
-            ->whereHas('relation', function ($query) {
-                $query->where('name', 'Anak'); // Hanya relasi anak
-            })
             ->paginate(3);
 
         // Kirim data anak ke view

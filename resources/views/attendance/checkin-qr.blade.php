@@ -72,7 +72,7 @@
     
             <!-- Notifikasi Error -->
             @if ($errors->any())
-                <div class="alert alert-danger">
+                <div id="alert" class="alert alert-danger">
                     @foreach ($errors->all() as $error)
                         {{ $error }}
                     @endforeach

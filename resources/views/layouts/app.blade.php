@@ -29,10 +29,15 @@
                                     ['url' => url('master-data/certifications'), 'label' => 'Verifikasi Keanggotaan',],
                                 ],
                             ],
-                            ['url' => url('master-data/schedule'), 'label' => 'Jadwal', 'items' => [
+                            ['url' => url('#'), 'label' => 'Jadwal', 'items' => [
                                     ['url' => url('master-data/type'), 'label' => 'Tipe Jadwal',],
                                     ['url' => url('master-data/category'), 'label' => 'Kategori Jadwal',],
-                                    ['url' => url('master-data/list'), 'label' => 'List Jadwal',],
+                                    ['url' => url('master-data/schedule'), 'label' => 'List Jadwal',],
+                                ],
+                            ],
+                            ['url' => url('#'), 'label' => 'Berita', 'items' => [
+                                    ['url' => url('master-data/news-categories'), 'label' => 'Kategori Berita',],
+                                    ['url' => url('master-data/news'), 'label' => 'List Berita',],
                                 ],
                             ],
                         ]">

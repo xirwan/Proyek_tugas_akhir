@@ -66,14 +66,14 @@
         }
 
         // Notifikasi error
-        const errorAlert = document.querySelector('.alert-danger');
-        if (errorAlert) {
-            setTimeout(function () {
-                errorAlert.style.opacity = 0; // Fade out effect
-                setTimeout(function () {
-                    errorAlert.remove(); // Remove element from DOM
-                }, 600); // Match the duration of the fade out effect
-            }, 3000); // Delay before auto-close (3 seconds)
-        }
+        // const errorAlert = document.querySelector('.alert-danger');
+        // if (errorAlert) {
+        //     setTimeout(function () {
+        //         errorAlert.style.opacity = 0;
+        //         setTimeout(function () {
+        //             errorAlert.remove();
+        //         }, 600);
+        //     }, 3000); 
+        // }
     });
 </script>

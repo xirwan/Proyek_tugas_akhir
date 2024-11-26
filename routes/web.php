@@ -20,6 +20,8 @@ use App\Http\Controllers\MemberBaptistController;
 use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CertificationController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsCategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,6 +51,10 @@ Route::prefix('master-data')->middleware('auth')->group(function () {
 
     Route::resource('member', MemberController::class);
 
+    Route::resource('news', NewsController::class);
+
+    Route::resource('news-categories', NewsCategoryController::class);
+
     Route::get('certifications', [CertificationController::class, 'index'])->name('certifications.index');
 
     Route::get('certifications/{id}', [CertificationController::class, 'show'])->name('certifications.show');
@@ -58,6 +64,8 @@ Route::prefix('master-data')->middleware('auth')->group(function () {
     Route::post('certifications/{id}/reject', [CertificationController::class, 'reject'])->name('certifications.reject');
 
     Route::post('certifications/create', [CertificationController::class, 'createForMember'])->name('certifications.createForMember');
+
+
 });
 
 Route::prefix('sunday-school')->middleware('auth')->group(function () {

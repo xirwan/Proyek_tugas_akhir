@@ -43,6 +43,7 @@
                             :required="true" 
                             :errorMessage="$errors->first('address')"
                         />
+                        <x-select-box label="Jenis Relasi" name="relation_id" :options="$relationoptions" placeholder="Pilih Relasi" :required="true" :selected="old('relation_id', $relationId)" />
                     </div>
                 </div>
             </div>

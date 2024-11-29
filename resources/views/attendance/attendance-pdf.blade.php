@@ -69,7 +69,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $presence->member->firstname . ' ' . $presence->member->lastname }}</td>
                         <td>{{ $presence->member->sundaySchoolClasses->first()->name ?? 'N/A' }}</td>
-                        <td>{{ $presence->check_in }}</td>
+                        <td>{{ $presence->check_in ? $presence->check_in : 'Tidak Hadir' }}</td>
                         <td>{{ $presence->week_of }}</td>
                     </tr>
                 @endforeach

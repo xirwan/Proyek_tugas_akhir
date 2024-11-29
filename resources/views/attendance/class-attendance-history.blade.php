@@ -66,19 +66,25 @@
                                 <td>{{ $presences->firstItem() + $index }}</td>
                                 <td>{{ $presence->member->firstname . ' ' . $presence->member->lastname }}</td>
                                 <td>{{ $presence->member->sundaySchoolClasses->first()->name ?? 'N/A' }}</td>
-                                <td>{{ $presence->check_in }}</td>
+                                <td>
+                                    @if ($presence->check_in)
+                                        {{ $presence->check_in }}
+                                    @else
+                                        Tidak Hadir
+                                    @endif
+                                </td>
                                 <td>{{ $presence->week_of }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-            <footer class="card-footer d-flex justify-content-between">
+            <footer class="card-footer">
                 <!-- Pagination Links -->
                 {{ $presences->links() }}
 
                 <!-- Export to PDF -->
-                <form method="POST" action="{{ route('admin.attendance.export') }}">
+                <form method="POST" action="{{ route('admin.attendance.export') }}" target="_blank">
                     @csrf
                     <input type="hidden" name="class_id" value="{{ $selectedClassId }}">
                     <input type="hidden" name="week_of" value="{{ $selectedWeek }}">

@@ -332,12 +332,16 @@ class MemberController extends Controller
         // Cek apakah anak terhubung dengan orang tua yang sedang login
         $parent = Auth::user();
         $parentMember = Member::where('user_id', $parent->id)->first();
+        $relations = Relation::where('status', 'Active')->get();
+        $relationoptions = $relations->pluck('name', 'id');
 
         if (!$parentMember || !$parentMember->children->contains($child)) {
             return redirect()->route('member.childrenList')->withErrors('Anda tidak memiliki akses untuk mengedit data anak ini.');
         }
 
-        return view('childrens.children-edit', compact('child'));
+        $relationId = $parentMember->children()->where('related_member_id', $child->id)->first()->pivot->relation_id ?? null;
+
+        return view('childrens.children-edit', compact('child', 'relationoptions', 'relationId'));
     }
 
     public function updateChild(Request $request, Member $child): RedirectResponse
@@ -348,6 +352,7 @@ class MemberController extends Controller
             'lastname'    => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'dateofbirth' => ['required', 'date'],
             'address'     => ['nullable', 'string', 'max:255'], // Opsional jika ingin mengubah alamat anak
+            'relation_id' => 'required|exists:relations,id',
         ], [
             'firstname.regex' => 'Harap hanya memasukan huruf saja.',
             'lastname.regex'  => 'Harap hanya memasukan huruf saja.',
@@ -369,6 +374,26 @@ class MemberController extends Controller
             'dateofbirth' => $request->input('dateofbirth'),
             'address'     => $request->input('address') ?? $parentMember->address, // Default ke alamat orang tua jika tidak diubah
         ]);
+
+        // Perbarui relasi
+        $relationId = $request->input('relation_id');
+        $memberRelation = MemberRelation::where('member_id', $parentMember->id)
+                                        ->where('related_member_id', $child->id)
+                                        ->first();
+
+        if ($memberRelation) {
+            $memberRelation->update([
+                'relation_id' => $relationId,
+            ]);
+        } else {
+            // Jika relasi belum ada, buat relasi baru
+            MemberRelation::create([
+                'member_id'         => $parentMember->id, // Orang tua
+                'related_member_id' => $child->id,        // Anak/Keponakan
+                'relation_id'       => $relationId,       // Relasi: Anak/Keponakan
+            ]);
+        }
+
 
         // Jika umur berubah, cek kembali penugasan kelas
         $classId = $this->assignClassByAge($child);

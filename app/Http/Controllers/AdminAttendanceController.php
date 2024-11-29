@@ -45,10 +45,11 @@ class AdminAttendanceController extends Controller
             $query->whereDate('week_of', $selectedWeek);
         }
 
-        $presences = $query->paginate(10); // 10 data per halaman
+        $presences = $query->paginate(10)->appends(request()->query()); // Tambahkan query string ke pagination
 
         return view('attendance.class-attendance-history', compact('classes', 'presences', 'selectedClassId', 'selectedWeek', 'weeks'));
     }
+
 
     // Fungsi untuk export data absensi ke PDF
     public function exportToPdf(Request $request)
@@ -91,6 +92,6 @@ class AdminAttendanceController extends Controller
             '.pdf';
 
         // Return file PDF untuk diunduh
-        return $pdf->download($fileName);
+        return $pdf->stream($fileName);
     }
 }

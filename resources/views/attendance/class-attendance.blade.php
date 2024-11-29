@@ -25,45 +25,27 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $student->firstname }} {{ $student->lastname }}</td>
                             <td>
-                                @if (in_array($student->id, $presentStudentIds))
+                                @php
+                                    // Cek apakah siswa ada di tabel absensi minggu ini dan check_in-nya
+                                    $attendance = $student->sundaySchoolPresence()->where('week_of', $weekOf)->first();
+                                @endphp
+                                
+                                @if ($attendance && $attendance->check_in) 
                                     ✔️ Hadir Minggu Ini
+                                @elseif ($attendance && !$attendance->check_in)
+                                    ❌ Tidak Hadir
                                 @else
                                     ❌ Tidak Hadir
                                 @endif
                             </td>
                             <td>
-                                @if (!in_array($student->id, $presentStudentIds))
-                                    <input type="checkbox" name="manual_checkins[]" value="{{ $student->id }}" class="manual-checkin-checkbox">
-                                @else
-                                    ✔️ Sudah Hadir
-                                @endif
+                                <input type="checkbox" name="manual_checkins[]" value="{{ $student->id }}" class="manual-checkin-checkbox">
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-            <button type="submit" class="btn btn-primary" id="submit-button" disabled>Simpan Checklist Manual</button>
+            <button type="submit" class="btn btn-primary">Simpan Checklist Manual</button>
         </form>
     </x-card>
-    <script>
-        // JavaScript untuk mengelola status tombol
-        document.addEventListener('DOMContentLoaded', function () {
-            const checkboxes = document.querySelectorAll('.manual-checkin-checkbox');
-            const submitButton = document.getElementById('submit-button');
-
-            // Fungsi untuk mengecek apakah ada checkbox yang dicentang
-            function updateButtonStatus() {
-                const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
-                submitButton.disabled = !anyChecked; // Nonaktifkan tombol jika tidak ada yang dicentang
-            }
-
-            // Tambahkan event listener ke semua checkbox
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateButtonStatus);
-            });
-
-            // Panggil fungsi untuk memeriksa status awal tombol
-            updateButtonStatus();
-        });
-    </script>
 </x-app-layout>

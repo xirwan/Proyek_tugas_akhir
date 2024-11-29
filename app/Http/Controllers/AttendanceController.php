@@ -243,38 +243,58 @@ class AttendanceController extends Controller
 
     public function manualCheckin(Request $request, $class_id)
     {
+        // Validasi dan ambil data dari request
+        $manualCheckins = $request->input('manual_checkins', []);
+
         $request->validate([
-            'manual_checkins' => 'array',                   // Validasi bahwa input adalah array
-            'manual_checkins.*' => 'exists:members,id',     // Pastikan setiap ID murid ada di tabel `members`
+            'manual_checkins' => 'array',                   // Pastikan input berupa array
+            'manual_checkins.*' => 'exists:members,id',     // Pastikan setiap ID anggota ada di tabel `members`
         ]);
 
-        // Tentukan minggu aktif untuk absensi (mulai dari hari Minggu)
-        // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
+        // Tentukan minggu aktif untuk absensi (mulai hari Minggu)
         $weekOf = Carbon::now()->toDateString();
 
-
         // Ambil ID admin yang melakukan checklist manual
-        $adminId = Auth::user()->id; // Sesuaikan sesuai struktur data Anda
+        $adminId = Auth::user()->id;
 
-        foreach ($request->manual_checkins as $childId) {
-            // Cek apakah murid sudah absen minggu ini
-            $alreadyCheckedIn = SundaySchoolPresence::where('member_id', $childId)
-                ->whereDate('week_of', $weekOf)
-                ->exists();
+        // Ambil semua siswa di kelas
+        $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
+            $query->where('sunday_school_classes.id', $class_id); // Filter siswa berdasarkan kelas
+        })->get();
 
-            if (!$alreadyCheckedIn) {
-                // Catat absensi baru di minggu aktif ini dengan `admin_checkin`
+        // Ambil data absensi minggu ini untuk setiap siswa
+        foreach ($students as $student) {
+            $attendance = SundaySchoolPresence::where('member_id', $student->id)
+                                            ->whereDate('week_of', $weekOf)
+                                            ->first();
+
+            // Cek apakah siswa sudah absen
+            if ($attendance) {
+                // Jika siswa sudah absen, hanya update jika dicentang pada manual check-in
+                if (in_array($student->id, $manualCheckins)) {
+                    // Jika checkbox dicentang, update check_in ke waktu sekarang
+                    $attendance->update([
+                        'check_in' => now(),
+                        'admin_check_in' => $adminId, // Set admin yang melakukan check-in
+                    ]);
+                }
+            } else {
+                // Jika siswa belum ada absensinya, buat data baru dengan check_in null jika tidak dicentang
                 SundaySchoolPresence::create([
-                    'member_id' => $childId,
-                    'check_in' => now(),
+                    'member_id' => $student->id,
+                    'check_in' => in_array($student->id, $manualCheckins) ? now() : null, // Set check_in berdasarkan apakah dicentang atau tidak
                     'week_of' => $weekOf,
-                    'admin_check_in' => $adminId, // Isi kolom admin_check_in
+                    'admin_check_in' => in_array($student->id, $manualCheckins) ? $adminId : null, // Set admin jika dicentang
                 ]);
             }
         }
 
         return redirect()->route('attendance.classAttendance', $class_id)->with('success', 'Checklist manual berhasil disimpan untuk minggu ini!');
     }
+
+
+
+
 
     public function parentViewAttendance(Request $request)
     {

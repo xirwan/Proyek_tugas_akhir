@@ -21,6 +21,13 @@
                         </a>                        
                     </li>
 
+                    @if(auth()->user()->hasRole('Admin'))
+                        <x-side-link href="{{url ('/my-schedule')}}" :active="request()->is('my-schedule*')">
+                            <i class="bx bx-calendar" aria-hidden="true"></i>
+                            <span>Jadwal</span>
+                        </x-side-link>
+                    @endif
+
                     <x-side-link1 href="#" :active="request()->is('master-data*')" icon="bx bx-data" class="nav-parent" :items="[
                             ['url' => url('master-data/branch'), 'label' => 'Cabang',],
                             ['url' => url('master-data/position'), 'label' => 'Posisi',],
@@ -46,15 +53,26 @@
 
                     <x-side-link1 href="#" :active="request()->is('sunday-school*')" icon="bx bx-home-smile" class="nav-parent" :items="[
                         ['url' => url('sunday-school/sunday-classes'), 'label' => 'List Kelas',],
-                        ['url' => url('sunday-school/qr-code/children'), 'label' => 'Generate QR',],
+                        ['url' => url('sunday-school/qr-code/children'), 'label' => 'List Anak',],
                         ['url' => url('#'), 'label' => 'Absensi', 'items' => [
                                 ['url' => url('sunday-school/attendance/class'), 'label' => 'Scan',],
                                 ['url' => url('sunday-school/attendance/history'), 'label' => 'Riwayat Absensi Sekolah Minggu',],
+                                ['url' => url('sunday-school/reports'), 'label' => 'Laporan Sekolah Minggu',],
                             ],
                         ],
                     ]">
                         <span>Sekolah Minggu</span>
                     </x-side-link1>
+
+                    <x-side-link href="{{ url ('scheduling')}}" :active="request()->is('reports*')">
+                        <i class="bx bx-calendar" aria-hidden="true"></i>
+                        <span>Penjadwalan</span>
+                    </x-side-link>
+                    
+                    <x-side-link href="" :active="request()->is('reports*')">
+                        <i class="bx bx-calendar" aria-hidden="true"></i>
+                        <span>Kegiatan</span>
+                    </x-side-link> 
                     
                 {{-- <x-side-link href="{{url ('branch')}}" :active="request()->is('branch*')">
                     <i class="bx bx-building-house" aria-hidden="true"></i>
@@ -101,20 +119,15 @@
                 ]">
                     <i class="bx bx-calendar" aria-hidden="true"></i>
                     <span>Absensi</span>
-                </x-side-link>
-    
-                <x-side-link href="{{ route ('admin.reports.index')}}" :active="request()->is('reports*')">
-                    <i class="bx bx-layout" aria-hidden="true"></i>
-                    <span>Laporan Sekolah Minggu</span>
-                </x-side-link> --}}
+                </x-side-link>--}}
 
-                    <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
+                    {{-- <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
                         ['url' => url('baptist'), 'label' => 'List Jadwal Pembaptisan'],
                         ['url' => url('baptist-classes'), 'label' => 'List Kelas Pembaptisan'],
                     ]">
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Pembaptisan</span>
-                    </x-side-link>
+                    </x-side-link> --}}
 
                     
                 </x-sidebar>

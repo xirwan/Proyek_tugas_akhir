@@ -92,4 +92,9 @@ class Member extends Model
         return $this->hasOne(Certification::class);
     }
 
+    public function scheduleMember()
+    {
+        return $this->hasMany(MemberScheduleMonthly::class, 'member_id');
+    }
+
 }

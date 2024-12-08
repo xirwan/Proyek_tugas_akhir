@@ -78,7 +78,7 @@
                             :value="'Member ini belum memiliki akun. Password tidak bisa diubah.'" 
                             :readonly="true" />
                         @endif
-                        
+                        <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$member->status" :required="true"/>
                     </div>
                 </div>
                 <div class="form-group">

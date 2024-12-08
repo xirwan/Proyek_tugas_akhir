@@ -22,6 +22,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsCategoryController;
+use App\Http\Controllers\MemberScheduleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -98,8 +99,31 @@ Route::prefix('sunday-school')->middleware('auth')->group(function () {
     ->name('qr-code.children.generate.qr');
 
     Route::get('qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
+
+    Route::prefix('reports')->group(function () {
+
+        Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
+
+        Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');
+
+        Route::post('/store', [ReportController::class, 'store'])->name('admin.reports.store');
+
+        Route::get('/download/{id}', [ReportController::class, 'download'])->name('admin.reports.download');
+
+        Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
+
+    });
     
 });
+
+Route::get('/scheduling', [MemberScheduleController::class, 'index'])->name('scheduling.index');
+
+Route::get('/scheduling/create', [MemberScheduleController::class, 'create'])->name('scheduling.create'); // Form tambah jadwal
+
+Route::post('/scheduling/store', [MemberScheduleController::class, 'store'])->name('scheduling.store');
+
+Route::get('/my-schedule', [MemberScheduleController::class, 'mySchedule'])->name('myschedule.index');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/certifications/upload', [CertificationController::class, 'showUploadForm'])->name('certifications.uploadForm');
@@ -181,21 +205,14 @@ Route::post('/member-baptist/register', [MemberBaptistController::class, 'regist
 Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
 
-// Admin routes
-Route::prefix('reports/sunday-class')->middleware('auth')->group(function () {
-    Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
-    Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');
-    Route::post('/store', [ReportController::class, 'store'])->name('admin.reports.store');
-    Route::get('/download/{id}', [ReportController::class, 'download'])->name('admin.reports.download');
-    Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
-});
+
 
 Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
 
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified', 'role:SuperAdmin'])->name('dashboard');
+})->middleware(['auth', 'verified', 'role:SuperAdmin|Admin'])->name('dashboard');
 
 // Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
 //     Route::resource('branch', BranchController::class);

@@ -7,7 +7,7 @@
     @endif
     <x-card>
         <x-slot name="header">
-            List Qr Anak Sekolah Minggu
+            List Anak Sekolah Minggu
         </x-slot>
         <a href="{{ route('qr-code.generate.all.qr') }}" class="btn btn-md btn-success mb-3">Generate QR Code untuk Semua Anak Tanpa QR</a>
         <div class="table-responsive">
@@ -17,7 +17,9 @@
                         <th>No</th>
                         <th>Nama Lengkap</th>
                         <th>Tanggal Lahir</th>
+                        <th>Kelas</th>
                         <th>Status QR Code</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,6 +28,13 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $child->firstname }} {{ $child->lastname }}</td>
                             <td>{{ $child->dateofbirth }}</td>
+                            <td>
+                                @if($child->sundaySchoolClasses->isNotEmpty())
+                                    {{ $child->sundaySchoolClasses->first()->name }}
+                                @else
+                                    <span class="text-danger">Tidak ada kelas</span>
+                                @endif
+                            </td>
                             <td>
                                 @if ($child->qr_code)
                                     <button class="btn btn-primary btn-show-qr" data-bs-toggle="modal" data-bs-target="#qrModal{{ $child->id }}">
@@ -59,10 +68,15 @@
                                     </a>
                                 @endif
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if (!$child->qr_code)
                                     <span class="text-danger">Belum ada QR Code</span>
                                 @endif
+                            </td> --}}
+                            <td>
+                                <a href="{{ route('sundayschoolclass.showAdjustClassForm', encrypt($child->id)) }}" class="btn btn-sm btn-primary">
+                                    Sesuaikan Kelas
+                                </a>
                             </td>                            
                         </tr>
                     @endforeach

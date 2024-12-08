@@ -36,9 +36,9 @@
                         </td>
                     </tr>
                 @empty
-                <div class="alert alert-danger">
-                    Tidak ada murid yang terdaftar di kelas ini.
-                </div>
+                    <div class="alert alert-danger">
+                        Tidak ada murid yang terdaftar di kelas ini.
+                    </div>
                 @endforelse
             </tbody>
         </table>

@@ -27,5 +27,10 @@ class SundaySchoolClass extends Model
     {
         return $this->belongsToMany(Schedule::class, 'schedules_sunday_school_class', 'sunday_school_class_id', 'schedule_id');
     }
+    
+    public function scheduleSundaySchoolClasses()
+    {
+        return $this->hasMany(ScheduleSundaySchoolClass::class, 'sunday_school_class_id', 'id');
+    }
 
 }

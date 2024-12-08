@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
 
         // Cek role dan arahkan pengguna sesuai role mereka
-        if ($user->hasRole('SuperAdmin')) {
+        if ($user->hasAnyRole('SuperAdmin', 'Admin')) {
             return redirect()->intended(route('dashboard', absolute: false));
         } elseif ($user->hasRole('Jemaat')) {
             return redirect()->intended(route('portal', absolute: false));

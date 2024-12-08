@@ -46,6 +46,7 @@
                 </tbody>
             </table>
             <button type="submit" class="btn btn-primary">Simpan Checklist Manual</button>
+            <a href="{{ route ('attendance.classList') }}" class="btn btn-default">Kembali</a>
         </form>
     </x-card>
 </x-app-layout>

@@ -12,7 +12,7 @@ class PositionController extends Controller
     //
     public function index() : View
     {   
-        $positions = Position::orderBy('name', 'asc')->paginate(3);
+        $positions = Position::orderBy('name', 'asc')->paginate(10);
         
         return view('position.index', compact('positions'));
     }
@@ -74,14 +74,27 @@ class PositionController extends Controller
     public function destroy($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
-        //get product by ID
-        $positions = Position::findOrFail($id);
+        $position = Position::findOrFail($id);
 
-        //delete product
-        $positions->delete();
+        // Ubah status menjadi 'Inactive'
+        $position->update([
+            'status' => 'Inactive',
+        ]);
 
-        //redirect to index
-        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Dinonaktifkan!']);
+    }
+
+    public function activate($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+        $position = Position::findOrFail($id);
+
+        // Ubah status menjadi 'Active'
+        $position->update([
+            'status' => 'Active',
+        ]);
+
+        return redirect()->route('position.index')->with(['success' => 'Data Berhasil Diaktifkan Kembali!']);
     }
 
 }

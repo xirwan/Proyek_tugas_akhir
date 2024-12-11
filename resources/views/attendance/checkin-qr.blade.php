@@ -102,7 +102,10 @@
                     <div class="card-body">
                         <ul class="list-group">
                             @forelse ($absentStudents as $student)
-                                <li class="list-group-item">{{ $student->firstname }} {{ $student->lastname }}</li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $student->firstname }} {{ $student->lastname }}</span>
+                                    <span class="badge badge-primary">{{ $student->check_in->format('H:i') }}</span>
+                                </li>
                             @empty
                                 <li class="list-group-item">Belum ada murid yang absen.</li>
                             @endforelse

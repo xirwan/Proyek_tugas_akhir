@@ -7558,6 +7558,7 @@ html.dark .call-to-action.call-to-action-grey:before {
 	background: #fdfdfd;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 	border-radius: 5px;
+	overflow: auto;  /* Membuat konten bisa digulir ketika terlalu besar */
 }
 
 .card-body-nopadding {
@@ -11017,6 +11018,7 @@ select.select-style-1:focus {
 	visibility: hidden;
 	line-height: 0;
 	height: 0;
+	position: relative;
 }
 
 .form-group + .form-group {
@@ -11241,6 +11243,8 @@ html.dark fieldset[disabled] .form-control {
 select.form-control-sm, select.form-control-lg {
 	line-height: 1;
 	height: auto !important;
+	position: relative;
+    z-index: 1;
 }
 
 .bootstrap-timepicker-widget input {

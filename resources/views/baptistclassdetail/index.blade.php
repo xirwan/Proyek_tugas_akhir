@@ -36,13 +36,9 @@
                         </td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="3" class="text-center">
-                            <div class="p-3 mb-2 bg-danger text-white">
-                                Data Pertemuan Kelas Pembaptisan belum tersedia.
-                            </div>
-                        </td>
-                    </tr>
+                        <div class="alert alert-danger">
+                            Data Pertemuan Kelas Pembaptisan belum tersedia.
+                        </div>
                 @endforelse
             </tbody>
         </table>

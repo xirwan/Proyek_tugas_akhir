@@ -21,8 +21,8 @@
             @if ($selectedChild)
                 <h3 class="mt-4">Absensi untuk {{ $selectedChild->firstname . ' ' . $selectedChild->lastname }}</h3>
                     @if (count($attendanceRecords) > 0)
-                        <table class="table mb-0">
-                            <thead class="text-center">
+                        <table class="table mb-0 text-center">
+                            <thead">
                                 <th>No</th>
                                 <th>Minggu</th>
                                 <th>Check-in</th>
@@ -35,7 +35,7 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $record->week_of }}</td>
-                                        <td>{{ $record->check_in }}</td>
+                                        <td> {{ $record->check_in ? \Carbon\Carbon::parse($record->check_in)->format('H:i') : 'Tidak Hadir' }}</td>
                                         <td>{{ $record->member->sundaySchoolClasses->first()->name ?? 'N/A' }}</td>
                                         <td>
                                             @php

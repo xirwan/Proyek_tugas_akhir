@@ -11,8 +11,6 @@
 
                     <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" placeholder="Masukan deskripsi" :required="true"/>
 
-                    <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :required="true"/>
-
             </div>
 
             <footer class="card-footer text-right">

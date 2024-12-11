@@ -17,7 +17,7 @@ class AttendanceController extends Controller
     public function listChildren()
     {
         // Ambil semua anak yang memiliki orang tua dan paginate hasilnya
-        $children = Member::whereHas('parents')->paginate(3);
+        $children = Member::whereHas('parents')->paginate(10);
 
         return view('attendance.children-list', compact('children'));
     }
@@ -91,7 +91,7 @@ class AttendanceController extends Controller
         Carbon::setLocale('id');
 
         // Ambil semua kelas sekolah minggu
-        $classes = SundaySchoolClass::with('schedules')->paginate(3);
+        $classes = SundaySchoolClass::with('schedules')->paginate(10);
         $currentDay = strtolower(Carbon::now()->isoFormat('dddd')); // Ambil hari ini
         $currentTime = Carbon::now()->toTimeString(); // Ambil waktu saat ini
 
@@ -136,13 +136,17 @@ class AttendanceController extends Controller
         $weekOf = Carbon::now()->toDateString();
 
         // Ambil ID murid yang sudah absen di kelas ini untuk minggu ini
-        $absentStudentIds = SundaySchoolPresence::where('week_of', $weekOf)
-            ->whereIn('member_id', $students->pluck('id')->toArray()) // Pastikan hanya murid di kelas ini
-            ->pluck('member_id')
-            ->toArray();
-
-        // Ambil data murid yang sudah absen di kelas ini
-        $absentStudents = $students->whereIn('id', $absentStudentIds);
+        $absentStudents = SundaySchoolPresence::where('week_of', $weekOf)
+        ->whereIn('member_id', $students->pluck('id')->toArray()) // Pastikan hanya murid di kelas ini
+        ->with('member') // Pastikan relasi member di-load
+        ->get()
+        ->map(function ($presence) {
+            return (object) [
+                'firstname' => $presence->member->firstname,
+                'lastname' => $presence->member->lastname,
+                'check_in' => $presence->check_in ? Carbon::parse($presence->check_in) : null,
+            ];
+        });
         return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
     }
 

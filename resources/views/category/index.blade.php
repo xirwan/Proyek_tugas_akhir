@@ -27,7 +27,7 @@
                         <td>{{ $categories->firstItem() + $index }}</td>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->description }}</td>
-                        <td>{{ $category->status }}</td>
+                        <td class="text-center">{{ $category->status }}</td>
                         <td class="actions text-center">
                             <a href="{{ route('category.show', encrypt($category->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>

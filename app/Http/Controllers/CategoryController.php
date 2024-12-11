@@ -63,14 +63,6 @@ class CategoryController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $encryptedId)
@@ -105,10 +97,28 @@ class CategoryController extends Controller
         //get product by ID
         $category = Category::findOrFail($id);
 
-        //delete product
-        $category->delete();
+        $category->update([
+            'status' => 'Inactive',
+        ]);
 
         //redirect to index
-        return redirect()->route('category.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        return redirect()->route('category.index')->with(['success' => 'Data Berhasil Dinonaktifkan!']);
     }
+
+    public function activate($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+        
+        // Temukan branch berdasarkan ID
+        $category = Category::findOrFail($id);
+
+        // Perbarui status menjadi 'Active'
+        $category->update([
+            'status' => 'Active',
+        ]);
+
+        // Redirect kembali ke index dengan pesan sukses
+        return redirect()->route('category.index')->with(['success' => 'Data Berhasil Diaktifkan Kembali!']);
+    }
+
 }

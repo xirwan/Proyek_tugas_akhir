@@ -51,3 +51,5 @@
 		<script src="{{asset('admintemp/vendor/modernizr/modernizr.js')}}"></script>
 
 		<script src="{{asset('admintemp/js/html5-qrcode.min.js')}}"></script>
+
+		<script src="{{asset('admintemp/js/jquery-3.6.0.min.js')}}"></script>

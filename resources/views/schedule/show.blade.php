@@ -14,34 +14,54 @@
             @csrf
             @method('PUT')
             <div class="card-body">
-                <x-select-box
-                name="day"
-                label="Pilih Hari"
-                :options="$dayoptions"
-                :selected="old('day', $schedule->day)" 
-                placeholder="Pilih Hari"
-                :required="true"
-                />
-                <x-select-box 
-                label="Tipe" 
-                name="type_id" 
-                :options="$typeoptions" 
-                placeholder="Pilih Tipe" 
-                :required="true"
-                :selected="$schedule->type_id" 
-                />
-                <x-select-box 
-                label="Kategori" 
-                name="category_id" 
-                :options="$categoryoptions" 
-                placeholder="Pilih Kategori" 
-                :required="true"
-                :selected="$schedule->category_id" 
-                />
-                <x-input-text name="name" id="inputnama" label="Nama" :value="$schedule->name" :required="true"/>
-                <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" :value="$schedule->description" :required="true"/>
-                <x-time-picker name="start" label="Jam Mulai" :value="$schedule->start" :required="true" />
-                <x-time-picker name="end" label="Jam Selesai (optional)" :value="$schedule->end" />
+                <div class="row form-group">
+                    <div class="col-lg-4">
+                        <x-select-box
+                        name="day"
+                        label="Pilih Hari"
+                        :options="$dayoptions"
+                        :selected="old('day', $schedule->day)" 
+                        placeholder="Pilih Hari"
+                        :required="true"
+                        />
+                    </div>
+                    <div class="col-lg-4">
+                        <x-select-box 
+                        label="Tipe" 
+                        name="type_id" 
+                        :options="$typeoptions" 
+                        placeholder="Pilih Tipe" 
+                        :required="true"
+                        :selected="$schedule->type_id" 
+                        />  
+                    </div>
+                    <div class="col-lg-4">
+                        <x-select-box 
+                        label="Kategori" 
+                        name="category_id" 
+                        :options="$categoryoptions" 
+                        placeholder="Pilih Kategori" 
+                        :required="true"
+                        :selected="$schedule->category_id" 
+                        />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-6">
+                        <x-input-text name="name" id="inputnama" label="Nama" :value="$schedule->name" :required="true"/>
+                    </div>
+                    <div class="col-lg-6">
+                        <x-input-area name="description" id="inputdeskripsi" label="Deskripsi" :value="$schedule->description" :required="true"/>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-6">
+                        <x-time-picker name="start" label="Jam Mulai" :value="$schedule->start" :required="true" />
+                    </div>
+                    <div class="col-lg-6">
+                        <x-time-picker name="end" label="Jam Selesai (optional)" :value="$schedule->end" />
+                    </div>
+                </div>
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-success">Edit</button>

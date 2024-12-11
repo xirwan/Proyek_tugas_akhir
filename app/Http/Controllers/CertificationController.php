@@ -73,20 +73,33 @@ class CertificationController extends Controller
             'rejection_reason' => 'required|string|max:255',
         ]);
 
-            // Dekripsi ID
-            $id = decrypt($encryptedId);
+        // Dekripsi ID
+        $id = decrypt($encryptedId);
 
-            // Ambil data sertifikasi
-            $certification = Certification::findOrFail($id);
+        // Ambil data sertifikasi
+        $certification = Certification::findOrFail($id);
 
-            // Update alasan penolakan
-            $certification->seminar_certified = false;
-            $certification->baptism_certified = false;
-            $certification->rejection_reason = $request->input('rejection_reason');
-            $certification->save();
+        // Update alasan penolakan
+        $certification->seminar_certified = false;
+        $certification->baptism_certified = false;
+        $certification->rejection_reason = $request->input('rejection_reason');
+        $certification->save();
 
-            return redirect()->route('certifications.index')->with('error', 'Sertifikasi ditolak dengan alasan: ' . $certification->rejection_reason);
+        // Perbarui position_id anggota menjadi ID posisi untuk "Jemaat"
+        $member = $certification->member; // Ambil relasi member dari sertifikasi
+
+        // Cari ID posisi "Jemaat" di tabel posisi
+        $positionId = Position::where('name', 'Jemaat')->value('id');
+
+        // Perbarui position_id anggota
+        if ($positionId) {
+            $member->position_id = $positionId;
+            $member->save();
+        }
+
+        return redirect()->route('certifications.index')->with('error', 'Sertifikasi ditolak dengan alasan: ' . $certification->rejection_reason);
     }
+
 
     public function showUploadForm()
     {

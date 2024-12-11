@@ -31,7 +31,7 @@ class Schedule extends Model
 
     public function classes()
     {
-        return $this->belongsToMany(SundaySchoolClass::class, 'schedule_sunday_school_class', 'schedule_id', 'sunday_school_class_id');
+        return $this->belongsToMany(SundaySchoolClass::class, 'schedules_sunday_school_class', 'schedule_id', 'sunday_school_class_id');
     }
 
 }

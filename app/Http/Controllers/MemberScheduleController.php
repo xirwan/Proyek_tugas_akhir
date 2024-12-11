@@ -67,7 +67,7 @@ class MemberScheduleController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
-            'month' => 'required|string',
+            'month' => 'required|integer',
             'year' => 'required|integer|min:2024',
             'class_id' => 'required|exists:schedules_sunday_school_class,id',
             'member_id' => 'required|exists:members,id',
@@ -75,30 +75,31 @@ class MemberScheduleController extends Controller
 
         // Pemetaan nama bulan ke nomor
         $monthMap = [
-            'Januari' => 1,
-            'Februari' => 2,
-            'Maret' => 3,
-            'April' => 4,
-            'Mei' => 5,
-            'Juni' => 6,
-            'Juli' => 7,
-            'Agustus' => 8,
-            'September' => 9,
-            'Oktober' => 10,
-            'November' => 11,
-            'Desember' => 12,
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
-        $monthName = $validated['month'];
+        $monthNumber = $validated['month'];
         $year = $validated['year'];
         $classId = $validated['class_id'];
         $memberId = $validated['member_id'];
 
-        if (!isset($monthMap[$monthName])) {
+        // Cek validitas bulan
+        if (!isset($monthMap[$monthNumber])) {
             return back()->withErrors(['month' => 'Bulan tidak valid.']);
         }
 
-        $month = $monthMap[$monthName]; // Ubah menjadi integer bulan
+        $monthName = $monthMap[$monthNumber]; // Ubah menjadi integer bulan
 
         // Ambil hari dari jadwal kelas
         $scheduleClass = ScheduleSundaySchoolClass::findOrFail($classId);
@@ -122,7 +123,7 @@ class MemberScheduleController extends Controller
         ]);
 
         // Generate semua tanggal
-        $startOfMonth = Carbon::create($year, $month, 1);
+        $startOfMonth = Carbon::create($year, $monthNumber, 1);
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
         $dates = [];
@@ -158,43 +159,97 @@ class MemberScheduleController extends Controller
         return redirect()->route('scheduling.index')->with('success', 'Data Penjadwalan Berhasil Disimpan!');
     }
 
-    /**
-     * Tampilkan Form Penjadwalan Bulanan
-     */
-    public function create()
+    
+    public function create(Request $request)
     {
-        // Ambil data untuk dropdown
-        $monthOptions = [
-            'Januari' => 'Januari',
-            'Februari' => 'Februari',
-            'Maret' => 'Maret',
-            'April' => 'April',
-            'Mei' => 'Mei',
-            'Juni' => 'Juni',
-            'Juli' => 'Juli',
-            'Agustus' => 'Agustus',
-            'September' => 'September',
-            'Oktober' => 'Oktober',
-            'November' => 'November',
-            'Desember' => 'Desember',
-        ];
+        // Ambil tahun dan bulan dari request atau default ke tahun saat ini
+        $selectedYear = $request->input('year', now()->year);
+        $selectedMonth = $request->input('month');
 
+        // Definisikan bulan dengan nama
+        $monthOptions = collect([
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ])->filter(function ($monthName, $monthNumber) use ($selectedYear) {
+            $currentMonth = now()->month;
+            $currentYear = now()->year;
+            if ($selectedYear > $currentYear) {
+                return true; // Semua bulan tersedia untuk tahun mendatang
+            } elseif ($selectedYear == $currentYear) {
+                return $monthNumber >= $currentMonth; // Bulan yang belum lewat
+            } else {
+                return true; // Sesuaikan jika ingin membatasi untuk tahun lalu
+            }
+        });
+
+        // Validasi selectedMonth
+        if ($selectedMonth && !$monthOptions->has($selectedMonth)) {
+            $selectedMonth = null; // Menghapus bulan yang tidak valid
+        }
+
+        // Jika selectedMonth tidak ada, set ke bulan pertama yang tersedia
+        if (!$selectedMonth && $monthOptions->isNotEmpty()) {
+            $selectedMonth = $monthOptions->keys()->first();
+        }
+
+        // Mendapatkan ID Member yang sudah dijadwalkan pada bulan dan tahun yang dipilih berdasarkan schedule_date
+        $scheduledMemberIds = MemberScheduleMonthly::whereYear('schedule_date', $selectedYear)
+            ->when($selectedMonth, function ($query, $month) {
+                return $query->whereMonth('schedule_date', $month);
+            })
+            ->pluck('member_id')
+            ->unique()
+            ->toArray();
+
+        // Mendapatkan ID Kelas yang sudah dijadwalkan pada bulan dan tahun yang dipilih berdasarkan schedule_date
+        $scheduledClassIds = MemberScheduleMonthly::whereYear('schedule_date', $selectedYear)
+            ->when($selectedMonth, function ($query, $month) {
+                return $query->whereMonth('schedule_date', $month);
+            })
+            ->pluck('schedules_sunday_school_class_id')
+            ->unique()
+            ->toArray();
+
+        // Mendapatkan opsi member yang belum dijadwalkan
         $memberOptions = Member::whereHas('user', function ($query) {
-            $query->role('admin'); // Menggunakan Spatie untuk memfilter user dengan role 'admin'
-        })->get()->mapWithKeys(function ($member) {
-            return [$member->id => $member->firstname . ' ' . $member->lastname]; // Gabungkan nama depan dan belakang
-        });        
+                $query->role('Admin'); // Menggunakan Spatie untuk memfilter user dengan role 'admin'
+            })
+            ->whereNotIn('id', $scheduledMemberIds)
+            ->get()
+            ->mapWithKeys(function ($member) {
+                return [$member->id => $member->firstname . ' ' . $member->lastname];
+            });
 
-        $scheduleClassOptions = DB::table('schedules_sunday_school_class')
+        // Mendapatkan opsi kelas yang belum dijadwalkan
+        $scheduleClassOptions = ScheduleSundaySchoolClass::whereNotIn('schedules_sunday_school_class.id', $scheduledClassIds)
             ->join('schedules', 'schedules.id', '=', 'schedules_sunday_school_class.schedule_id')
             ->join('sunday_school_classes', 'sunday_school_classes.id', '=', 'schedules_sunday_school_class.sunday_school_class_id')
             ->select(
                 'schedules_sunday_school_class.id',
                 DB::raw("CONCAT(sunday_school_classes.name, ' - ', schedules.day) as name")
             )
-            ->pluck('name', 'id'); // Pilihan kelas & jadwal
-        return view('scheduling.add', compact('monthOptions', 'memberOptions', 'scheduleClassOptions'));
+            ->pluck('name', 'schedules_sunday_school_class.id');
+
+        // Jika tidak ada bulan yang tersedia, tampilkan pesan error
+        if (!$selectedMonth) {
+            return redirect()->route('scheduling.create')->with('error', 'Tidak ada bulan yang tersedia untuk tahun yang dipilih.');
+        }
+
+        return view('scheduling.add', compact('monthOptions', 'memberOptions', 'scheduleClassOptions', 'selectedMonth', 'selectedYear'));
     }
+
+
+     
 
     public function mySchedule(Request $request)
     {

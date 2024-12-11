@@ -13,7 +13,7 @@ class SundaySchoolClassController extends Controller
     // 1. Menampilkan daftar kelas
     public function index()
     {
-        $classes = SundaySchoolClass::paginate(3);
+        $classes = SundaySchoolClass::paginate(10);
         return view('sundayclasses.index', compact('classes'));
     }
 

@@ -40,13 +40,23 @@ Route::prefix('master-data')->middleware('auth')->group(function () {
 
     Route::resource('schedule', ScheduleController::class);
 
-    Route::resource('category', CategoryController::class)->middleware(['auth', 'verified']);
+    Route::post('/schedule/{id}/activate', [ScheduleController::class, 'activate'])->name('schedule.activate');
+
+    Route::resource('category', CategoryController::class);
+
+    Route::post('/category/{id}/activate', [CategoryController::class, 'activate'])->name('category.activate');
     
-    Route::resource('type', TypeController::class)->middleware(['auth', 'verified']);
-    
-    Route::resource('position', PositionController::class)->middleware(['auth', 'verified']);
+    Route::resource('type', TypeController::class);
+
+    Route::post('/type/{id}/activate', [TypeController::class, 'activate'])->name('type.activate');
+
+    Route::resource('position', PositionController::class);
+
+    Route::post('/position/{id}/activate', [PositionController::class, 'activate'])->name('position.activate');
 
     Route::resource('branch', BranchController::class);
+
+    Route::post('/branch/{id}/activate', [BranchController::class, 'activate'])->name('branch.activate');
 
     Route::resource('role', RoleController::class);
 
@@ -106,9 +116,15 @@ Route::prefix('sunday-school')->middleware('auth')->group(function () {
 
         Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');
 
+        Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
+
         Route::post('/store', [ReportController::class, 'store'])->name('admin.reports.store');
 
+        Route::get('/show/{id}', [ReportController::class, 'show'])->name('admin.reports.show');
+
         Route::get('/download/{id}', [ReportController::class, 'download'])->name('admin.reports.download');
+
+        Route::put('/update/{id}', [ReportController::class, 'update'])->name('admin.reports.update');
 
         Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
 
@@ -121,6 +137,8 @@ Route::get('/scheduling', [MemberScheduleController::class, 'index'])->name('sch
 Route::get('/scheduling/create', [MemberScheduleController::class, 'create'])->name('scheduling.create'); // Form tambah jadwal
 
 Route::post('/scheduling/store', [MemberScheduleController::class, 'store'])->name('scheduling.store');
+
+Route::get('/scheduling/available-options', [MemberScheduleController::class, 'availableOptions'])->name('scheduling.availableOptions');
 
 Route::get('/my-schedule', [MemberScheduleController::class, 'mySchedule'])->name('myschedule.index');
 
@@ -207,7 +225,7 @@ Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'sh
 
 
 
-Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
+
 
 
 Route::get('/dashboard', function () {

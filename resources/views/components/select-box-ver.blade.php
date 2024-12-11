@@ -5,11 +5,10 @@
     'placeholder' => '',     // Placeholder default kosong
     'options' => [],         // Opsi untuk select box
     'selected' => '',        // Nilai yang terpilih kosong (misalnya saat edit form)
-    'required' => false,      // Required default false
-    'disabled' => false,     // Atribut disabled defaultnya false
+    'required' => false,     // Required default false
 ])
 
-<div class="form-group">
+<div class="form-group select-container">
     <label class="form-label" for="{{ $id }}">{{ $label }}</label>
     <select class="form-control" name="{{ $name }}" id="{{ $id }}" {{ $required ? 'required' : '' }}>
         <!-- Placeholder -->

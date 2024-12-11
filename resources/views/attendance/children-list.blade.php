@@ -35,7 +35,7 @@
                                     <span class="text-danger">Tidak ada kelas</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center">
                                 @if ($child->qr_code)
                                     <button class="btn btn-primary btn-show-qr" data-bs-toggle="modal" data-bs-target="#qrModal{{ $child->id }}">
                                         Show QR
@@ -73,7 +73,7 @@
                                     <span class="text-danger">Belum ada QR Code</span>
                                 @endif
                             </td> --}}
-                            <td>
+                            <td class="text-center">
                                 <a href="{{ route('sundayschoolclass.showAdjustClassForm', encrypt($child->id)) }}" class="btn btn-sm btn-primary">
                                     Sesuaikan Kelas
                                 </a>

@@ -14,7 +14,7 @@ class TypeController extends Controller
     public function index()
     {
         //
-        $types = Type::orderBy('name', 'asc')->paginate(3);
+        $types = Type::orderBy('name', 'asc')->paginate(10);
         
         return view('type.index', compact('types'));
     }
@@ -65,10 +65,6 @@ class TypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -98,17 +94,33 @@ class TypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $encryptedId)
+    public function destroy(string $encryptedId): RedirectResponse
     {
-        //
         $id = decrypt($encryptedId);
-        //get product by ID
+        // Get Type by ID
         $type = Type::findOrFail($id);
 
-        //delete product
-        $type->delete();
+        // Update status menjadi 'Inactive'
+        $type->update([
+            'status' => 'Inactive',
+        ]);
 
-        //redirect to index
-        return redirect()->route('type.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        // Redirect to index dengan pesan sukses
+        return redirect()->route('type.index')->with(['success' => 'Data Berhasil Dinonaktifkan!']);
+    }
+
+    public function activate(string $encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+        // Get Type by ID
+        $type = Type::findOrFail($id);
+
+        // Update status menjadi 'Active'
+        $type->update([
+            'status' => 'Active',
+        ]);
+
+        // Redirect to index dengan pesan sukses
+        return redirect()->route('type.index')->with(['success' => 'Data Berhasil Diaktifkan Kembali!']);
     }
 }

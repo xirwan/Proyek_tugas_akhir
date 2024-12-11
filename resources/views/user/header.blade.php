@@ -29,11 +29,11 @@
                                             </a>    
                                         </li>
 
-                                        <li>
+                                        {{-- <li>
                                             <a class="nav-link" href="#cabang" data-hash data-hash-offset="120">
                                                 Cabang
                                             </a>    
-                                        </li>
+                                        </li> --}}
 
                                         
                                         <li class="dropdown">
@@ -53,15 +53,10 @@
                                                     </a>
                                                 </li>
                                                 
-                                                <li>
-                                                    <a class="nav-link" href="pages-signup.html">
-                                                        Kelompok Tumbuh Bersama
-                                                    </a>
-                                                </li>
                                                 
                                             </ul>
                                         </li>
-                                        <li class="dropdown">
+                                        {{-- <li class="dropdown">
                                             <a class="nav-link dropdown-toggle" href="#">
                                                 Layanan
                                             </a>
@@ -109,7 +104,7 @@
                                                 </li>
                                                 
                                             </ul>
-                                        </li>                                               
+                                        </li>--}}
                                         @if (Route::has('login'))
                                         @auth
                                         <li class="dropdown">

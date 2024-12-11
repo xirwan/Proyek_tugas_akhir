@@ -27,7 +27,7 @@
                         <td>{{ $positions->firstItem() + $index }}</td>
                         <td>{{ $position->name }}</td>
                         <td>{{ $position->description }}</td>
-                        <td>{{ $position->status }}</td>
+                        <td class="text-center">{{ $position->status }}</td>
                         <td class="actions text-center">
                             <a href="{{ route('position.show', encrypt($position->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>

@@ -45,5 +45,6 @@
         <div class="mt-5">
             {{ $students->links() }}
         </div>
+        <a href="{{ route ('sunday-classes.index') }}" class="btn btn-success">Kembali</a>
     </x-card>
 </x-app-layout>

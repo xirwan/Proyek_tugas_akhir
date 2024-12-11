@@ -14,11 +14,18 @@
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-success">Edit</button>
             </form>
-            <form action="{{ route('category.destroy', encrypt($category->id)) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data kategori jadwal ini?');">Hapus</button>
-            </form>
+                @if($category->status === 'Active')
+                    <form action="{{ route('category.destroy', encrypt($category->id)) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data kategori jadwal ini?');">Nonaktifkan</button>
+                    </form>
+                @else
+                    <form action="{{ route('category.activate', encrypt($category->id)) }}" method="POST" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali data kategori jadwal ini?');">Aktifkan</button>
+                    </form>
+                @endif
                 <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
             </footer>
     </section>

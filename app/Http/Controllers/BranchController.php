@@ -74,14 +74,34 @@ class BranchController extends Controller
     public function destroy($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
-        //get product by ID
+        
+        // Temukan branch berdasarkan ID
         $branch = Branch::findOrFail($id);
 
-        //delete product
-        $branch->delete();
+        // Perbarui status menjadi 'Inactive' tanpa menghapus record
+        $branch->update([
+            'status' => 'Inactive',
+        ]);
 
-        //redirect to index
-        return redirect()->route('branch.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        // Redirect kembali ke index dengan pesan sukses
+        return redirect()->route('branch.index')->with(['success' => 'Data Cabang berhasil di-nonaktifkan!']);
     }
+
+    public function activate($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+        
+        // Temukan branch berdasarkan ID
+        $branch = Branch::findOrFail($id);
+
+        // Perbarui status menjadi 'Active'
+        $branch->update([
+            'status' => 'Active',
+        ]);
+
+        // Redirect kembali ke index dengan pesan sukses
+        return redirect()->route('branch.index')->with(['success' => 'Data Cabang berhasil diaktifkan kembali!']);
+    }
+
 
 }

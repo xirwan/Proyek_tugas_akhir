@@ -24,7 +24,7 @@ class MemberController extends Controller
     public function index() : View
     {   
         // Mengambil semua data anggota beserta cabang-nya menggunakan eager loading (dengan relasi cabang)
-        $members = Member::with('branch', 'user', 'position')->paginate(3);
+        $members = Member::with('branch', 'user', 'position')->paginate(5);
         
         return view('member.index', compact('members'));
     }
@@ -411,11 +411,11 @@ class MemberController extends Controller
         $age = \Carbon\Carbon::parse($child->dateofbirth)->age;
 
         // Tentukan kelas berdasarkan usia
-        if ($age >= 1 && $age <= 5) {
+        if ($age >= 0 && $age < 3) {
             $classId = SundaySchoolClass::where('name', 'Kelas Yakobus')->first()->id;
-        } elseif ($age >= 5 && $age <= 10) {
+        } elseif ($age >= 3 && $age < 6) {
             $classId = SundaySchoolClass::where('name', 'Kelas Petrus')->first()->id;
-        } elseif ($age >= 10 && $age <= 15) {
+        } elseif ($age >= 6 && $age <= 13) {
             $classId = SundaySchoolClass::where('name', 'Kelas Yohanes')->first()->id;
         } else {
             $classId = null; // Tidak ada kelas yang cocok
@@ -435,7 +435,7 @@ class MemberController extends Controller
         // Cari semua anak dari parentMember melalui tabel member_relation
         $children = MemberRelation::with(['relatedMember', 'relation'])
             ->where('member_id', $parentMember->id)
-            ->paginate(3);
+            ->paginate(10);
 
         // Kirim data anak ke view
 

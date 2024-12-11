@@ -27,7 +27,7 @@
                         <td>{{ $types->firstItem() + $index }}</td>
                         <td>{{ $type->name }}</td>
                         <td>{{ $type->description }}</td>
-                        <td>{{ $type->status }}</td>
+                        <td class="text-center">{{ $type->status }}</td>
                         <td class="actions text-center">
                             <a href="{{ route('type.show', encrypt($type->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>

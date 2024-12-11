@@ -23,7 +23,7 @@
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="text-center">
                 @forelse($reports as $index => $report)
                     <tr>
                         <td>{{ $reports->firstItem() + $index }}</td>
@@ -33,9 +33,10 @@
                         <td>{{ $report->description ?? '-' }}</td>
                         <td>
                             @if ($report->file_path)
-                                <a href="{{ route('admin.reports.download', $report->id) }}" class="btn btn-primary">
+                                <a href="{{ route('admin.reports.download', $report->id) }}" target="_blank" class="btn btn-primary">
                                     Download
                                 </a>
+                                <a href="{{ route('admin.reports.show', $report->id) }}" class="btn btn-success">Edit</a>
                             @else
                                 <span class="text-muted">Tidak ada file</span>
                             @endif

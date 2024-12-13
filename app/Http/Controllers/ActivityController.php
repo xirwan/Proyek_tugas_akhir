@@ -134,11 +134,6 @@ class ActivityController extends Controller
             ]);
         }
 
-        // Jika kegiatan berbayar, arahkan ke halaman upload pembayaran
-        if ($activity->is_paid) {
-            return redirect()->route('activities.upload.payment.form', $activityId)
-                ->with('success', 'Anak berhasil didaftarkan. Silakan unggah bukti pembayaran.');
-        }
 
         // Jika kegiatan tidak berbayar, kembali ke daftar kegiatan
         return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');

@@ -23,18 +23,23 @@ use App\Http\Controllers\CertificationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsCategoryController;
 use App\Http\Controllers\MemberScheduleController;
+use App\Http\Controllers\ActivityController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/coba', function () {
-    return view('coba');
-});
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified', 'role:SuperAdmin|Admin'])->name('dashboard');
 
 Route::get('/portal', function () {
     return view('userdashboard');
 })->name('portal')->middleware(['auth', 'verified', 'role:Jemaat']);
+
+Route::get('/coba', function () {
+    return view('coba');
+});
 
 Route::prefix('master-data')->middleware('auth')->group(function () {
 
@@ -79,6 +84,14 @@ Route::prefix('master-data')->middleware('auth')->group(function () {
 
 });
 
+Route::get('/scheduling', [MemberScheduleController::class, 'index'])->name('scheduling.index');
+
+Route::get('/scheduling/create', [MemberScheduleController::class, 'create'])->name('scheduling.create');
+
+Route::post('/scheduling/store', [MemberScheduleController::class, 'store'])->name('scheduling.store');
+
+Route::get('/scheduling/available-options', [MemberScheduleController::class, 'availableOptions'])->name('scheduling.availableOptions');
+
 Route::prefix('sunday-school')->middleware('auth')->group(function () {
 
     Route::resource('sunday-classes', SundaySchoolClassController::class);
@@ -90,6 +103,8 @@ Route::prefix('sunday-school')->middleware('auth')->group(function () {
     Route::post('sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'adjustClass'])->name('sundayschoolclass.adjustClass');
 
     Route::get('attendance/class', [AttendanceController::class, 'classList'])->name('attendance.classList');
+
+    Route::get('attendance/class-admin', [AttendanceController::class, 'classListAdmin'])->name('attendance.classListAdmin');
 
     Route::get('attendance/class/{class_id}', [AttendanceController::class, 'attendanceListByClass'])->name('attendance.classAttendance');
 
@@ -132,13 +147,7 @@ Route::prefix('sunday-school')->middleware('auth')->group(function () {
     
 });
 
-Route::get('/scheduling', [MemberScheduleController::class, 'index'])->name('scheduling.index');
 
-Route::get('/scheduling/create', [MemberScheduleController::class, 'create'])->name('scheduling.create'); // Form tambah jadwal
-
-Route::post('/scheduling/store', [MemberScheduleController::class, 'store'])->name('scheduling.store');
-
-Route::get('/scheduling/available-options', [MemberScheduleController::class, 'availableOptions'])->name('scheduling.availableOptions');
 
 Route::get('/my-schedule', [MemberScheduleController::class, 'mySchedule'])->name('myschedule.index');
 
@@ -178,6 +187,23 @@ Route::post('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDet
 
 
 
+Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
+
+Route::get('/activities/create', [ActivityController::class, 'create'])->name('activities.create');
+
+Route::post('/activities/store', [ActivityController::class, 'storeActivity'])->name('activities.store');
+
+Route::get('/activities/{id}', [ActivityController::class, 'show'])->name('activities.show');
+
+Route::get('/activities/{id}/edit', [ActivityController::class, 'edit'])->name('activities.edit');
+
+Route::put('/activities/{id}', [ActivityController::class, 'update'])->name('activities.update');
+
+Route::post('/activities/{id}/approve', [ActivityController::class, 'approveActivity'])->name('activities.approve');
+
+Route::post('/activities/{id}/reject', [ActivityController::class, 'rejectActivity'])->name('activities.reject');
+
+
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
@@ -199,6 +225,19 @@ Route::get('/member/children/{child}/edit', [MemberController::class, 'editChild
 Route::patch('/member/children/{child}', [MemberController::class, 'updateChild'])->name('member.updateChild');
 
 Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
+
+Route::get('/childrens-activities', [ActivityController::class, 'indexParent'])->name('activities.parent.index');
+
+Route::get('/childrens-activities/{id}/register', [ActivityController::class, 'registerForm'])->name('activities.register.form');
+
+// Route untuk menyimpan pendaftaran kegiatan
+Route::post('/childrens-activities/{id}/register', [ActivityController::class, 'register'])->name('activities.register.children');
+
+// Route::get('/childrens-activities/{id}/upload-payment', [ActivityController::class, 'uploadPaymentForm'])->name('activities.upload.payment.form');
+
+Route::get('/childrens-activities/{id}', [ActivityController::class, 'showParent'])->name('activities.parent.show');
+
+Route::post('/activities/{id}/upload-payment', [ActivityController::class, 'uploadPayment'])->name('activities.upload.payment');
 
 // Route::get('/qr-code/checkin/{id}', [AttendanceController::class, 'checkIn'])->name('qr-code.checkin');
 
@@ -222,29 +261,10 @@ Route::post('/member-baptist/register', [MemberBaptistController::class, 'regist
 
 Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
-
-
-
-
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'role:SuperAdmin|Admin'])->name('dashboard');
-
-// Route::group(['middleware' => ['auth', 'verified', 'role:SuperAdmin']], function () {
-//     Route::resource('branch', BranchController::class);
-//     Route::resource('role', RoleController::class);
-//     Route::resource('member', MemberController::class);
-// });
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/pembaptisan', function () {
-        return view('pembaptisan');
-    })->name('pembaptisan');
 }); 
 
 require __DIR__.'/auth.php';

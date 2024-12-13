@@ -14,7 +14,6 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Deskripsi</th>
-                    <th>Status</th>
                     <th>Absensi</th>
                     <th>Scan QR</th>
                 </tr>
@@ -25,7 +24,6 @@
                         <td>{{ $classes->firstItem() + $index }}</td>
                         <td>{{ $class->name }}</td>
                         <td>{{ $class->description }}</td>
-                        <td>{{ $class->status }}</td>
                         <td class="text-center">
                             @if($class->isActiveSchedule)
                                 <a href="{{ route('attendance.classAttendance', $class->id) }}" class="btn btn-primary">
@@ -48,11 +46,12 @@
                 @empty
                     <tr>                        
                         <div class="alert alert-danger">
-                            Data kelas sekolah minggu belum tersedia.
+                            Tidak ada kelas yang dijadwalkan untuk Anda.
                         </div>
                     </tr>
                 @endforelse
             </tbody>
+            
         </table>
         <div class="mt-5">
             {{ $classes->links() }}

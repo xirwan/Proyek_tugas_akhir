@@ -20,4 +20,11 @@ class ScheduleSundaySchoolClass extends Model
     {
         return $this->belongsTo(Schedule::class, 'schedule_id', 'id'); // Sesuaikan dengan model jadwal
     }
+
+    public function memberSchedules()
+    {
+        return $this->hasMany(MemberScheduleMonthly::class, 'schedules_sunday_school_class_id');
+    }
+
+
 }

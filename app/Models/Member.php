@@ -19,7 +19,6 @@ class Member extends Model
         'address',
         'qr_code',
         'branch_id',
-        // 'role_id',
         'position_id',
         'user_id',
     ];
@@ -33,11 +32,6 @@ class Member extends Model
     {
         return $this->belongsTo(Position::class, 'position_id', 'id');
     }
-
-    // public function role()
-    // {
-    //     return $this->belongsTo(Role::class, 'role_id');
-    // }
 
     public function user()
     {
@@ -97,4 +91,21 @@ class Member extends Model
         return $this->hasMany(MemberScheduleMonthly::class, 'member_id');
     }
 
+    // Relasi ke aktivitas yang dibuat oleh member (admin)
+    public function createdActivities()
+    {
+        return $this->hasMany(Activity::class, 'created_by');
+    }
+
+    // Relasi ke pendaftaran aktivitas
+    public function registrations()
+    {
+        return $this->hasMany(MemberActivityRegistration::class, 'registered_by');
+    }
+
+    // Relasi ke aktivitas yang diverifikasi pembayaran oleh admin (jika member bertugas sebagai admin)
+    public function verifiedPayments()
+    {
+        return $this->hasMany(ActivityPayment::class, 'verified_by');
+    }
 }

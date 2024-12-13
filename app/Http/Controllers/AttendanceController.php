@@ -106,19 +106,6 @@ class AttendanceController extends Controller
                 }
             }
         }        
-        // foreach ($classes as $class) {
-        //     foreach ($class->schedules as $schedule) {
-        //         dd([
-        //             'current_day' => $currentDay,
-        //             'current_time' => $currentTime,
-        //             'schedule_day' => $schedule->day,
-        //             'schedule_start' => $schedule->start,
-        //             'schedule_end' => $schedule->end,
-        //             'is_active' => ($schedule->day === $currentDay) && ($currentTime >= $schedule->start && $currentTime <= $schedule->end),
-        //         ]);
-        //     }
-        // }
-
         return view('attendance.class-list', compact('classes'));
     }
 
@@ -149,6 +136,52 @@ class AttendanceController extends Controller
         });
         return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
     }
+
+    public function classListAdmin()
+{
+    // Atur lokal untuk menghasilkan nama bulan dalam bahasa Indonesia
+    Carbon::setLocale('id');
+
+    // Ambil admin yang login dan cari member_id-nya
+    $member = Member::where('user_id', Auth::id())->first();
+
+    if (!$member) {
+        return redirect()->back()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
+    }
+
+    // Ambil nama bulan dan tahun saat ini
+    $currentMonth = Carbon::now()->translatedFormat('F'); // Contoh: "Desember"
+    $currentYear = Carbon::now()->year;
+
+    // Ambil kelas yang sesuai dengan member berdasarkan bulan (nama dalam bahasa Indonesia) dan tahun
+    $classes = SundaySchoolClass::whereHas('scheduleSundaySchoolClasses', function ($query) use ($member, $currentMonth, $currentYear) {
+        $query->whereHas('memberSchedules', function ($subQuery) use ($member, $currentMonth, $currentYear) {
+            $subQuery->where('member_id', $member->id)
+                     ->whereHas('monthlySchedule', function ($monthlyScheduleQuery) use ($currentMonth, $currentYear) {
+                         $monthlyScheduleQuery->where('month', $currentMonth)
+                                              ->where('year', $currentYear);
+                     });
+        });
+    })
+    ->with('schedules') // Pastikan jadwal ikut di-load
+    ->paginate(10);
+
+    // Tandai kelas sebagai aktif berdasarkan jadwal, jika diperlukan
+    foreach ($classes as $class) {
+        foreach ($class->schedules as $schedule) {
+            $class->isActiveSchedule = false; // Default: Tidak aktif
+            if (strtolower($schedule->day) === strtolower(Carbon::now()->isoFormat('dddd'))) {
+                $class->isActiveSchedule = true;
+                break;
+            }
+        }
+    }
+
+    return view('attendance.admin-class-list', compact('classes'));
+}
+
+
+
 
     public function checkinByClass(Request $request, $class_id)
     {

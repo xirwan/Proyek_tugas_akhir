@@ -1,4 +1,10 @@
 <x-app-layout>
+    <style>
+        .badge-custom {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @if (session('success'))
         <div id="alert" class="alert alert-success">
@@ -6,12 +12,13 @@
         </div>
     @endif
     @if ($errors->any())
-    <div class="alert alert-danger">
-        @foreach ($errors->all() as $error)
-            <p>{{ $error }}</p>
-        @endforeach
-    </div>
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
     @endif
+
     <x-card>
         <x-slot name="header">
             List Pengajuan Kegiatan
@@ -74,7 +81,15 @@
                         <td>{{ $loop->iteration + $activities->firstItem() - 1 }}</td>
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->description ?? '-' }}</td>
-                        <td>{{ ucfirst(str_replace('_', ' ', $activity->status)) }}</td>
+                        <td>
+                            @if ($activity->status === 'pending_approval')
+                                <span class="badge bg-warning text-white badge-custom">Pending Approval</span>
+                            @elseif ($activity->status === 'approved')
+                                <span class="badge bg-success text-white badge-custom">Approved</span>
+                            @elseif ($activity->status === 'rejected')
+                                <span class="badge bg-danger text-white badge-custom">Rejected</span>
+                            @endif
+                        </td>
                         @if (auth()->user()->hasRole('SuperAdmin')) {{-- Menampilkan kolom Pembina hanya untuk SuperAdmin --}}
                             <td>{{ $activity->creator->firstname }} {{ $activity->creator->lastname }}</td>
                         @endif
@@ -119,9 +134,13 @@
                         </td>
                     </tr>
                 @empty
-                    <div class="alert alert-danger">
-                        Data Aktivitas belum tersedia.
-                    </div>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="alert alert-danger">
+                                Data Aktivitas belum tersedia.
+                            </div>
+                        </td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>

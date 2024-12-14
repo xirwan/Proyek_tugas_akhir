@@ -72,9 +72,7 @@ class ActivityController extends Controller
         $children = Auth::user()->member->children;
 
         // Ambil semua registrasi anak untuk kegiatan
-        $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))
-            ->pluck('activity_id', 'child_id')
-            ->toArray();
+        $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
 
         // Periksa apakah tombol daftar harus muncul
         foreach ($activities as $activity) {
@@ -96,6 +94,7 @@ class ActivityController extends Controller
 
         return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
     }
+
 
 
 

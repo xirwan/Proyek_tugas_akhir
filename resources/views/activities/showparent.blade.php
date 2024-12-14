@@ -31,6 +31,7 @@
                 {{-- Informasi Kegiatan --}}
                 <h5>Informasi Kegiatan</h5>
                 <p><strong>Nama Kegiatan:</strong> {{ $activity->title }}</p>
+                <p><strong>Deskripsi Kegiatan:</strong> {{ $activity->description }}</p>
                 <p><strong>Tanggal Kegiatan:</strong> {{ $activity->start_date }}</p>
                 <p><strong>Tanggal Pendaftaran Dibuka:</strong> {{ $activity->registration_open_date }}</p>
                 <p><strong>Tanggal Pendaftaran Ditutup:</strong> {{ $activity->registration_close_date }}</p>

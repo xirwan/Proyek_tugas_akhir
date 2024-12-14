@@ -1,6 +1,11 @@
 <x-user>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <style>
+        .badge-custom {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
     {{-- Pesan Sukses --}}
     @if (session('success'))
         <div class="alert alert-success">
@@ -38,6 +43,7 @@
                     <th>Judul</th>
                     <th>Deskripsi</th>
                     <th>Tanggal Mulai</th>
+                    <th>Status</th>
                     <th>Poster</th>
                     <th>Aksi</th>
                 </tr>
@@ -49,6 +55,16 @@
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->description ?? '-' }}</td>
                         <td>{{ $activity->start_date }}</td>
+                        <td>
+                            @php
+                                $isRegistered = $registeredChildren->contains('activity_id', $activity->id);
+                            @endphp
+                            @if ($isRegistered)
+                                <span class="badge bg-success text-white badge-custom">Sudah Didaftarkan</span>
+                            @else
+                                <span class="badge bg-secondary text-white badge-custom">Belum Didaftarkan</span>
+                            @endif
+                        </td>
                         <td>
                             {{-- Tombol untuk melihat poster kegiatan --}}
                             @if ($activity->poster_file)
@@ -86,7 +102,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">
+                        <td colspan="7" class="text-center">
                             <div class="alert alert-danger">
                                 Tidak ada kegiatan yang tersedia.
                             </div>

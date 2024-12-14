@@ -1,17 +1,19 @@
 <x-user>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    {{-- Pesan Sukses --}}
     @if (session('success'))
-        <div id="alert" class="alert alert-success">
+        <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    {{-- Filter Pencarian --}}
     <x-card>
         <x-slot name="header">
             Daftar Kegiatan
         </x-slot>
 
-        {{-- Filter Pencarian --}}
         <form method="GET" action="{{ route('activities.parent.index') }}" class="mb-4">
             <div class="row">
                 <div class="col-lg-4">
@@ -43,7 +45,7 @@
             <tbody>
                 @forelse($activities as $activity)
                     <tr>
-                        <td>{{ $loop->iteration + $activities->firstItem() - 1 }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->description ?? '-' }}</td>
                         <td>{{ $activity->start_date }}</td>
@@ -53,13 +55,14 @@
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#posterModal-{{ $activity->id }}">
                                     Lihat Poster
                                 </button>
+
                                 {{-- Modal Poster --}}
                                 <div class="modal fade" id="posterModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="posterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="posterModalLabel">Poster Kegiatan</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
                                             </div>
                                             <div class="modal-body text-center">
                                                 <img src="{{ asset('storage/' . $activity->poster_file) }}" class="img-fluid" alt="Poster Kegiatan">
@@ -76,7 +79,9 @@
                             <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
 
                             {{-- Tombol Daftar --}}
-                            <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
+                            @if ($activity->showRegisterButton)
+                                <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
+                            @endif
                         </td>
                     </tr>
                 @empty

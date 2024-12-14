@@ -54,42 +54,6 @@
                         </div>
                     </div>
 				</section>
-
-				<section id="intro" class="section section-no-border bg-light border-top-0 pt-0 pb-0 m-0">
-					
-					<div class="container py-5 h-100">
-						<section id="cabang" class="pb-2">
-                        	<h1 class="m-0 pb-3 text-center text-color-dark">Cabang</h1>
-							<div class="row text-center">
-								
-								<div class="my-auto col-md-4 col-lg-4 py-3 text-center divider-left-border divider-right-border">
-									<div class="appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="750" data-appear-animation-duration="750">
-										<label class="font-weight-semibold negative-ls-1 text-6 text-color-dark mb-0">GBI Sungai Yordan</label>
-										<p class="text-color-grey font-weight-semibold pb-1 mb-2">Taman Ratu</p>
-										<p class="mb-0"><a href="https://themeforest.net/item/porto-admin-responsive-html5-template/8539472" class="text-color-primary d-flex align-items-center justify-content-center text-3 font-weight-semibold text-decoration-none" target="_blank">View More<i class="fas fa-long-arrow-alt-right ml-2 text-3 mb-0"></i></a></p>
-									</div>
-								</div>
-								<div class="my-auto col-md-4 col-lg-4 py-3 text-center divider-left-border divider-right-border">
-									<div class="appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="750" data-appear-animation-duration="750">
-										<label class="font-weight-semibold negative-ls-1 text-6 text-color-dark mb-0">GBI Sungai Yordan</label>
-										<p class="text-color-grey font-weight-semibold pb-1 mb-2">Taman Ratu</p>
-										<p class="mb-0"><a href="https://themeforest.net/item/porto-admin-responsive-html5-template/8539472" class="text-color-primary d-flex align-items-center justify-content-center text-3 font-weight-semibold text-decoration-none" target="_blank">View More<i class="fas fa-long-arrow-alt-right ml-2 text-3 mb-0"></i></a></p>
-									</div>
-								</div>
-								<div class="my-auto col-md-4 col-lg-4 py-3 text-center divider-left-border divider-right-border">
-									<div class="appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="750" data-appear-animation-duration="750">
-										<label class="font-weight-semibold negative-ls-1 text-6 text-color-dark mb-0">GBI Sungai Yordan</label>
-										<p class="text-color-grey font-weight-semibold pb-1 mb-2">Taman Ratu</p>
-										<p class="mb-0"><a href="https://themeforest.net/item/porto-admin-responsive-html5-template/8539472" class="text-color-primary d-flex align-items-center justify-content-center text-3 font-weight-semibold text-decoration-none" target="_blank">View More<i class="fas fa-long-arrow-alt-right ml-2 text-3 mb-0"></i></a></p>
-									</div>
-								</div>
-								
-							</div>
-						</section>
-						
-					</div>
-				</section>
-
 				<section class="section section-no-border border-top-0 pt-0 pb-0 m-0">
 					<div class="container">
 						<div class="row align-items-center justify-content-between">

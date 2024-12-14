@@ -203,6 +203,15 @@ Route::post('/activities/{id}/approve', [ActivityController::class, 'approveActi
 
 Route::post('/activities/{id}/reject', [ActivityController::class, 'rejectActivity'])->name('activities.reject');
 
+Route::get('/activities-list', [ActivityController::class, 'adminIndex'])->name('activities.admin.index');
+
+Route::get('/activities/{id}/participants', [ActivityController::class, 'viewParticipants'])->name('activities.participants.view');
+
+Route::post('/activities/{id}/verify-payment', [ActivityController::class, 'verifyPayment'])->name('activities.payment.verify');
+
+Route::post('/activities/{id}/reject-payment', [ActivityController::class, 'rejectPayment'])->name('activities.payment.reject');
+
+
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 

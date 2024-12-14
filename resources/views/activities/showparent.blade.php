@@ -1,4 +1,25 @@
 <x-user>
+    @if (session('success'))
+        <div id="alert" class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Notifikasi Error -->
+    @if ($errors->any())
+        <div id="alert" class="alert alert-danger">
+            @foreach ($errors->all() as $error)
+                {{ $error }}
+            @endforeach
+        </div>
+    @endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .badge-custom {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
     <x-card>
         <x-slot name="header">
             Detail Kegiatan: {{ $activity->title }}
@@ -23,7 +44,7 @@
                 {{-- Poster --}}
                 @if ($activity->poster_file)
                     <div class="mb-4">
-                        <a href="{{ asset('storage/' . $activity->poster_file) }}" class="btn btn-info btn-sm" download>
+                        <a href="{{ asset('storage/' . $activity->poster_file) }}" class="btn btn-primary btn-sm" download>
                             Download Poster
                         </a>
                     </div>
@@ -47,8 +68,8 @@
                 @endif
 
                 {{-- Status Pembayaran --}}
-                @if ($activity->is_paid)
-                    <h5>Status Pembayaran</h5>
+                @if ($activity->is_paid && !empty($childrenRegistered))
+                    
                     @php
                         $payment = $activity->payments->where('parent_id', Auth::user()->member->id)->first();
                         $totalChildren = count($childrenRegistered);
@@ -57,20 +78,47 @@
 
                     <p><strong>Total Anak yang Didaftarkan:</strong> {{ $totalChildren }}</p>
                     <p><strong>Total Biaya:</strong> Rp{{ number_format($totalCost, 0, ',', '.') }}</p>
-
+                    <h5>Status Pembayaran</h5>
                     @if (!$payment)
                         <p class="text-muted">Belum Upload Bukti Pembayaran</p>
                     @elseif ($payment->payment_status === 'Diproses')
-                        <span class="badge bg-warning">Menunggu Verifikasi</span>
+                        <span class="badge bg-warning badge-custom">Menunggu Verifikasi</span>
                     @elseif ($payment->payment_status === 'Berhasil')
-                        <span class="badge bg-success">Terverifikasi</span>
+                        <span class="badge bg-success text-white badge-custom">Terverifikasi</span>
                     @elseif ($payment->payment_status === 'Ditolak')
-                        <span class="badge bg-danger">Ditolak</span>
+                        <span class="badge bg-danger text-white badge-custom">Ditolak</span>
+                    @endif
+
+                    {{-- Tombol untuk melihat bukti pembayaran --}}
+                    @if ($payment && $payment->payment_proof)
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                                Lihat Bukti Pembayaran
+                            </button>
+                        </div>
+
+                        {{-- Modal Bukti Pembayaran --}}
+                        <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="paymentModalLabel">Bukti Pembayaran</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="{{ asset('storage/' . $payment->payment_proof) }}" class="img-fluid" alt="Bukti Pembayaran">
+                                    </div>
+                                    <div class="modal-footer justify-content-end">
+                                        <a href="{{ asset('storage/' . $payment->payment_proof) }}" class="btn btn-primary" download>Unduh Bukti</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     @endif
 
                     {{-- Tombol Upload Bukti Pembayaran --}}
-                    @if (!$payment || $payment->payment_status === 'Ditolak')
-                        <form method="POST" action="{{ route('activities.upload.payment', $activity->id) }}" enctype="multipart/form-data">
+                    @if (!$payment || $payment->payment_status === 'Ditolak' || $payment->payment_status === 'Diproses')
+                        <form method="POST" action="{{ route('activities.upload.payment', $activity->id) }}" enctype="multipart/form-data" class="mt-3">
                             @csrf
                             <div class="mb-3">
                                 <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>

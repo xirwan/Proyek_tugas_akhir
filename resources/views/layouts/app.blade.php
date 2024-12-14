@@ -41,9 +41,9 @@
 
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
-                            ['url' => url('activities'), 'label' => 'List Kegiatan'],
+                            ['url' => url('activities-list'), 'label' => 'List Kegiatan'],
                         ]">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
+                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
 
@@ -92,9 +92,9 @@
 
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
-                            ['url' => url('activities'), 'label' => 'List Kegiatan'],
+                            ['url' => url('activities-list'), 'label' => 'List Kegiatan'],
                         ]">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
+                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
 
@@ -150,20 +150,20 @@
                     <span>Absensi</span>
                 </x-side-link>--}}
 
-                    <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
+                    {{-- <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
                         ['url' => url('baptist'), 'label' => 'List Jadwal Pembaptisan'],
                         ['url' => url('baptist-classes'), 'label' => 'List Kelas Pembaptisan'],
                     ]">
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Pembaptisan</span>
-                    </x-side-link>
+                    </x-side-link> --}}
 
                     
                 </x-sidebar>
 
 				<section role="main" class="content-body">
 					<header class="page-header">
-						<h2 style="border-bottom: none">{{ ucfirst(request()->segment(1)) }}</h2>
+						<h2 style="border-bottom: none">GBI Sungai Yordan</h2>
                         {{-- <h2 style="border-bottom: none">
                             {{ Str::title(str_replace('-', ' ', count(request()->segments()) > 1 ? request()->segment(2) : request()->segment(1))) }}
                         </h2> --}}

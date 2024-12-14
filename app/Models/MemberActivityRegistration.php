@@ -31,4 +31,10 @@ class MemberActivityRegistration extends Model
     {
         return $this->belongsTo(Member::class, 'registered_by');
     }
-}
+
+    // Relasi ke pembayaran (jika ada)
+    public function payment()
+    {
+        return $this->hasOne(ActivityPayment::class, 'parent_id', 'registered_by');
+    }
+}   

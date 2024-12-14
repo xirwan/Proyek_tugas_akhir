@@ -10,7 +10,7 @@
                 <div class="inner-wrapper">
                     <x-sidebar>
                         <li>			
-                            <a class="nav-link" href="{{url ('/')}}">
+                            <a class="nav-link" href="{{url ('/portal')}}">
                                 <i class="bx bx-home-alt" aria-hidden="true"></i>
                                 <span>Home</span>
                             </a>                        
@@ -27,24 +27,22 @@
                             <i class="bx bx-layout" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
-                        <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
+                        {{-- <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
                             ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
                             ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],
                         ]">
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Pembaptisan</span>
-                        </x-side-link>
-                        <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('coba')">
+                        </x-side-link> --}}
+                        {{-- <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('coba')">
                             <i class="bx bx-layout" aria-hidden="true"></i>
                             <span>Pengajuan Keanggotaan</span>
-                        </x-side-link>
+                        </x-side-link> --}}
                         
                     </x-sidebar>
                     <section role="main" class="content-body">
                         <header class="page-header">
-                            <h2 style="border-bottom: none">
-                                {{ Str::title(str_replace('-', ' ', request()->segment(1))) }}
-                            </h2>                                                
+                            <h2 style="border-bottom: none">GBI Sungai Yordan</h2>                                                
                             <div class="right-wrapper text-right" style="padding-right: 20px">
                                 <ol class="breadcrumbs">
                                     <li>

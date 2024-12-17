@@ -5,6 +5,7 @@
     'accept' => '',          // File types to accept (default: empty, accepts all)
     'required' => false,     // Whether the field is required
     'errorMessage' => null,  // Custom error message
+    'disabled' => false,      // Disabled default false
 ])
 
 <div class="form-group">
@@ -15,7 +16,8 @@
         name="{{ $name }}" 
         id="{{ $id }}" 
         {{ $accept ? 'accept=' . $accept : '' }} 
-        {{ $required ? 'required' : '' }}>
+        {{ $required ? 'required' : '' }}
+        {{ $disabled ? 'disabled' : '' }} >
     @if ($errorMessage)
         <div class="text-danger">{{ $errorMessage }}</div>
     @endif

@@ -27,6 +27,10 @@
                             <i class="bx bx-layout" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
+                        <x-side-link href="{{route ('seminars.indexmember')}}" :active="request()->is('member-seminar*')">
+                            <i class="bx bx-layout" aria-hidden="true"></i>
+                            <span>Seminar</span>
+                        </x-side-link>
                         {{-- <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
                             ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
                             ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],

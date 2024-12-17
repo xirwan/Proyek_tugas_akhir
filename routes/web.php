@@ -24,6 +24,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsCategoryController;
 use App\Http\Controllers\MemberScheduleController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\SeminarController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -185,7 +186,25 @@ Route::get('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDeta
 // Route untuk menyimpan absensi admin
 Route::post('/baptist-class-detail/{classDetailId}/attendance', [BaptistClassDetailController::class, 'markAttendance'])->name('baptist-class-detail.markAttendance');
 
+Route::get('/seminars', [SeminarController::class, 'index'])->name('seminars.index');
 
+Route::get('/attendance-seminars', [SeminarController::class, 'indexAttendance'])->name('seminars.indexAttendance');
+
+Route::get('/attendance-seminars/{id}/memberslist', [SeminarController::class, 'showAttendance'])->name('seminars.attendancelist');
+
+Route::post('/attendance-seminars/{id}/memberslist', [SeminarController::class, 'attendanceSeminars'])->name('seminars.attendanceSave');
+
+Route::get('/seminars/create', [SeminarController::class, 'create'])->name('seminars.create');
+
+Route::get('/seminars/show/{id}', [SeminarController::class, 'show'])->name('seminars.show');
+
+Route::post('/seminars/store', [SeminarController::class, 'store'])->name('seminars.store');
+
+Route::put('/seminars/{id}', [SeminarController::class, 'update'])->name('seminars.update');
+
+Route::get('/member-seminars', [SeminarController::class, 'indexMember'])->name('seminars.indexmember');
+
+Route::post('/member-seminars/register/{id}', [SeminarController::class, 'register'])->name('seminars.registermember');
 
 Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
 

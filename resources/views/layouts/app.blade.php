@@ -100,7 +100,17 @@
 
                     @endif
                     
-                    
+                    <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')" class="nav-parent" :items="[
+                        ['url' => url('/attendance-seminars'), 'label' => 'List Peserta Seminar'],
+                    ]">
+                        <i class="bx bxs-calendar-event" aria-hidden="true"></i>
+                        <span>Seminar</span>
+                    </x-side-link>
+
+                    {{-- <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')">
+                        <i class="bx bx-user-plus" aria-hidden="true"></i>
+                        <span>Seminar</span>
+                    </x-side-link> --}}
                     
                     
                 {{-- <x-side-link href="{{url ('branch')}}" :active="request()->is('branch*')">

@@ -10,6 +10,7 @@
     'max' => null,           // Nilai maksimum untuk input
     'step' => 1,             // Langkah untuk input angka, default 1
     'errorMessage' => null,  // Pesan error kustom jika ada
+    'disabled' => false,
 ])
 
 <div class="form-group">
@@ -25,6 +26,7 @@
         {{ $readonly ? 'readonly' : '' }}
         {{ is_numeric($min) ? "min=$min" : '' }} 
         {{ is_numeric($max) ? "max=$max" : '' }} 
+        {{ $disabled ? 'disabled' : '' }}
         step="{{ $step }}"
     >
     @if ($errorMessage)

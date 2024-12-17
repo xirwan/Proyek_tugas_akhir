@@ -4,9 +4,10 @@
     'id' => $name,           // Jika id tidak diberikan, gunakan name
     'placeholder' => '',     // Placeholder default kosong
     'value' => '',           // Nilai default untuk input
-    'required' => false      // Required default false
+    'required' => false,      // Required default false
+    'disabled' => false,      // Disabled default false
 ])
 <div class="form-group">
     <label class="form-label" for="{{ $id }}">{{ $label }}</label>
-    <textarea class="form-control" name="{{ $name }}" id="{{ $id }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }}>{{ old($name, $value) }}</textarea>
+    <textarea class="form-control" name="{{ $name }}" id="{{ $id }}" placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }} {{ $disabled ? 'disabled' : '' }}>{{ old($name, $value) }}</textarea>
 </div>

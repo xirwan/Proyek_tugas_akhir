@@ -132,14 +132,14 @@ class ActivityController extends Controller
         return view('activities.adminparticipants', compact('activity', 'participants', 'payments'));
     }
 
-private function paginateQuery(Collection $items, $perPage, $currentPage, $pageName = 'page')
-{
-    $currentItems = $items->forPage($currentPage, $perPage);
-    return new LengthAwarePaginator($currentItems, $items->count(), $perPage, $currentPage, [
-        'path' => LengthAwarePaginator::resolveCurrentPath(),
-        'pageName' => $pageName,
-    ]);
-}
+    private function paginateQuery(Collection $items, $perPage, $currentPage, $pageName = 'page')
+    {
+        $currentItems = $items->forPage($currentPage, $perPage);
+        return new LengthAwarePaginator($currentItems, $items->count(), $perPage, $currentPage, [
+            'path' => LengthAwarePaginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
+    }
 
 
 

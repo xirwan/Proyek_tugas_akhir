@@ -42,8 +42,10 @@
                     <th>No</th>
                     <th>Judul</th>
                     <th>Deskripsi</th>
-                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Kegiatan</th>
                     <th>Status</th>
+                    <th>Mulai Pendaftaran</th>
+                    <th>Tutup Pendaftaran</th>
                     <th>Poster</th>
                     <th>Aksi</th>
                 </tr>
@@ -65,20 +67,19 @@
                                 <span class="badge bg-secondary text-white badge-custom">Belum Didaftarkan</span>
                             @endif
                         </td>
+                        <td>{{ $activity->registration_open_date }}</td>
+                        <td>{{ $activity->registration_close_date }}</td>
                         <td>
-                            {{-- Tombol untuk melihat poster kegiatan --}}
                             @if ($activity->poster_file)
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#posterModal-{{ $activity->id }}">
                                     Lihat Poster
                                 </button>
-
-                                {{-- Modal Poster --}}
                                 <div class="modal fade" id="posterModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="posterModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="posterModalLabel">Poster Kegiatan</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
                                                 <img src="{{ asset('storage/' . $activity->poster_file) }}" class="img-fluid" alt="Poster Kegiatan">
@@ -91,10 +92,7 @@
                             @endif
                         </td>
                         <td>
-                            {{-- Tombol Detail --}}
                             <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
-
-                            {{-- Tombol Daftar --}}
                             @if ($activity->showRegisterButton)
                                 <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
                             @endif
@@ -102,7 +100,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="8" class="text-center">
                             <div class="alert alert-danger">
                                 Tidak ada kegiatan yang tersedia.
                             </div>
@@ -110,6 +108,7 @@
                     </tr>
                 @endforelse
             </tbody>
+            
         </table>
 
         {{-- Navigasi Pagination --}}

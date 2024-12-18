@@ -12,7 +12,7 @@ class PositionController extends Controller
     //
     public function index() : View
     {   
-        $positions = Position::orderBy('name', 'asc')->paginate(10);
+        $positions = Position::where('status', 'Active')->paginate(10);
         
         return view('position.index', compact('positions'));
     }

@@ -30,10 +30,10 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('scheduling.index') }}" class="btn btn-secondary">Reset</a>
-                    <a href="{{ route('scheduling.create') }}" class="btn btn-success">Tambah</a>
+                    <a href="{{ route('scheduling.create') }}" class="btn btn-success">Tambah Penjadwalan</a>
                 </div>
             </div>
         </form>

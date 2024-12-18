@@ -48,7 +48,7 @@
                         <td>{{ $schedule->monthlySchedule->year }}</td>
                         <td>{{ $schedule->schedule_date }}</td>
                         <td>{{ $schedule->scheduleSundaySchoolClass->schedule->day ?? '-' }}</td>
-                        <td>{{ $schedule->scheduleSundaySchoolClass->schedule->start ?? '-' }}</td>
+                        <td>{{ \Carbon\Carbon::parse($schedule->scheduleSundaySchoolClass->schedule->start)->format('H:i') ?? '-' }}</td>
                         <td>{{ $schedule->scheduleSundaySchoolClass->sundaySchoolClass->name ?? '-' }}</td>
                     </tr>
                 @empty

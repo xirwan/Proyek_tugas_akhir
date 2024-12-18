@@ -8,9 +8,9 @@
         <x-slot name="header">
             Daftar Murid di {{ $class->name }}
         </x-slot>
-        <table class="table table-responsive-md mb-0">
+        <table class="table table-responsive-md mb-0 text-center">
             <thead>
-                <tr class="text-center">
+                <tr>
                     <th>No</th>
                     <th>Nama Lengkap</th>
                     <th>Tanggal Lahir</th>

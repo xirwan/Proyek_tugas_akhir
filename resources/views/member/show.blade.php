@@ -86,14 +86,14 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </form>
             <form action="{{ route('member.destroy', encrypt($member->id)) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data member ini?');">Hapus</button>
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data member ini?');">Nonaktifkan</button>
             </form>
-                <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
+                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

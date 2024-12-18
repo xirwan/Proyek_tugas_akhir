@@ -4,6 +4,12 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        .btn-group-custom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Sesuaikan jarak antar tombol */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @if (session('success'))
@@ -94,44 +100,44 @@
                             <td>{{ $activity->creator->firstname }} {{ $activity->creator->lastname }}</td>
                         @endif
                         <td>
-                            <a href="{{ route('activities.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
-                            @if (auth()->user()->hasRole('SuperAdmin') && $activity->status === 'pending_approval')
-                                {{-- Tombol Setujui untuk SuperAdmin --}}
-                                <form method="POST" action="{{ route('activities.approve', $activity->id) }}" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success btn-sm">Setujui</button>
-                                </form>
-
-                                {{-- Tombol Tolak untuk SuperAdmin --}}
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ $activity->id }}">
-                                    Tolak
-                                </button>
-
-                                {{-- Modal Alasan Penolakan --}}
-                                <div class="modal fade" id="rejectModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <form method="POST" action="{{ route('activities.reject', $activity->id) }}">
-                                            @csrf
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                            <div class="btn-group-custom">
+                                <a href="{{ route('activities.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
+                        
+                                @if (auth()->user()->hasRole('SuperAdmin') && $activity->status === 'pending_approval')
+                                    {{-- Tombol Setujui --}}
+                                    <form method="POST" action="{{ route('activities.approve', $activity->id) }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success btn-sm">Setujui</button>
+                                    </form>
+                        
+                                    {{-- Tombol Tolak --}}
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ $activity->id }}">
+                                        Tolak
+                                    </button>
+                        
+                                    {{-- Modal Alasan Penolakan --}}
+                                    <div class="modal fade" id="rejectModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form method="POST" action="{{ route('activities.reject', $activity->id) }}">
+                                                @csrf
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Masukkan alasan penolakan" required></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-danger">Tolak</button>
+                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
+                                                    </div>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Masukkan alasan penolakan" required></textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-danger">Tolak</button>
-                                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
-                                                </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                            @elseif (auth()->user()->hasRole('Admin') && $activity->status === 'pending_approval')
-                                {{-- Tombol Edit untuk Admin jika status pending --}}
-                                <a href="{{ route('activities.edit', $activity->id)}}" class="btn btn-success btn-sm">Edit</a>
-                            @endif
-                        </td>
+                                @endif
+                            </div>
+                        </td>                        
                     </tr>
                 @empty
                     <tr>

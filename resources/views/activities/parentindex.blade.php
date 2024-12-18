@@ -5,6 +5,12 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        .btn-group-custom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px; /* Sesuaikan jarak antar tombol */
+        }
     </style>
     {{-- Pesan Sukses --}}
     @if (session('success'))
@@ -29,11 +35,18 @@
                     </select>
                 </div>
                 <div class="col-lg-4">
+                    <select name="is_registered" class="form-control">
+                        <option value="">Semua Status Pendaftaran</option>
+                        <option value="1" {{ request('is_registered') == '1' ? 'selected' : '' }}>Sudah Didaftarkan</option>
+                        <option value="0" {{ request('is_registered') == '0' ? 'selected' : '' }}>Belum Didaftarkan</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('activities.parent.index') }}" class="btn btn-secondary">Reset</a>
                 </div>
             </div>
-        </form>
+        </form>        
 
         {{-- Tabel Data --}}
         <table class="table table-responsive-md mb-0 text-center">
@@ -79,7 +92,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="posterModalLabel">Poster Kegiatan</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
                                             </div>
                                             <div class="modal-body text-center">
                                                 <img src="{{ asset('storage/' . $activity->poster_file) }}" class="img-fluid" alt="Poster Kegiatan">
@@ -92,10 +105,12 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
-                            @if ($activity->showRegisterButton)
-                                <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
-                            @endif
+                            <div class="btn-group-custom">
+                                <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
+                                @if ($activity->showRegisterButton)
+                                    <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                 @empty

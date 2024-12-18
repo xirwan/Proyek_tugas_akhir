@@ -44,9 +44,10 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </form>
-                <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data kelas sekolah minggu ini?');">Nonaktifkan</button>
+                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

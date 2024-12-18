@@ -10,9 +10,9 @@
             List Anak Sekolah Minggu
         </x-slot>
         <a href="{{ route('qr-code.generate.all.qr') }}" class="btn btn-md btn-success mb-3">Generate QR Code untuk Semua Anak Tanpa QR</a>
-        <div class="table-responsive">
+        <div class="table-responsive text-center">
             <table class="table mb-0">
-                <thead class="text-center">
+                <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama Lengkap</th>
@@ -68,16 +68,11 @@
                                     </a>
                                 @endif
                             </td>
-                            {{-- <td>
-                                @if (!$child->qr_code)
-                                    <span class="text-danger">Belum ada QR Code</span>
-                                @endif
-                            </td> --}}
                             <td class="text-center">
                                 <a href="{{ route('sundayschoolclass.showAdjustClassForm', encrypt($child->id)) }}" class="btn btn-sm btn-primary">
                                     Sesuaikan Kelas
                                 </a>
-                            </td>                            
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

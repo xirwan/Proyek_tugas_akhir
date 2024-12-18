@@ -48,7 +48,7 @@
 
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
         </form>
 
                 @if($type->status === 'Active')
@@ -64,7 +64,7 @@
                     </form>
                 @endif
 
-                <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
+                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

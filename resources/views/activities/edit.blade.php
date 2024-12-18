@@ -11,7 +11,7 @@
         @method('PUT') {{-- Metode HTTP untuk update --}}
         <section class="card">
             <header class="card-header">   
-                <h2 class="card-title">Edit Kegiatan</h2>
+                <h2 class="card-title">Edit Pengajuan Kegiatan</h2>
             </header>
             <div class="card-body">
                 <div class="row form-group">

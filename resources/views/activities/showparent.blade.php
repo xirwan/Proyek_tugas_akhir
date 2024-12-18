@@ -118,18 +118,22 @@
                     @endif
 
                     {{-- Tombol Upload Bukti Pembayaran --}}
-                    @if (!$payment || $payment->payment_status === 'Ditolak' || $payment->payment_status === 'Diproses')
-                        <form method="POST" action="{{ route('activities.upload.payment', $activity->id) }}" enctype="multipart/form-data" class="mt-3">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
-                                <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
-                                <small class="text-muted">Total Pembayaran: Rp{{ number_format($totalCost, 0, ',', '.') }}</small>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Upload Bukti Pembayaran</button>
-                            </div>
-                        </form>
+                    @if (!$isDeadlinePassed)
+                        @if (!$payment || $payment->payment_status === 'Ditolak' || $payment->payment_status === 'Diproses')
+                            <form method="POST" action="{{ route('activities.upload.payment', $activity->id) }}" enctype="multipart/form-data" class="mt-3">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="payment_proof" class="form-label">Upload Bukti Pembayaran</label>
+                                    <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept=".jpg,.jpeg,.png,.pdf" required>
+                                    <small class="text-muted">Total Pembayaran: Rp{{ number_format($totalCost, 0, ',', '.') }}</small>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">Upload Bukti Pembayaran</button>
+                                </div>
+                            </form>
+                        @endif
+                    @else
+                    <p class="text-danger mt-3"><strong>Pengunggahan bukti pembayaran sudah ditutup.</strong></p>
                     @endif
                 @endif
             </div>

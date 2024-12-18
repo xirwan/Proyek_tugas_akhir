@@ -55,6 +55,7 @@ class ActivityController extends Controller
         return view('activities.index', compact('activities', 'isSuperadmin', 'admins'));
     }
 
+
     public function indexParent(Request $request)
     {
         // Ambil semua kegiatan yang sudah disetujui
@@ -65,14 +66,26 @@ class ActivityController extends Controller
             $activities->where('is_paid', $request->is_paid);
         }
 
-        // Paginate hasil query
-        $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
-
         // Ambil anak yang terhubung dengan pengguna saat ini
         $children = Auth::user()->member->children;
 
         // Ambil semua registrasi anak untuk kegiatan
         $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
+
+        // Filter berdasarkan status pendaftaran
+        if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
+            $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
+            if ($request->is_registered == '1') {
+                // Sudah didaftarkan
+                $activities->whereIn('id', $registeredActivityIds);
+            } elseif ($request->is_registered == '0') {
+                // Belum didaftarkan
+                $activities->whereNotIn('id', $registeredActivityIds);
+            }
+        }
+
+        // Paginate hasil query
+        $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
 
         // Periksa apakah tombol daftar harus muncul
         foreach ($activities as $activity) {
@@ -94,7 +107,6 @@ class ActivityController extends Controller
 
         return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
     }
-
 
 
 
@@ -215,6 +227,7 @@ class ActivityController extends Controller
         return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
     }
 
+
     public function showParent($id)
     {
         $activity = Activity::where('id', $id)
@@ -227,8 +240,12 @@ class ActivityController extends Controller
         $childrenRegistered = $activity->registrations->pluck('child_id')->toArray();
         $children = Auth::user()->member->children;
 
-        return view('activities.showparent', compact('activity', 'children', 'childrenRegistered'));
-    }
+        // Periksa apakah tanggal payment_deadline sudah lewat
+        $isDeadlinePassed = now()->greaterThan($activity->payment_deadline);
+
+        return view('activities.showparent', compact('activity', 'children', 'childrenRegistered', 'isDeadlinePassed'));
+}
+
 
     public function uploadPayment(Request $request, $activityId)
     {

@@ -13,9 +13,17 @@
         <span class="separator"></span>
         <div id="userbox" class="userbox">
             <a href="#" data-toggle="dropdown">
-                <div class="profile-info"   >
+                <div class="profile-info">
                     <span class="name">{{ Auth::user()->name }}</span>
-                    <span class="role">{{ Auth::user()->getRoleNames()->first() }}</span>
+                    <span class="role">
+                        @if(Auth::user()->getRoleNames()->first() === 'SuperAdmin')
+                            Admin
+                        @elseif(Auth::user()->getRoleNames()->first() === 'Admin')
+                            Pembina
+                        @else
+                            {{ Auth::user()->getRoleNames()->first() }}
+                        @endif
+                    </span>
                 </div>
                 <i class="fa custom-caret"></i>
             </a>

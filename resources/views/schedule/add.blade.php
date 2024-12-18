@@ -39,7 +39,7 @@
                         <x-time-picker name="start" label="Jam Mulai" :required="true" />
                     </div>
                     <div class="col-lg-6">
-                        <x-time-picker name="end" label="Jam Selesai (optional)" />
+                        <x-time-picker name="end" label="Jam Selesai" :required="true" />
                     </div>
                 </div>                
             </div>

@@ -3,7 +3,7 @@
         @csrf
         <section class="card">
             <header class="card-header">   
-                <h2 class="card-title">Tambah Anak</h2>
+                <h2 class="card-title">Daftarkan Anak</h2>
             </header>
             <div class="card-body">                
                 <div class="row form-group">

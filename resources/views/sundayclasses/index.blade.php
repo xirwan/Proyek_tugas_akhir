@@ -30,7 +30,7 @@
                         <td>{{ $class->status }}</td>
                         <td>
                             @foreach($class->schedules as $schedule)
-                                <p>{{ $schedule->name }} ({{ ucfirst($schedule->day) }}: {{ $schedule->start }} - {{ $schedule->end }})</p>
+                                <p>{{ $schedule->name }} ({{ ucfirst($schedule->day) }}: {{ \Carbon\Carbon::parse($schedule->start)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end)->format('H:i') }})</p>
                             @endforeach
                         </td>
                         <td class="actions text-center">

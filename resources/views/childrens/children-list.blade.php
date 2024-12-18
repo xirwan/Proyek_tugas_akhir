@@ -21,7 +21,7 @@
                         <th>Jenis Relasi</th>
                         <th>Cabang</th>
                         <th>Kelas</th>
-                        <th>Status Akun</th>
+                        {{-- <th>Status Akun</th> --}}
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -42,22 +42,22 @@
                                     <span class="text-danger">Tidak ada kelas</span>
                                 @endif
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if($child->relatedMember->user_id)
                                     <span class="text-success">Sudah memiliki akun</span>
                                 @else
                                     <span class="text-danger">Belum memiliki akun</span>
                                 @endif
-                            </td>
+                            </td> --}}
                             <td>
-                                @if(!$child->relatedMember->user_id)
+                                {{-- @if(!$child->relatedMember->user_id)
                                     <a href="{{ route('member.createChildAccount', encrypt($child->relatedMember->id)) }}" class="btn btn-sm btn-primary">
                                         Buatkan Akun
                                     </a>
                                 @else
                                     <span class="text-muted">Akun sudah ada</span>
-                                @endif
-                                <a href="{{ route('member.editChild', $child->relatedMember->id) }}" class="btn btn-sm btn-primary mt-3">
+                                @endif --}}
+                                <a href="{{ route('member.editChild', $child->relatedMember->id) }}" class="btn btn-sm btn-primary">
                                     Edit Data
                                 </a>
                             </td>

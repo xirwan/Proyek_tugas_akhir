@@ -64,11 +64,6 @@
                                     ['url' => url('master-data/schedule'), 'label' => 'List Jadwal',],
                                 ],
                             ],
-                            ['url' => url('#'), 'label' => 'Berita', 'items' => [
-                                    ['url' => url('master-data/news-categories'), 'label' => 'Kategori Berita',],
-                                    ['url' => url('master-data/news'), 'label' => 'List Berita',],
-                                ],
-                            ],
                         ]">
                             <span>Master Data</span>
                         </x-side-link1>
@@ -77,7 +72,7 @@
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Penjadwalan</span>
                         </x-side-link>
-                        <x-side-link1 href="#" :active="request()->is('sunday-school*')" icon="bx bx-home-smile" class="nav-parent" :items="[
+                        {{-- <x-side-link1 href="#" :active="request()->is('sunday-school*')" icon="bx bx-home-smile" class="nav-parent" :items="[
                             ['url' => url('sunday-school/sunday-classes'), 'label' => 'List Kelas',],
                             ['url' => url('sunday-school/qr-code/children'), 'label' => 'List Anak',],
                             ['url' => url('#'), 'label' => 'Absensi', 'items' => [
@@ -88,7 +83,7 @@
                             ],
                         ]">
                             <span>Sekolah Minggu</span>
-                        </x-side-link1>
+                        </x-side-link1> --}}
 
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
@@ -100,12 +95,12 @@
 
                     @endif
                     
-                    <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')" class="nav-parent" :items="[
+                    {{-- <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')" class="nav-parent" :items="[
                         ['url' => url('/attendance-seminars'), 'label' => 'List Peserta Seminar'],
                     ]">
                         <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                         <span>Seminar</span>
-                    </x-side-link>
+                    </x-side-link> --}}
 
                     {{-- <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')">
                         <i class="bx bx-user-plus" aria-hidden="true"></i>

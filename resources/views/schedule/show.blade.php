@@ -59,19 +59,19 @@
                         <x-time-picker name="start" label="Jam Mulai" :value="$schedule->start" :required="true" />
                     </div>
                     <div class="col-lg-6">
-                        <x-time-picker name="end" label="Jam Selesai (optional)" :value="$schedule->end" />
+                        <x-time-picker name="end" label="Jam Selesai" :value="$schedule->end" />
                     </div>
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
             </form>
             <form action="{{ route('schedule.destroy', encrypt($schedule->id)) }}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data jadwal ini?');">Hapus</button>
             </form>
-                <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
+                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

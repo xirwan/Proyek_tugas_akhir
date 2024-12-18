@@ -4,7 +4,7 @@
         @method('PATCH')
         <section class="card">
             <header class="card-header">   
-                <h2 class="card-title">Update Data Anak</h2>
+                <h2 class="card-title">Edit Data Anak</h2>
             </header>
             <div class="card-body">                
                 <div class="row form-group">
@@ -56,7 +56,7 @@
                 <x-select-box label="Jenis Relasi" name="relation_id" :options="$relationoptions" placeholder="Pilih Relasi" :required="true" :selected="old('relation_id', $relationId)" />
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
                 <button type="reset" class="btn btn-default">Reset</button>
                 <a href="{{ route ('member.childrenList') }}" class="btn btn-success">Kembali</a>
             </footer>

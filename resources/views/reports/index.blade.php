@@ -6,7 +6,7 @@
     @endif
     <x-card>
         <x-slot name="header">
-            List Laporan Mingguan
+            List Laporan Kegiatan Kelas
         </x-slot>
         
         <a href="{{ route('admin.reports.create') }}" class="btn btn-md btn-success mb-3">Tambah Laporan Mingguan</a>

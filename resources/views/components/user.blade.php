@@ -15,7 +15,7 @@
                                 <span>Home</span>
                             </a>                        
                         </li>
-                        <x-side-link href="#" :active="request()->is('member/children') || request()->is('member/register-child') || request()->is('attendance/parent-view')" class="nav-parent" :items="[
+                        <x-side-link href="#" :active="request()->is('member/children*') || request()->is('member/register-child*') || request()->is('attendance/parent-view*')" class="nav-parent" :items="[
                             ['url' => route('member.childrenList'), 'label' => 'List Anak'],
                             ['url' => route('member.createChildForm'), 'label' => 'Daftar Anak'],
                             ['url' => route('attendance.parentView'), 'label' => 'Absensi Anak'],
@@ -24,13 +24,13 @@
                             <span>Anak</span>
                         </x-side-link>
                         <x-side-link href="{{route ('activities.parent.index')}}" :active="request()->is('childrens-activities*')">
-                            <i class="bx bx-layout" aria-hidden="true"></i>
+                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
-                        <x-side-link href="{{route ('seminars.indexmember')}}" :active="request()->is('member-seminar*')">
+                        {{-- <x-side-link href="{{route ('seminars.indexmember')}}" :active="request()->is('member-seminar*')">
                             <i class="bx bx-layout" aria-hidden="true"></i>
                             <span>Seminar</span>
-                        </x-side-link>
+                        </x-side-link> --}}
                         {{-- <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
                             ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
                             ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],

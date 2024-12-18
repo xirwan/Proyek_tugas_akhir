@@ -48,7 +48,7 @@
 
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
         </form>
                 @if($branch->status === 'Active')
                     <form action="{{ route('branch.destroy', encrypt($branch->id)) }}" method="POST" style="display:inline;">
@@ -62,7 +62,7 @@
                         <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali data cabang ini?');">Aktifkan</button>
                     </form>
                 @endif
-                <a href="{{ url()->previous() }}" class="btn btn-primary">Kembali</a>
+                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

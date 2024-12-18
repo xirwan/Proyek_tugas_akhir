@@ -12,7 +12,7 @@
         @method('PUT')
         <section class="card">
             <header class="card-header">
-                <h2 class="card-title">Edit Laporan Kegiatan Sekolah Minggu</h2>
+                <h2 class="card-title">Edit Laporan Kegiatan Kelas</h2>
             </header>
             <div class="card-body">
                 <div class="row form-group">
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Perbarui</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
                 <a href="{{ route('admin.reports.index') }}" class="btn btn-success">Kembali</a>
             </footer>
         </section>

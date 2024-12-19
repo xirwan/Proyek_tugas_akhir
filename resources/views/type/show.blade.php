@@ -1,9 +1,7 @@
 <x-app-layout>
-    @if ($errors->any())
+    @if(session('error'))
         <div id="alert" class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                {{ $error }}
-            @endforeach
+            {{ session('error') }}
         </div>
     @endif
 
@@ -64,7 +62,7 @@
                     </form>
                 @endif
 
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+                <a href="{{ route ('type.index') }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

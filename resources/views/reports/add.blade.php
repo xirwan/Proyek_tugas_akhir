@@ -10,7 +10,7 @@
         @csrf
         <section class="card">
             <header class="card-header">
-                <h2 class="card-title">Tambah Laporan Kegiatan Sekolah Minggu</h2>
+                <h2 class="card-title">Tambah Laporan Kegiatan Kelas</h2>
             </header>
             <div class="card-body">
                 <div class="row form-group">

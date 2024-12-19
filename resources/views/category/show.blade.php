@@ -1,4 +1,10 @@
 <x-app-layout>
+    @if(session('error'))
+        <div id="alert" class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    
     <section class="card">
         <header class="card-header">   
             <h2 class="card-title">Detail Kategori jadwal</h2>

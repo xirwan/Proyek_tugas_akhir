@@ -25,6 +25,7 @@ use App\Http\Controllers\NewsCategoryController;
 use App\Http\Controllers\MemberScheduleController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\SeminarController;
+use App\Http\Middleware\CheckMemberStatus;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,7 +37,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/portal', function () {
     return view('userdashboard');
-})->name('portal')->middleware(['auth', 'verified', 'role:Jemaat']);
+})->name('portal')->middleware(['auth', 'role:Jemaat', CheckMemberStatus::class]);
 
 Route::get('/coba', function () {
     return view('coba');
@@ -68,6 +69,8 @@ Route::prefix('master-data')->middleware('auth')->group(function () {
 
     Route::resource('member', MemberController::class);
 
+    Route::post('/member/{id}/active', [MemberController::class, 'active'])->name('member.active');
+
     Route::resource('news', NewsController::class);
 
     Route::resource('news-categories', NewsCategoryController::class);
@@ -96,7 +99,9 @@ Route::get('/scheduling/available-options', [MemberScheduleController::class, 'a
 Route::prefix('sunday-school')->middleware('auth')->group(function () {
 
     Route::resource('sunday-classes', SundaySchoolClassController::class);
-    
+
+    Route::post('/sunday-classes/{id}/active', [SundaySchoolClassController::class, 'active'])->name('sunday-classes.active');
+
     Route::get('sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents');
 
     Route::get('sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'showAdjustClassForm'])->name('sundayschoolclass.showAdjustClassForm');

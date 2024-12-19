@@ -1,4 +1,9 @@
 <x-app-layout>
+    @if(session('error'))
+        <div id="alert" class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <section class="card">
         <header class="card-header">   
             <h2 class="card-title">Detail Kelas Sekolah Minggu</h2>
@@ -46,8 +51,26 @@
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Edit</button>
             </form>
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data kelas sekolah minggu ini?');">Nonaktifkan</button>
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+
+            <!-- Tombol Nonaktifkan dan Aktifkan -->
+            @if($class->status === 'Active')
+                <form action="{{ route('sunday-classes.destroy', encrypt($class->id)) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data kelas sekolah minggu ini?');">
+                        Nonaktifkan
+                    </button>
+                </form>
+            @else
+                <form action="{{ route('sunday-classes.active', encrypt($class->id)) }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan data kelas sekolah minggu ini?');">
+                        Aktifkan
+                    </button>
+                </form>
+            @endif
+
+            <a href="{{ route('sunday-classes.index') }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

@@ -10,6 +10,21 @@
         </x-slot>
         
         <a href="{{ route('branch.create') }}" class="btn btn-md btn-success mb-3">Tambah Cabang</a>
+        <form method="GET" action="{{ route('branch.index') }}" class="mb-4">
+            <div class="row">
+                <div class="col-lg-4">
+                    <select name="status" class="form-control">
+                        <option value="">Semua Status</option>
+                        <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                        <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ route('branch.index') }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
 
         <table class="table table-responsive-md mb-0">
             <thead>

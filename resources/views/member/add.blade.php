@@ -7,7 +7,7 @@
             </header>
             <div class="card-body">                
                 <div class="row form-group">
-                    <div class="col-lg-4">
+                    {{-- <div class="col-lg-4">
                         <x-select-box 
                         label="Nama Role" 
                         name="role_id" 
@@ -16,8 +16,8 @@
                         :required="true"
                         :selected="old('role_id')" 
                         />
-                    </div>
-                    <div class="col-lg-4">
+                    </div> --}}
+                    <div class="col-lg-6">
                         <x-select-box 
                         label="Nama Posisi" 
                         name="position_id" 
@@ -27,7 +27,7 @@
                         :selected="old('posisi_id')" 
                         />
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <x-select-box 
                         label="Nama Cabang" 
                         name="branch_id" 
@@ -54,7 +54,7 @@
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Simpan</button>
                 <button type="reset" class="btn btn-default">Reset</button>
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+                <a href="{{ route ('member.index') }}" class="btn btn-success">Kembali</a>
             </footer>
         </section>
     </form>

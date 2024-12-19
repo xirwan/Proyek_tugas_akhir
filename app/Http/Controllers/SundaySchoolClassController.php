@@ -7,20 +7,33 @@ use App\Models\SundaySchoolClass;
 use App\Models\Member;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class SundaySchoolClassController extends Controller
 {
     // 1. Menampilkan daftar kelas
-    public function index()
+    public function index(Request $request): View
     {
-        $classes = SundaySchoolClass::paginate(10);
-        return view('sundayclasses.index', compact('classes'));
+        // Ambil filter status dari query parameter
+        $filterStatus = $request->query('status');
+
+        // Query dengan filter status jika diberikan
+        $query = SundaySchoolClass::query();
+
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+
+        $classes = $query->paginate(10);
+
+        return view('sundayclasses.index', compact('classes', 'filterStatus'));
     }
+
 
     // 2. Menampilkan form untuk membuat kelas baru
     public function create()
     {
-        $schedules = Schedule::all();
+        $schedules = Schedule::where('status', 'Active')->get();
         return view('sundayclasses.add', compact('schedules'));
     }
 
@@ -63,9 +76,11 @@ class SundaySchoolClassController extends Controller
     }
 
     // 6. Memperbarui data kelas
-    public function update(Request $request, $encryptedId)
+    public function update(Request $request, $encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
+
+        // Validasi input
         $request->validate([
             'name'              => 'required|string|max:255',
             'description'       => 'nullable|string',
@@ -73,11 +88,19 @@ class SundaySchoolClassController extends Controller
             'schedule_id'       => 'required|exists:schedules,id', // Validasi jadwal harus ada
         ]);
 
+        // Temukan kelas berdasarkan ID
         $class = SundaySchoolClass::findOrFail($id);
+
+        // Periksa apakah status diubah menjadi 'Inactive' dan kelas memiliki anggota
+        if ($request->input('status') === 'Inactive' && $class->members()->exists()) {
+            return redirect()->back()->with('error', 'Kelas tidak dapat diubah menjadi Inactive karena masih memiliki anggota.');
+        }
+
+        // Perbarui data kelas
         $class->update([
-            'name'              => $request->input('name'),
-            'description'       => $request->input('description'),
-            'status'            => $request->input('status'),
+            'name'        => $request->input('name'),
+            'description' => $request->input('description'),
+            'status'      => $request->input('status'),
         ]);
 
         // Perbarui relasi jadwal
@@ -86,14 +109,41 @@ class SundaySchoolClassController extends Controller
         return redirect()->route('sunday-classes.index')->with('success', 'Data Berhasil Diperbarui!');
     }
 
+
     // 7. Menghapus kelas
-    public function destroy($encryptedId)
+    public function destroy($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
-        $class = SundaySchoolClass::findOrFail($id);
-        $class->delete();
 
-        return redirect()->route('sundayclasses.index')->with('success', 'Data Berhasil Dihapus!');
+        // Temukan kelas berdasarkan ID
+        $class = SundaySchoolClass::findOrFail($id);
+
+        // Periksa apakah masih ada anggota yang terkait dengan kelas
+        if ($class->members()->exists()) {
+            return redirect()->back()->with('error', 'Kelas tidak dapat dinonaktifkan karena masih memiliki anggota.');
+        }
+
+        // Ubah status kelas menjadi 'Inactive'
+        $class->update([
+            'status' => 'Inactive',
+        ]);
+
+        return redirect()->route('sunday-classes.index')->with('success', 'Status kelas berhasil diubah menjadi Inactive!');
+    }
+
+    public function active($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+
+        // Temukan kelas berdasarkan ID
+        $class = SundaySchoolClass::findOrFail($id);
+
+        // Ubah status kelas menjadi 'Active'
+        $class->update([
+            'status' => 'Active',
+        ]);
+
+        return redirect()->route('sunday-classes.index')->with('success', 'Status kelas berhasil diubah menjadi Active!');
     }
 
     // 8. untuk menampilkan list anak yang terdaftar pada kelas

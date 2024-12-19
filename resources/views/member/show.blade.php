@@ -17,27 +17,7 @@
             @endif
             <div class="card-body">
                 <div class="row form-group">
-                    <div class="col-lg-4">
-                        @if($member->user)
-                            <x-select-box 
-                                label="Nama Role" 
-                                name="role_id" 
-                                :options="$roleoptions"
-                                :selected="$member->user->roles->pluck('id')->first()" 
-                                placeholder="Pilih Role" 
-                                :required="true" 
-                            />
-                        @else
-                            <x-input-text 
-                            name="warning" 
-                            id="warning" 
-                            label="Role" 
-                            placeholder="Informasi" 
-                            :value="'Member ini belum memiliki akun.'" 
-                            :readonly="true" />
-                        @endif
-                    </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <x-select-box 
                         label="Nama Posisi" 
                         name="position_id" 
@@ -47,7 +27,7 @@
                         :required="true" 
                         />
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <x-select-box 
                         label="Nama Cabang" 
                         name="branch_id" 
@@ -88,12 +68,22 @@
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Edit</button>
             </form>
-            <form action="{{ route('member.destroy', encrypt($member->id)) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data member ini?');">Nonaktifkan</button>
-            </form>
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+
+            <!-- Tombol Nonaktifkan atau Aktifkan -->
+            @if($member->status === 'Active')
+                <form action="{{ route('member.destroy', encrypt($member->id)) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data member ini?');">Nonaktifkan</button>
+                </form>
+            @else
+                <form action="{{ route('member.active', encrypt($member->id)) }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali data member ini?');">Aktifkan</button>
+                </form>
+            @endif
+
+            <a href="{{ route('member.index') }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

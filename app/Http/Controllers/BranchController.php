@@ -10,11 +10,18 @@ use App\Models\Branch;
 class BranchController extends Controller
 {
     //
-    public function index() : View
+    public function index(Request $request) : View
     {   
-        $branches = Branch::orderBy('name', 'asc')->paginate(3);
+        $filterStatus = $request->query('status');
+        $query = Branch::orderByRaw("FIELD(status, 'Active', 'Inactive')");
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+
+        $branches = $query->paginate(10);
+
         
-        return view('branch.index', compact('branches'));
+        return view('branch.index', compact('branches', 'filterStatus'));
     }
 
     public function create() : View
@@ -61,6 +68,12 @@ class BranchController extends Controller
 
         $branch = Branch::findOrFail($id);
 
+        if ($request->input('status') === 'Inactive' && $branch->members()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Cabang tidak dapat dinonaktifkan karena masih digunakan oleh anggota.'
+            ]);
+        }
+
         $branch->update([
             'name'         => $request->input('name'),
             'address'      => $request->input('address'),
@@ -77,6 +90,12 @@ class BranchController extends Controller
         
         // Temukan branch berdasarkan ID
         $branch = Branch::findOrFail($id);
+
+        if ($branch->members()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Cabang tidak dapat dinonaktifkan karena masih digunakan oleh anggota.'
+            ]);
+        }
 
         // Perbarui status menjadi 'Inactive' tanpa menghapus record
         $branch->update([

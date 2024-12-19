@@ -5,18 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class TypeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request) : View
     {
         //
-        $types = Type::orderBy('name', 'asc')->paginate(10);
-        
-        return view('type.index', compact('types'));
+        $filterStatus = $request->query('status');
+        $query = Type::orderByRaw("FIELD(status, 'Active', 'Inactive')");
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+        $types = $query->paginate(10);
+        return view('type.index', compact('types', 'filterStatus'));
     }
 
     /**
@@ -82,6 +87,12 @@ class TypeController extends Controller
 
         $type = Type::findOrFail($id);
 
+        if ($request->input('status') === 'Inactive' && $type->schedules()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Tipe Jadwal tidak dapat dinonaktifkan karena masih digunakan oleh Jadwal.'
+            ]);
+        }
+
         $type->update([
             'name'              => $request->input('name'),
             'description'       => $request->input('description'),
@@ -99,6 +110,12 @@ class TypeController extends Controller
         $id = decrypt($encryptedId);
         // Get Type by ID
         $type = Type::findOrFail($id);
+
+        if ($type->schedules()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Tipe Jadwal tidak dapat dinonaktifkan karena masih digunakan oleh Jadwal.'
+            ]);
+        }
 
         // Update status menjadi 'Inactive'
         $type->update([

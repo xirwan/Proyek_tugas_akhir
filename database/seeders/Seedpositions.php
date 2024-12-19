@@ -15,13 +15,13 @@ class Seedpositions extends Seeder
     {
         //
         Position::create([
-            "name"=> "Penggurus Umum",
-            "description"=> "Penggurus Umum gereja",
+            "name"=> "Pembina",
+            "description"=> "Pembina Sekolah Minggu GBI Sungai Yordan",
             "status"=> "Active",
         ]);
         Position::create([
             "name"=> "Jemaat",
-            "description"=> "Jemaat gereja",
+            "description"=> "Jemaat GBI Sungai Yordan",
             "status"=> "Active",
         ]);
     }

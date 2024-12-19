@@ -110,7 +110,7 @@
                                         <img src="{{ asset('storage/' . $payment->payment_proof) }}" class="img-fluid" alt="Bukti Pembayaran">
                                     </div>
                                     <div class="modal-footer justify-content-end">
-                                        <a href="{{ asset('storage/' . $payment->payment_proof) }}" class="btn btn-primary" download>Unduh Bukti</a>
+                                        <a href="{{ asset('storage/' . $payment->payment_proof) }}" class="btn btn-primary" download>Download Bukti</a>
                                     </div>
                                 </div>
                             </div>

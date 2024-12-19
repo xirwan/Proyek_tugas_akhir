@@ -21,13 +21,24 @@ use Carbon\Carbon;
 
 class MemberController extends Controller
 {
-    public function index() : View
-    {   
-        // Mengambil semua data anggota beserta cabang-nya menggunakan eager loading (dengan relasi cabang)
-        $members = Member::with('branch', 'user', 'position')->paginate(5);
-        
-        return view('member.index', compact('members'));
+    public function index(Request $request) : View
+    {
+        // Ambil filter status dari query parameter
+        $filterStatus = $request->query('status');
+
+        // Query anggota dengan relasi yang diperlukan
+        $query = Member::with('branch', 'user', 'position');
+
+        // Terapkan filter jika status diberikan
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+
+        $members = $query->paginate(5);
+
+        return view('member.index', compact('members', 'filterStatus'));
     }
+
     
     public function create() : View
     {   
@@ -48,18 +59,15 @@ class MemberController extends Controller
 
     public function store(Request $request) : RedirectResponse
     {
-        // dd($request->all());
         $request->validate([
             'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'dateofbirth'       => 'required|date',
             'address'           => 'required|string',
-            'role_id'           => 'required|exists:roles,id',
             'position_id'       => 'required|exists:positions,id',
             'branch_id'         => 'required|exists:branches,id',
             'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'          => ['required', Rules\Password::defaults()],
-
         ], [
             'firstname.regex'       => 'Harap hanya memasukan huruf saja.',
             'lastname.regex'        => 'Harap hanya memasukan huruf saja.',
@@ -67,18 +75,24 @@ class MemberController extends Controller
 
         $fullname = $request->input('firstname') . ' ' . $request->input('lastname');
 
+        // Buat user baru
         $user = User::create([
             'email' => $request->email,
             'name'  => $fullname,
             'password' => Hash::make($request->password),
         ]);
 
-        // Assign role ke user menggunakan Spatie Permission
-        $role = Role::find($request->role_id); // Ambil role berdasarkan ID dari request
-        if ($role) {
-            $user->assignRole($role); // Berikan role ke user
+        // Tentukan role berdasarkan posisi yang dipilih
+        $positionId = $request->position_id;
+        $roleName = $positionId == Position::where('name', 'Jemaat')->first()->id
+            ? 'Jemaat'
+            : ($positionId == Position::where('name', 'Pembina')->first()->id ? 'Admin' : null);
+
+        if ($roleName) {
+            $user->assignRole($roleName); // Berikan role ke user
         }
 
+        // Simpan data anggota ke tabel Member
         Member::create([
             'firstname'         => $request->input('firstname'),
             'lastname'          => $request->input('lastname'),
@@ -90,9 +104,10 @@ class MemberController extends Controller
             'branch_id'         => $request->input('branch_id'),
             'user_id'           => $user->id,
         ]);
-        return redirect()->route('member.index')->with(['success' => 'Data Anggota Berhasil Disimpan!']);
 
+        return redirect()->route('member.index')->with(['success' => 'Data Anggota Berhasil Disimpan!']);
     }
+
 
     public function show($encryptedId): View
     {
@@ -202,7 +217,6 @@ class MemberController extends Controller
                     'unique:users,email,' . $member->user->id,
                 ],
                 'password' => ['nullable', \Illuminate\Validation\Rules\Password::defaults()],
-                'role_id'  => 'required|exists:roles,id',
             ]);
         }
 
@@ -222,9 +236,15 @@ class MemberController extends Controller
                 'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
             ]);
 
-            // Sinkronisasi role
-            $role = Role::findOrFail($request->role_id)->name;
-            $user->syncRoles([$role]);
+            // Tentukan role berdasarkan posisi
+            $positionId = $request->input('position_id');
+            $roleName = $positionId == Position::where('name', 'Jemaat')->first()->id
+                ? 'Jemaat'
+                : ($positionId == Position::where('name', 'Pembina')->first()->id ? 'Admin' : null);
+
+            if ($roleName) {
+                $user->syncRoles([$roleName]); // Sinkronisasi role
+            }
         }
 
         // Update data member
@@ -243,25 +263,58 @@ class MemberController extends Controller
 
 
 
-    public function destroy($encryptedId) : RedirectResponse
+    public function destroy($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
 
         // Temukan anggota berdasarkan ID
         $member = Member::findOrFail($id);
 
-        // Temukan user yang terkait dengan anggota (melalui foreign key users_id)
-        $user = User::findOrFail($member->user_id);
+        // Ubah status anggota menjadi 'Inactive'
+        $member->update([
+            'status' => 'Inactive',
+        ]);
 
-        // Hapus anggota
-        $member->delete();
+        // Dapatkan semua anak yang terkait melalui relasi pivot
+        $children = $member->children()->get();
 
-        // Hapus user yang terkait dengan anggota
-        $user->delete();
+        // Perbarui status semua anak menjadi 'Inactive'
+        foreach ($children as $child) {
+            $child->update(['status' => 'Inactive']);
+        }
 
         // Redirect kembali ke halaman index anggota dengan pesan sukses
-        return redirect()->route('member.index')->with('success', 'Data Anggota dan Akun User berhasil dihapus!');
+        return redirect()->route('member.index')->with('success', 'Status anggota dan semua anak yang terkait berhasil diubah menjadi Inactive!');
     }
+
+
+    public function active($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+
+        // Temukan anggota berdasarkan ID
+        $member = Member::findOrFail($id);
+
+        // Ubah status anggota menjadi 'Active'
+        $member->update([
+            'status' => 'Active',
+        ]);
+
+        // Dapatkan semua anak yang terkait melalui relasi pivot
+        $children = $member->children()->get();
+
+        // Perbarui status semua anak menjadi 'Active' jika status mereka sebelumnya 'Inactive'
+        foreach ($children as $child) {
+            if ($child->status === 'Inactive') {
+                $child->update(['status' => 'Active']);
+            }
+        }
+
+        // Redirect kembali ke halaman index anggota dengan pesan sukses
+        return redirect()->route('member.index')->with('success', 'Status anggota dan semua anak yang terkait berhasil diubah menjadi Active!');
+    }
+
+
 
     public function createChildForm() {
 

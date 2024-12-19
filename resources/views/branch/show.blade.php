@@ -1,9 +1,7 @@
 <x-app-layout>
-    @if ($errors->any())
+    @if(session('error'))
         <div id="alert" class="alert alert-danger">
-            @foreach ($errors->all() as $error)
-                {{ $error }}
-            @endforeach
+            {{ session('error') }}
         </div>
     @endif
 
@@ -62,7 +60,7 @@
                         <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali data cabang ini?');">Aktifkan</button>
                     </form>
                 @endif
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+                <a href="{{ route ('branch.index') }}" class="btn btn-success">Kembali</a>
             </footer>
     </section>
 </x-app-layout>

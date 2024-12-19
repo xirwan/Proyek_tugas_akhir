@@ -5,18 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use illuminate\View\View;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        $categories = Category::orderBy('name', 'asc')->paginate(3);
+        $filterStatus = $request->query('status');
+        $query = Category::orderByRaw("FIELD(status, 'Active', 'Inactive')");
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+        $categories = $query->paginate(10);
         
-        return view('category.index', compact('categories'));
+        return view('category.index', compact('categories', 'filterStatus'));
     }
 
     /**
@@ -78,6 +84,12 @@ class CategoryController extends Controller
 
         $category = Category::findOrFail($id);
 
+        if ($request->input('status') === 'Inactive' && $category->schedules()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Kategori Jadwal tidak dapat dinonaktifkan karena masih digunakan oleh Jadwal.'
+            ]);
+        }
+
         $category->update([
             'name'              => $request->input('name'),
             'description'       => $request->input('description'),
@@ -96,6 +108,12 @@ class CategoryController extends Controller
         $id = decrypt($encryptedId);
         //get product by ID
         $category = Category::findOrFail($id);
+
+        if ($category->schedules()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Kategori Jadwal tidak dapat dinonaktifkan karena masih digunakan oleh Jadwal.'
+            ]);
+        }
 
         $category->update([
             'status' => 'Inactive',

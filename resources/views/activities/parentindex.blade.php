@@ -2,7 +2,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .badge-custom {
-            font-size: 1.2rem;
+            font-size: 0.85rem;
             font-weight: bold;
         }
         .btn-group-custom {
@@ -65,23 +65,38 @@
             </thead>
             <tbody>
                 @forelse($activities as $activity)
+                    @php
+                        $isFull = $activity->max_participants && $activity->registrations->count() >= $activity->max_participants;
+                        $isRegistered = $registeredChildren->contains('activity_id', $activity->id);
+                    @endphp
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->description ?? '-' }}</td>
                         <td>{{ $activity->start_date }}</td>
                         <td>
-                            @php
-                                $isRegistered = $registeredChildren->contains('activity_id', $activity->id);
-                            @endphp
-                            @if ($isRegistered)
+                            @if ($isFull)
+                                <span class="badge bg-danger text-white badge-custom">Penuh</span>
+                            @elseif ($isRegistered)
                                 <span class="badge bg-success text-white badge-custom">Sudah Didaftarkan</span>
                             @else
                                 <span class="badge bg-secondary text-white badge-custom">Belum Didaftarkan</span>
                             @endif
                         </td>
-                        <td>{{ $activity->registration_open_date }}</td>
-                        <td>{{ $activity->registration_close_date }}</td>
+                        <td>
+                            @if ($isFull)
+                                <span class="badge bg-danger text-white badge-custom">Slot Kegiatan Sudah Penuh</span>
+                            @else
+                                <p>{{ $activity->registration_open_date }}</p>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($isFull)
+                                <span class="badge bg-danger text-white badge-custom">Slot Kegiatan Sudah Penuh</span>
+                            @else
+                                <p>{{ $activity->registration_close_date }}</p>
+                            @endif
+                        </td>
                         <td>
                             @if ($activity->poster_file)
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#posterModal-{{ $activity->id }}">
@@ -105,25 +120,28 @@
                             @endif
                         </td>
                         <td>
-                            <div class="btn-group-custom">
+                            @if (!$isFull)
+                                <div class="btn-group-custom">
+                                    <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
+                                    @if ($activity->showRegisterButton)
+                                        <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
+                                    @endif
+                                </div>
+                            @else
                                 <a href="{{ route('activities.parent.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
-                                @if ($activity->showRegisterButton)
-                                    <a href="{{ route('activities.register.form', $activity->id) }}" class="btn btn-success btn-sm">Daftar</a>
-                                @endif
-                            </div>
+                            @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center">
+                        <td colspan="9" class="text-center">
                             <div class="alert alert-danger">
                                 Tidak ada kegiatan yang tersedia.
                             </div>
                         </td>
                     </tr>
                 @endforelse
-            </tbody>
-            
+            </tbody>            
         </table>
 
         {{-- Navigasi Pagination --}}

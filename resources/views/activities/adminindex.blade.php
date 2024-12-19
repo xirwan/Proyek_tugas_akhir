@@ -12,7 +12,7 @@
                     <th>Judul</th>
                     <th>Tanggal Kegiatan</th>
                     <th>Total Peserta</th>
-                    <th>Slot Peserta</th> {{-- Tambahkan Kolom Slot Peserta --}}
+                    <th>Sisa Slot Peserta</th> {{-- Tambahkan Kolom Slot Peserta --}}
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -23,7 +23,13 @@
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->start_date }}</td>
                         <td>{{ $activity->registrations->count() }}</td>
-                        <td>{{ $activity->max_participants ?? 'Tidak Ditentukan' }}</td> {{-- Tampilkan Slot --}}
+                        <td>
+                            @if ($activity->max_participants)
+                                {{ $activity->max_participants - $activity->registrations->count() }}
+                            @else
+                                Tidak Ditentukan
+                            @endif
+                        </td>
                         <td>
                             <a href="{{ route('activities.participants.view', $activity->id) }}" class="btn btn-primary btn-sm">
                                 Lihat Peserta

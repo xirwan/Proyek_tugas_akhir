@@ -1,4 +1,9 @@
 <x-guest-layout>
+    @if ($errors->has('status'))
+        <div class="alert alert-danger">
+            {{ $errors->first('status') }}
+        </div>
+    @endif
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

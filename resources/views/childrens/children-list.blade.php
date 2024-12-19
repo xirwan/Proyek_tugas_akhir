@@ -63,16 +63,9 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="8" class="text-center">
-                                <div class="alert alert-danger mb-0">
-                                    Anda belum mendaftarkan anak.
-                                </div>
-                                <a href="{{ route('member.createChildForm') }}" class="btn btn-primary mt-2">
-                                    Daftarkan Anak
-                                </a>
-                            </td>
-                        </tr>
+                        <div class="alert alert-danger">
+                            Anda belum mendaftarkan anak.
+                        </div>
                     @endforelse
                 </tbody>
             </table>

@@ -14,9 +14,13 @@ use App\Models\MemberScheduleMonthly;
 class ScheduleController extends Controller
 {
     //
-    public function index() : View
-    {   
-        $schedules = Schedule::with(['type', 'category'])
+    public function index(Request $request) : View
+    {
+        // Ambil filter status dari request
+        $filterStatus = $request->query('status');
+
+        // Query jadwal dengan urutan hari
+        $query = Schedule::with(['type', 'category'])
             ->orderByRaw("
                 CASE 
                     WHEN day = 'Senin' THEN 1
@@ -27,11 +31,18 @@ class ScheduleController extends Controller
                     WHEN day = 'Sabtu' THEN 6
                     WHEN day = 'Minggu' THEN 7
                 END
-            ")->paginate(10);
+            ");
 
-        return view('schedule.index', compact('schedules'));
+        // Tambahkan filter status jika ada
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
 
-    }
+        $schedules = $query->paginate(10);
+
+        return view('schedule.index', compact('schedules', 'filterStatus'));
+}
+
 
     public function create() : View
     {
@@ -121,13 +132,17 @@ class ScheduleController extends Controller
             'end'           => ['nullable', 'date_format:H:i'],
             'category_id'   => 'required|exists:categories,id',
             'type_id'       => 'required|exists:types,id',
+            'status'            => 'required|in:Active,Inactive',
         ]);
 
         // Cari jadwal berdasarkan ID
         $schedule = Schedule::findOrFail($id);
 
-        // Simpan hari lama sebelum update
-        $oldDay = $schedule->day;
+        if ($request->input('status') === 'Inactive' && $schedule->classes()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Jadwal tidak dapat dinonaktifkan karena masih terkait dengan kelas.'
+            ]);
+        }
 
         // Update jadwal dengan nilai baru
         $schedule->update([
@@ -136,50 +151,11 @@ class ScheduleController extends Controller
             'day'           => $request->input('day'),
             'start'         => $request->input('start', $schedule->start),
             'end'           => $request->input('end', $schedule->end),
-            'status'        => 'Active',
+            'status'        => $request->input('status'),
             'category_id'   => $request->input('category_id'),
             'type_id'       => $request->input('type_id'),
         ]);
 
-        // Jika hari berubah, perbarui penjadwalan anggota
-        if ($oldDay !== $request->input('day')) {
-            // Pemetaan hari Indonesia ke format bahasa Inggris (untuk Carbon)
-            $dayMap = [
-                'Senin'    => 'Monday',
-                'Selasa'   => 'Tuesday',
-                'Rabu'     => 'Wednesday',
-                'Kamis'    => 'Thursday',
-                'Jumat'    => 'Friday',
-                'Sabtu'    => 'Saturday',
-                'Minggu'   => 'Sunday',
-            ];
-
-            // Tentukan hari baru dan hari lama dalam format bahasa Inggris
-            $newDay = $dayMap[$request->input('day')];
-            $oldDay = $dayMap[$oldDay];
-
-            // Ambil semua kelas (SundaySchoolClass) yang terkait dengan jadwal ini
-            $scheduleClasses = $schedule->classes; // Mengambil koleksi kelas yang terkait dengan jadwal
-
-            // Loop melalui setiap kelas yang terkait dan perbarui MemberScheduleMonthly
-            foreach ($scheduleClasses as $scheduleClass) {
-                // Ambil semua penjadwalan anggota untuk kelas ini
-                $memberSchedules = MemberScheduleMonthly::where('schedules_sunday_school_class_id', $scheduleClass->pivot->id)->get();
-
-                foreach ($memberSchedules as $memberSchedule) {
-                    // Parsing tanggal jadwal lama
-                    $oldScheduleDate = Carbon::parse($memberSchedule->schedule_date);
-
-                    // Cari tanggal berikutnya untuk hari baru (misalnya, Senin ke Selasa)
-                    $newScheduleDate = $oldScheduleDate->copy()->next($newDay); // Mendapatkan tanggal yang sesuai dengan hari baru
-
-                    // Perbarui tanggal jadwal untuk anggota
-                    $memberSchedule->update([
-                        'schedule_date' => $newScheduleDate->toDateString(),
-                    ]);
-                }
-            }
-        }
 
         // Mengembalikan pesan sukses setelah berhasil diubah
         return redirect()->route('schedule.index')->with(['success' => 'Data Berhasil Diubah!']);
@@ -188,14 +164,43 @@ class ScheduleController extends Controller
     public function destroy($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
-        //get product by ID
+
+        // Cari jadwal berdasarkan ID
         $schedule = Schedule::findOrFail($id);
 
-        //delete product
-        $schedule->delete();
+        // Periksa apakah jadwal masih terkait dengan kelas
+        if ($schedule->classes()->exists()) {
+            return redirect()->back()->with([
+                'error' => 'Jadwal tidak dapat dinonaktifkan karena masih terkait dengan kelas.'
+            ]);
+        }
 
-        //redirect to index
-        return redirect()->route('schedule.index')->with(['success' => 'Data Berhasil Dihapus!']);
+        // Ubah status menjadi 'Inactive'
+        $schedule->update([
+            'status' => 'Inactive',
+        ]);
+
+        return redirect()->route('schedule.index')->with([
+            'success' => 'Jadwal berhasil dinonaktifkan!'
+        ]);
     }
+
+    public function active($encryptedId): RedirectResponse
+    {
+        $id = decrypt($encryptedId);
+
+        // Cari jadwal berdasarkan ID
+        $schedule = Schedule::findOrFail($id);
+
+        // Ubah status menjadi 'Active'
+        $schedule->update([
+            'status' => 'Active',
+        ]);
+
+        return redirect()->route('schedule.index')->with([
+            'success' => 'Jadwal berhasil diaktifkan kembali!'
+        ]);
+    }
+
 
 }

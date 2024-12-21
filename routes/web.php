@@ -26,10 +26,15 @@ use App\Http\Controllers\MemberScheduleController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\SeminarController;
 use App\Http\Middleware\CheckMemberStatus;
+use App\Http\Controllers\LandingController;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
+
+Route::get('/', [LandingController::class, 'landing'])->name('landing');
+
+Route::get('/landing-activities', [LandingController::class, 'index'])->name('landing-activities.index');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -95,6 +100,10 @@ Route::get('/scheduling/create', [MemberScheduleController::class, 'create'])->n
 Route::post('/scheduling/store', [MemberScheduleController::class, 'store'])->name('scheduling.store');
 
 Route::get('/scheduling/available-options', [MemberScheduleController::class, 'availableOptions'])->name('scheduling.availableOptions');
+
+Route::get('/scheduling/{id}/edit', [MemberScheduleController::class, 'edit'])->name('scheduling.edit');
+
+Route::put('/scheduling/{id}', [MemberScheduleController::class, 'update'])->name('scheduling.update');
 
 Route::prefix('sunday-school')->middleware('auth')->group(function () {
 

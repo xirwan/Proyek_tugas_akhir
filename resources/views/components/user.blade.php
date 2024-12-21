@@ -20,7 +20,7 @@
                             ['url' => route('member.createChildForm'), 'label' => 'Daftar Anak'],
                             ['url' => route('attendance.parentView'), 'label' => 'Absensi Anak'],
                         ]">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
+                            <i class="bx bx-user" aria-hidden="true"></i>
                             <span>Anak</span>
                         </x-side-link>
                         <x-side-link href="{{route ('activities.parent.index')}}" :active="request()->is('childrens-activities*')">

@@ -248,6 +248,48 @@ class MemberScheduleController extends Controller
         return view('scheduling.add', compact('monthOptions', 'memberOptions', 'scheduleClassOptions', 'selectedMonth', 'selectedYear'));
     }
 
+    public function edit($id)
+    {
+        $schedule = MemberScheduleMonthly::with(['monthlySchedule', 'member'])->findOrFail($id);
+
+        // Ambil bulan dan tahun dari jadwal
+        $month = $schedule->monthlySchedule->month;
+        $year = $schedule->monthlySchedule->year;
+
+        // Ambil ID pembina yang sudah dijadwalkan di bulan dan tahun yang sama
+        $scheduledMemberIds = MemberScheduleMonthly::whereHas('monthlySchedule', function ($query) use ($month, $year) {
+            $query->where('month', $month)->where('year', $year);
+        })->pluck('member_id')->unique()->toArray();
+
+        // Masukkan pembina yang sedang dijadwalkan agar tetap muncul di dropdown
+        if (($key = array_search($schedule->member_id, $scheduledMemberIds)) !== false) {
+            unset($scheduledMemberIds[$key]);
+        }
+
+        // Ambil daftar pembina yang belum dijadwalkan di bulan dan tahun tersebut
+        $members = Member::whereHas('user', function ($query) {
+            $query->role('Admin'); // Menggunakan Spatie untuk memfilter user dengan role 'admin'
+        })->whereNotIn('id', $scheduledMemberIds)->get();
+
+        return view('scheduling.edit', compact('schedule', 'members'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $schedule = MemberScheduleMonthly::findOrFail($id);
+
+        $validated = $request->validate([
+            'member_id' => 'required|exists:members,id',
+        ]);
+
+        // Perbarui pembina
+        $schedule->update([
+            'member_id' => $validated['member_id'],
+        ]);
+
+        return redirect()->route('scheduling.index')->with('success', 'Jadwal berhasil diperbarui!');
+    }
 
      
 

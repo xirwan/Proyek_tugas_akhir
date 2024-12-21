@@ -48,6 +48,7 @@
                     <th>Tanggal</th>
                     <th>Kelas</th>
                     <th>Pembina</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,6 +60,7 @@
                         <td>{{ $schedule->schedule_date }}</td>
                         <td>{{ $schedule->scheduleSundaySchoolClass->sundaySchoolClass->name ?? '-' }}</td>
                         <td>{{ $schedule->member->firstname }} {{ $schedule->member->lastname }}</td>
+                        <td><a href="{{ route('scheduling.edit', $schedule->id) }}" class="btn btn-success">Edit</a></td>
                     </tr>
                 @empty
                     <tr>

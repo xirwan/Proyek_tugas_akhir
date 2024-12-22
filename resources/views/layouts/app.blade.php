@@ -85,9 +85,9 @@
                             <span>Sekolah Minggu</span>
                         </x-side-link1> --}}
 
-                        <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
+                        <x-side-link href="#" :active="request()->is('activities*') || request()->is('activity*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
-                            ['url' => url('activities-list'), 'label' => 'List Kegiatan'],
+                            ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>

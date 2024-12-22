@@ -192,7 +192,7 @@
 
         {{-- Tombol Kembali --}}
         <div class="mt-4 d-flex justify-content-end">
-            <a href="{{ route('activities.admin.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('listactivities.index') }}" class="btn btn-secondary">Kembali</a>
         </div>
     </x-card>
 </x-app-layout>

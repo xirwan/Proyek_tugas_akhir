@@ -1,7 +1,7 @@
 <!-- start: header -->
 <header class="header">
     <div class="logo-container">
-        <a href="{{ route('dashboard') }}" class="logo">
+        <a href="{{ route('landing') }}" class="logo">
             <img src="{{asset('admintemp/img/logo.png')}}" width="50" height="50" alt="GBI" />
         </a>
         <div class="d-md-none toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">

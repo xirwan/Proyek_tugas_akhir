@@ -111,7 +111,7 @@ class ActivityController extends Controller
 
 
 
-    public function adminIndex(Request $request)
+    public function indexAdmin(Request $request)
     {
         $activities = Activity::where('status', 'approved')->with('registrations')->paginate(10);
 

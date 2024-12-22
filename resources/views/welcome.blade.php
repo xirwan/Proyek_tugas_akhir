@@ -4,13 +4,49 @@
 @section('content')
   <!-- ========== HERO SECTION ========== -->
   <section class="hero">
-    <div class="container">
+    <div class="container text-center">
       <h1>Selamat Datang di Sekolah Minggu</h1>
       <p>GBI Sungai Yordan</p>
     </div>
   </section>
 
-  <!-- ========== MAIN CONTENT ========== -->
+  <!-- ========== SECTION INFO: 3 Kolom Singkat ========== -->
+  <div class="container my-5" id="info">
+    <div class="row text-center">
+      <div class="col-md-4 mb-4">
+        <img 
+          src="{{ asset('admintemp/img/boy.png') }}" 
+          alt="icon1" 
+          class="mb-3"
+          style="width: 60px; height: 60px; object-fit: cover;"
+        >
+        <h5 class="fw-bold">Menyenangkan</h5>
+        <p>Kegiatan pujian dan bimbingan interaktif yang membuat anak-anak betah.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <img 
+          src="{{ asset('admintemp/img/pray.png') }}" 
+          alt="icon1" 
+          class="mb-3"
+          style="width: 60px; height: 60px; object-fit: cover;"
+        >
+        <h5 class="fw-bold">Membangun Iman</h5>
+        <p>Membantu membentuk karakter dan nilai-nilai Kristiani sejak dini.</p>
+      </div>
+      <div class="col-md-4 mb-4">
+        <img 
+          src="{{ asset('admintemp/img/family-member.png') }}" 
+          alt="icon1" 
+          class="mb-3"
+          style="width: 60px; height: 60px; object-fit: cover;"
+        >
+        <h5 class="fw-bold">Komunitas</h5>
+        <p>Memperluas pertemanan rohani bagi semua anggota keluarga.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SECTION TABEL JADWAL ========== -->
   <div class="container my-5">
     <div class="row">
       <div class="col text-center">
@@ -19,7 +55,6 @@
       </div>
     </div>
 
-    {{-- Contoh: Card + Table --}}
     <div class="row justify-content-center">
       <div class="col-md-10">
         <div class="card shadow-sm border-0">

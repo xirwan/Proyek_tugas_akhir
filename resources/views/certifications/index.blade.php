@@ -11,7 +11,7 @@
     @endif
     <x-card>
         <x-slot name="header">
-            List Sertifikasi
+            List Pengajuan Anggota Tetap
         </x-slot>
         <div class="table-responsive">
             <table class="table mb-0">

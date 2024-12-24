@@ -40,6 +40,9 @@ Route::get('/landing-activities', [LandingController::class, 'index'])->name('la
 Route::get('/coba', function () {
     return view('coba');
 });
+
+// Route::post('/payment/callback', [ActivityController::class, 'callback']);
+
 Route::middleware('auth')->group(function () {
     Route::middleware('role:SuperAdmin')->group(function () {
         Route::prefix('master-data')->group(function () {
@@ -141,7 +144,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('childrens-activities')->group(function(){
             Route::get('/', [ActivityController::class, 'indexParent'])->name('activities.parent.index');
             Route::get('/{id}/register', [ActivityController::class, 'registerForm'])->name('activities.register.form');
+            // Route::get('/{id}/register-free', [ActivityController::class, 'registerFormfree'])->name('activities.registerfree.form');
             Route::post('/{id}/register', [ActivityController::class, 'register'])->name('activities.register.children');
+            // Route::post('/{id}/register-free', [ActivityController::class, 'registerfree'])->name('activities.registerfree.children');
             Route::get('/{id}', [ActivityController::class, 'showParent'])->name('activities.parent.show');
             Route::post('/{id}/upload-payment', [ActivityController::class, 'uploadPayment'])->name('activities.upload.payment');
         });

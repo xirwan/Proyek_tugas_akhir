@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Gate;
 
 use App\Models\User;
 
+use Illuminate\Support\Facades\URL;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -31,7 +33,10 @@ class AppServiceProvider extends ServiceProvider
         });
         
         Paginator::useBootstrapFive();
-
+        //diaktifkan saat menggunakan ngrok
+        // if(config('app.env') === 'local'){
+        //     URL::forceScheme('https');
+        // }
         
 
     }

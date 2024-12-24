@@ -22,7 +22,6 @@ class AttendanceController extends Controller
         return view('attendance.children-list', compact('children'));
     }
 
-    // Generate QR code untuk anak tertentu
     public function generateQrForChild($id)
     {
         $child = Member::findOrFail($id);
@@ -38,11 +37,11 @@ class AttendanceController extends Controller
 
         // Cek apakah QR code sudah ada
         if (!file_exists($filePath)) {
-            // Generate URL untuk QR code hanya dengan ID anak
-            // $url = route('qr-code.checkin', ['id' => $child->id]);
-            $url = route('qr-code.children.generate.qr', ['id' => $child->id]);
+            // Generate path relatif untuk QR code
+            $relativePath = "/qr-code/checkin/{$child->id}";
+
             // Generate dan simpan QR code sebagai gambar PNG
-            QrCode::format('png')->size(300)->generate($url, $filePath);
+            QrCode::format('png')->size(300)->generate($relativePath, $filePath);
 
             // Simpan nama file di database (hanya menyimpan path relatif)
             $child->update(['qr_code' => 'qr-codes/' . $fileName]);
@@ -70,12 +69,11 @@ class AttendanceController extends Controller
             $fileName = 'qr_' . $child->id . '.png';
             $filePath = storage_path('app/public/qr-codes/' . $fileName);
 
-            // Generate URL untuk QR code hanya dengan ID anak
-            // $qrUrl = route('qr-code.checkin', ['id' => $child->id]);
-            $qrUrl = route('qr-code.children.generate.qr', ['id' => $child->id]);
+            // Generate path relatif untuk QR code
+            $relativePath = "/qr-code/checkin/{$child->id}";
 
             // Generate dan simpan QR code sebagai gambar PNG
-            QrCode::format('png')->size(300)->generate($qrUrl, $filePath);
+            QrCode::format('png')->size(300)->generate($relativePath, $filePath);
 
             // Simpan nama file di database (hanya menyimpan path relatif)
             $child->update(['qr_code' => 'qr-codes/' . $fileName]);
@@ -84,6 +82,7 @@ class AttendanceController extends Controller
         return redirect()->route('qr-code.children.list')
             ->with('success', 'QR Code berhasil di-generate untuk semua anak!');
     }
+
 
     public function classList()
     {
@@ -119,77 +118,86 @@ class AttendanceController extends Controller
         })->get();
 
         // Tentukan minggu aktif (mulai dari hari Minggu)
-        // $weekOf = Carbon::now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         $weekOf = Carbon::now()->toDateString();
 
-        // Ambil ID murid yang sudah absen di kelas ini untuk minggu ini
+        // Ambil ID murid yang sudah absen dengan QR Code (check_in tidak null)
         $absentStudents = SundaySchoolPresence::where('week_of', $weekOf)
-        ->whereIn('member_id', $students->pluck('id')->toArray()) // Pastikan hanya murid di kelas ini
-        ->with('member') // Pastikan relasi member di-load
-        ->get()
-        ->map(function ($presence) {
-            return (object) [
-                'firstname' => $presence->member->firstname,
-                'lastname' => $presence->member->lastname,
-                'check_in' => $presence->check_in ? Carbon::parse($presence->check_in) : null,
-            ];
-        });
+            ->whereNotNull('check_in') // Hanya murid yang check_in tidak null
+            ->whereIn('member_id', $students->pluck('id')->toArray()) // Pastikan hanya murid di kelas ini
+            ->with('member') // Pastikan relasi member di-load
+            ->get()
+            ->map(function ($presence) {
+                return (object) [
+                    'firstname' => $presence->member->firstname,
+                    'lastname' => $presence->member->lastname,
+                    'check_in' => $presence->check_in ? Carbon::parse($presence->check_in) : null,
+                ];
+            });
+
+        // Pastikan $absentStudents tidak null
+        $absentStudents = $absentStudents ?? collect([]);
+
+        // Pastikan $students tidak null
+        $students = $students ?? collect([]);
+
         return view('attendance.checkin-qr', compact('class', 'students', 'absentStudents'));
     }
 
+
+
     public function classListAdmin()
-{
-    // Atur lokal untuk menghasilkan nama bulan dalam bahasa Indonesia
-    Carbon::setLocale('id');
+    {
+        // Atur lokal untuk menghasilkan nama bulan dalam bahasa Indonesia
+        Carbon::setLocale('id');
 
-    // Ambil admin yang login dan cari member_id-nya
-    $member = Member::where('user_id', Auth::id())->first();
+        // Ambil admin yang login dan cari member_id-nya
+        $member = Member::where('user_id', Auth::id())->first();
 
-    if (!$member) {
-        return redirect()->back()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
-    }
+        if (!$member) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke kelas ini.');
+        }
 
-    // Ambil nama bulan dan tahun saat ini
-    $currentMonth = Carbon::now()->translatedFormat('F'); // Contoh: "Desember"
-    $currentYear = Carbon::now()->year;
+        // Ambil nama bulan dan tahun saat ini
+        $currentMonth = Carbon::now()->translatedFormat('F'); // Contoh: "Desember"
+        $currentYear = Carbon::now()->year;
 
-    // Ambil kelas yang sesuai dengan member berdasarkan bulan (nama dalam bahasa Indonesia) dan tahun
-    $classes = SundaySchoolClass::whereHas('scheduleSundaySchoolClasses', function ($query) use ($member, $currentMonth, $currentYear) {
-        $query->whereHas('memberSchedules', function ($subQuery) use ($member, $currentMonth, $currentYear) {
-            $subQuery->where('member_id', $member->id)
-                     ->whereHas('monthlySchedule', function ($monthlyScheduleQuery) use ($currentMonth, $currentYear) {
-                         $monthlyScheduleQuery->where('month', $currentMonth)
-                                              ->where('year', $currentYear);
-                     });
-        });
-    })
-    ->with('schedules') // Pastikan jadwal ikut di-load
-    ->paginate(10);
+        // Ambil kelas yang sesuai dengan member berdasarkan bulan (nama dalam bahasa Indonesia) dan tahun
+        $classes = SundaySchoolClass::whereHas('scheduleSundaySchoolClasses', function ($query) use ($member, $currentMonth, $currentYear) {
+            $query->whereHas('memberSchedules', function ($subQuery) use ($member, $currentMonth, $currentYear) {
+                $subQuery->where('member_id', $member->id)
+                        ->whereHas('monthlySchedule', function ($monthlyScheduleQuery) use ($currentMonth, $currentYear) {
+                            $monthlyScheduleQuery->where('month', $currentMonth)
+                                                ->where('year', $currentYear);
+                        });
+            });
+        })
+        ->with('schedules') // Pastikan jadwal ikut di-load
+        ->paginate(10);
 
-    // Tandai kelas sebagai aktif berdasarkan jadwal, jika diperlukan
-    foreach ($classes as $class) {
-        foreach ($class->schedules as $schedule) {
-            $class->isActiveSchedule = false; // Default: Tidak aktif
-            if (strtolower($schedule->day) === strtolower(Carbon::now()->isoFormat('dddd'))) {
-                $class->isActiveSchedule = true;
-                break;
+        // Tandai kelas sebagai aktif berdasarkan jadwal, jika diperlukan
+        foreach ($classes as $class) {
+            foreach ($class->schedules as $schedule) {
+                $class->isActiveSchedule = false; // Default: Tidak aktif
+                if (strtolower($schedule->day) === strtolower(Carbon::now()->isoFormat('dddd'))) {
+                    $class->isActiveSchedule = true;
+                    break;
+                }
             }
         }
+
+        return view('attendance.admin-class-list', compact('classes'));
     }
-
-    return view('attendance.admin-class-list', compact('classes'));
-}
-
-
-
 
     public function checkinByClass(Request $request, $class_id)
     {
         // Ambil nilai `member_id` dari QR code
         $url = $request->member_id;
 
-        // Ekstrak angka `member_id` dari path, contoh: "qr-codes/qr_5.png" menjadi "5"
-        if (preg_match('/checkin\/(\d+)$/', $url, $matches)) {
+        // Ambil path dari URL (abaikan domain)
+        $path = parse_url($url, PHP_URL_PATH);
+
+        // Ekstrak angka `member_id` dari path, contoh: "/qr-code/checkin/5" menjadi "5"
+        if (preg_match('/\/checkin\/(\d+)$/', $path, $matches)) {
             $memberId = $matches[1];
         } else {
             return redirect()->route('attendance.showCheckinQr', $class_id)
@@ -214,39 +222,34 @@ class AttendanceController extends Controller
         }
 
         // Tentukan minggu aktif (mulai hari Minggu ini)
-        // $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
         $weekOf = Carbon::now()->toDateString();
 
-
         // Cek apakah murid sudah absen minggu ini
-        $alreadyCheckedIn = SundaySchoolPresence::where('member_id', $memberId)
+        $attendance = SundaySchoolPresence::where('member_id', $memberId)
             ->whereDate('week_of', $weekOf)
             ->first();
 
-        // if (!$alreadyCheckedIn) {
-        //     // Catat absensi untuk minggu ini tanpa class_id
-        //     SundaySchoolPresence::create([
-        //         'member_id' => $memberId,
-        //         'check_in' => now(),
-        //         'week_of' => $weekOf,
-        //     ]);
-        // }
+        if ($attendance) {
+            // Jika `check_in` masih null, perbarui dengan waktu sekarang
+            if (!$attendance->check_in) {
+                $attendance->update([
+                    'check_in' => now(),
+                ]);
+                return back()->with('success', 'QR Code berhasil dipindai, absensi diperbarui!');
+            }
 
-        if ($alreadyCheckedIn !== null) { // Pastikan hanya memicu jika $alreadyCheckedIn tidak null
-            return back()->withErrors('Murid ini sudah absen minggu ini.');
+            return back()->with('success', 'Murid ini sudah absen minggu ini.');
         }
-    
-        // Jika belum absen, catat absensi untuk minggu ini
+
+        // Jika belum ada data absensi, buat data baru
         SundaySchoolPresence::create([
             'member_id' => $memberId,
             'check_in' => now(),
             'week_of' => $weekOf,
         ]);
 
-        // return redirect()->route('attendance.showCheckinQr', $class_id)->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
         return back()->with('success', 'Absensi berhasil dicatat untuk minggu ini!');
     }
-
 
     public function attendanceListByClass($class_id)
     {
@@ -329,10 +332,6 @@ class AttendanceController extends Controller
         return redirect()->route('attendance.classAttendance', $class_id)->with('success', 'Checklist manual berhasil disimpan untuk minggu ini!');
     }
 
-
-
-
-
     public function parentViewAttendance(Request $request)
     {
         // Ambil ID user yang sedang login
@@ -377,7 +376,5 @@ class AttendanceController extends Controller
             'reports' => $reports,
         ]);
     }
-
-
 
 }

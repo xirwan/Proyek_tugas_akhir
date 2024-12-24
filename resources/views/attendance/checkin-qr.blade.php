@@ -80,7 +80,7 @@
             @endif
         <div class="d-flex justify-content-between align-items-center mb-3">
             <a href="{{ route ('attendance.classList') }}" class="btn btn-secondary">Kembali</a>
-            <h2>Absensi Kelas {{ $class->name }} ({{ count($absentStudents) }}/{{ count($students) }})</h2>
+            <h2>Absensi Kelas {{ $class->name }} ({{ count($absentStudents ?? []) }}/{{ count($students ?? []) }})</h2>
         </div>
 
         <div class="row">
@@ -107,7 +107,7 @@
                                     <span class="badge badge-primary">{{ $student->check_in->format('H:i') }}</span>
                                 </li>
                             @empty
-                                <li class="list-group-item">Belum ada murid yang absen.</li>
+                                <li class="list-group-item">Belum ada murid yang absen dengan QR Code.</li>
                             @endforelse
                         </ul>
                     </div>

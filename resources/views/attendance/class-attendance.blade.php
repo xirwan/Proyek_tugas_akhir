@@ -1,4 +1,10 @@
 <x-app-layout>
+    <style>
+        .badge-custom {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
     @if (session('success'))
         <div id="alert" class="alert alert-success">
             {{ session('success') }}
@@ -39,7 +45,13 @@
                                 @endif
                             </td>
                             <td>
-                                <input type="checkbox" name="manual_checkins[]" value="{{ $student->id }}" class="manual-checkin-checkbox">
+                                @if (!$attendance || !$attendance->check_in)
+                                    {{-- Tampilkan checkbox hanya jika murid belum hadir --}}
+                                    <input type="checkbox" name="manual_checkins[]" value="{{ $student->id }}" class="manual-checkin-checkbox">
+                                @else
+                                    {{-- Jika murid sudah hadir, tampilkan teks atau badge --}}
+                                    <span class="badge badge-success badge-custom text-white">Sudah Hadir</span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

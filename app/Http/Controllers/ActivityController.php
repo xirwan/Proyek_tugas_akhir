@@ -13,10 +13,311 @@ Use App\Models\ActivityPayment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+// use Midtrans\Config;
+// use Midtrans\Snap;
 
 class ActivityController extends Controller
 {
     //
+    //midtrans mulai
+    // public function callback(Request $request)
+    // {
+    //     $serverKey = config('midtrans.server_key');
+    //     $hashedKey = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+
+    //     if ($hashedKey !== $request->signature_key) {
+    //         return response()->json(['message' => 'Invalid signature key'], 403);
+    //     }
+
+    //     $transactionStatus = $request->transaction_status;
+    //     $orderId = $request->order_id;
+    //     $order = ActivityPayment::where('midtrans_order_id', $orderId)->first();
+
+    //     if (!$order) {
+    //         return response()->json(['message' => 'Order not found'], 404);
+    //     }
+
+    //     switch ($transactionStatus) {
+    //         case 'capture':
+    //             if ($request->payment_type == 'credit_card') {
+    //                 if ($request->fraud_status == 'challenge') {
+    //                     $order->update(['midtrans_transaction_status' => 'pending']);
+    //                 } else {
+    //                     $order->update(['midtrans_transaction_status' => 'success']);
+    //                 }
+    //             }
+    //             break;
+    //         case 'settlement':
+    //             // Dapatkan informasi kegiatan dan daftar anak dari transaksi
+    //             $order->update(['midtrans_transaction_status' => 'settlement']);
+    //             // $this->registerChildrenAfterPayment($order);
+    //             break;
+    //         case 'pending':
+    //             $order->update(['midtrans_transaction_status' => 'pending']);
+    //             break;
+    //         case 'deny':
+    //             $order->update(['midtrans_transaction_status' => 'failed']);
+    //             break;
+    //         case 'expire':
+    //             $order->update(['midtrans_transaction_status' => 'expired']);
+    //             break;
+    //         case 'cancel':
+    //             $order->update(['midtrans_transaction_status' => 'canceled']);
+    //             break;
+    //         default:
+    //             $order->update(['midtrans_transaction_status' => 'unknown']);
+    //             break;
+    //     }
+
+    //     return response()->json(['message' => 'Callback received successfully']);
+    // }
+    // public function registerFormfree($activityId)
+    // {
+    //     $activity = Activity::findOrFail($activityId);
+
+    //     // Ambil semua anak milik orang tua
+    //     $allChildren = Auth::user()->member->children;
+
+    //     // Ambil ID anak yang sudah terdaftar di kegiatan ini
+    //     $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+    //         ->where('registered_by', Auth::user()->member->id)
+    //         ->pluck('child_id')
+    //         ->toArray();
+
+    //     // Filter anak yang belum terdaftar
+    //     $unregisteredChildren = $allChildren->whereNotIn('id', $registeredChildrenIds);
+
+    //     // Cari pembayaran terkait kegiatan ini
+    //     $payment = ActivityPayment::where('activity_id', $activityId)
+    //         ->where('parent_id', Auth::user()->member->id)
+    //         ->where('midtrans_transaction_status', 'pending') // Transaksi dengan status pending
+    //         ->first();
+
+    //     // Kirim data ke view
+    //     return view('activities.childrenregisterfree', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren', 'payment'));
+    // }
+    // public function registerForm($activityId)
+    // {
+    //     $activity = Activity::findOrFail($activityId);
+
+    //     // Ambil semua anak milik orang tua
+    //     $allChildren = Auth::user()->member->children;
+
+    //     // Ambil ID anak yang sudah terdaftar di kegiatan ini
+    //     $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+    //         ->where('registered_by', Auth::user()->member->id)
+    //         ->pluck('child_id')
+    //         ->toArray();
+
+    //     // Filter anak yang belum terdaftar
+    //     $unregisteredChildren = $allChildren->whereNotIn('id', $registeredChildrenIds);
+
+    //     // Cari pembayaran terkait kegiatan ini
+    //     $payment = ActivityPayment::where('activity_id', $activityId)
+    //         ->where('parent_id', Auth::user()->member->id)
+    //         ->where('midtrans_transaction_status', 'pending') // Transaksi dengan status pending
+    //         ->first();
+
+    //     // Kirim data ke view
+    //     return view('activities.childrenregister', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren', 'payment'));
+    // }
+    // public function indexParent(Request $request)
+    // {
+    //     // Ambil semua kegiatan yang sudah disetujui
+    //     $activities = Activity::where('status', 'approved');
+
+    //     // Filter berdasarkan jenis kegiatan
+    //     if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
+    //         $activities->where('is_paid', $request->is_paid);
+    //     }
+
+    //     // Ambil anak yang terhubung dengan pengguna saat ini
+    //     $children = Auth::user()->member->children;
+
+    //     // Ambil semua registrasi anak untuk kegiatan
+    //     $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
+
+    //     // Filter berdasarkan status pendaftaran
+    //     if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
+    //         $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
+    //         if ($request->is_registered == '1') {
+    //             // Sudah didaftarkan
+    //             $activities->whereIn('id', $registeredActivityIds);
+    //         } elseif ($request->is_registered == '0') {
+    //             // Belum didaftarkan
+    //             $activities->whereNotIn('id', $registeredActivityIds);
+    //         }
+    //     }
+
+    //     // Paginate hasil query
+    //     $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
+
+    //     // Periksa apakah tombol daftar harus muncul
+    //     foreach ($activities as $activity) {
+    //         // Anak-anak yang belum terdaftar untuk kegiatan ini
+    //         $unregisteredChildren = $children->pluck('id')->diff(
+    //             MemberActivityRegistration::where('activity_id', $activity->id)
+    //                 ->pluck('child_id')
+    //         );
+        
+    //         // Periksa apakah ada anak yang belum terdaftar
+    //         $hasUnregisteredChildren = $unregisteredChildren->isNotEmpty();
+        
+    //         // Periksa apakah masih dalam rentang waktu pendaftaran
+    //         $isWithinRegistrationPeriod = now()->between($activity->registration_open_date, $activity->registration_close_date);
+        
+    //         // Tentukan apakah tombol daftar muncul
+    //         $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
+    //     }        
+
+    //     return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
+    // }
+    // public function registerfree(Request $request, $activityId)
+    // {
+        
+    //     $activity = Activity::findOrFail($activityId);
+
+    //     // Validasi input
+    //     $request->validate([
+    //         'child_ids' => 'required|array|min:1',
+    //         'child_ids.*' => 'exists:members,id',
+    //     ]);
+
+    //     // Ambil ID orang tua yang sedang login
+    //     $parentId = Auth::user()->member->id;
+
+    //     // Ambil ID anak yang sudah terdaftar untuk kegiatan ini
+    //     $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+    //         ->where('registered_by', $parentId)
+    //         ->pluck('child_id')
+    //         ->toArray();
+
+    //     // Filter anak baru dari input
+    //     $newChildrenIds = array_diff($request->child_ids, $registeredChildrenIds);
+
+    //     if (empty($newChildrenIds)) {
+    //         return redirect()->back()->withErrors('Semua anak yang dipilih sudah terdaftar.');
+    //     }
+
+    //     // Masukkan anak baru ke tabel pendaftaran
+    //     foreach ($newChildrenIds as $childId) {
+    //         MemberActivityRegistration::create([
+    //             'activity_id' => $activityId,
+    //             'child_id' => $childId,
+    //             'registered_by' => $parentId,
+    //         ]);
+    //     }
+
+    //     // Jika kegiatan tidak berbayar, kembali ke daftar kegiatan
+    //     return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
+    // }
+    // public function register(Request $request, $activityId)
+    // {
+    //     $activity = Activity::findOrFail($activityId);
+
+    //     // Validasi input
+    //     $request->validate([
+    //         'child_ids' => 'required|array|min:1',
+    //         'child_ids.*' => 'exists:members,id',
+    //     ]); 
+        
+
+    //     $parentId = Auth::user()->member->id;
+
+    //     // Hitung total biaya
+    //     $totalChildren = count($request->child_ids);
+    //     $totalAmount = $activity->price * $totalChildren;
+
+    //     if ($activity->is_paid) {
+    //         $orderId = 'activity-' . $activity->id . '-parent-' . $parentId . '-' . time();
+
+    //         // Konfigurasi Midtrans
+    //         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+    //         Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
+    //         Config::$isSanitized = true;
+    //         Config::$is3ds = true;
+
+    //         $params = [
+    //             'transaction_details' => [
+    //                 'order_id' => $orderId,
+    //                 'gross_amount' => $totalAmount,
+    //             ],
+    //             'customer_details' => [
+    //                 'first_name' => Auth::user()->name,
+    //                 'email' => Auth::user()->email,
+    //             ],
+    //             'item_details' => [
+    //                 [
+    //                     'id' => $activity->id,
+    //                     'price' => $activity->price,
+    //                     'quantity' => $totalChildren,
+    //                     'name' => $activity->title,
+    //                 ],
+    //             ],
+    //         ];
+
+    //         try {
+    //             // Buat transaksi menggunakan Midtrans
+    //             $transaction = Snap::createTransaction($params);
+
+    //             // Simpan Snap Token dan Payment URL ke database
+    //             ActivityPayment::create([
+    //                 'parent_id' => $parentId,
+    //                 'activity_id' => $activityId,
+    //                 'total_children' => $totalChildren,
+    //                 'total_amount' => $totalAmount,
+    //                 'midtrans_order_id' => $orderId,
+    //                 'payment_token' => $transaction->token,
+    //                 'payment_url' => $transaction->redirect_url, // Simpan Payment URL
+    //                 'midtrans_transaction_status' => 'pending',
+    //                 'child_ids' => $request->child_ids, // Simpan ID anak
+    //             ]);
+    //             $childrenIds = $request->child_ids;
+
+    //             // Ubah semua elemen ke integer (jika perlu)
+    //             $childrenIds = array_map('intval', $childrenIds);
+
+    //             // Ambil ID anak yang sudah terdaftar untuk aktivitas ini
+    //             $existingChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+    //                 ->pluck('child_id')
+    //                 ->toArray();
+
+    //             // Bandingkan untuk mendapatkan ID anak yang baru (belum terdaftar)
+    //             $newChildrenIds = array_diff($childrenIds, $existingChildrenIds);
+
+    //             // Lakukan pendaftaran untuk setiap anak baru
+    //             foreach ($newChildrenIds as $childId) {
+    //                 MemberActivityRegistration::create([
+    //                     'activity_id' => $activityId,
+    //                     'child_id' => $childId,
+    //                     'registered_by' => $parentId,
+    //                 ]);
+    //             }
+
+    //             // Kirim Snap Token ke frontend
+    //             return response()->json(['snap_token' => $transaction->token]);
+    //         } catch (\Exception $e) {
+    //             return response()->json(['error' => $e->getMessage()], 500);
+    //         }
+    //     }
+    //     return response()->json(['message' => 'Pendaftaran berhasil!']);
+    // }
+    // public function showParent($id)
+    // {
+    //     $activity = Activity::where('id', $id)
+    //         ->where('status', 'approved')
+    //         ->with(['registrations' => function ($query) {
+    //             $query->where('registered_by', Auth::user()->member->id);
+    //         }])
+    //         ->firstOrFail();
+
+    //     $childrenRegistered = $activity->registrations->pluck('child_id')->toArray();
+    //     $children = Auth::user()->member->children;
+
+
+    //     return view('activities.showparent', compact('activity', 'children', 'childrenRegistered'));
+    // }
+
     public function index(Request $request)
     {
         $user = User::find(Auth::user()->id); // Ambil user yang sedang login

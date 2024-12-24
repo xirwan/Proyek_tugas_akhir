@@ -2,7 +2,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .badge-custom {
-            font-size: 1.01rem; /* Atur ukuran sesuai keinginan */
+            font-size: 0.85rem; /* Atur ukuran sesuai keinginan */
             font-weight: bold; /* Opsional: membuat teks lebih tebal */
         }
     </style>
@@ -196,3 +196,93 @@
         </div>
     </x-card>
 </x-app-layout>
+{{-- form kalau pake midtrans --}}
+{{-- <x-app-layout>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .badge-custom {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
+    @if(session('success'))
+        <div id="alert" class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    <script>
+        setTimeout(() => {
+            const alert = document.getElementById('alert');
+            if (alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 5000);
+    </script>
+    <x-card>
+        <x-slot name="header">
+            Peserta Kegiatan: {{ $activity->title }}
+        </x-slot>
+        <h5>Daftar Peserta</h5>
+        <table class="table table-responsive-md mb-0 text-center">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Anak</th>
+                    <th>Nama Orang Tua</th>
+                    @if ($activity->is_paid)
+                        <th>Status Pembayaran</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($participants as $participant)
+                    <tr>
+                        <td>{{ $loop->iteration + $participants->firstItem() - 1 }}</td>
+                        <td>{{ $participant->child->firstname }} {{ $participant->child->lastname }}</td>
+                        <td>
+                            @if ($participant->parent)
+                                {{ $participant->parent->firstname }} {{ $participant->parent->lastname }}
+                            @else
+                                <span class="text-danger">Orang tua tidak ditemukan</span>
+                            @endif
+                        </td>
+                        @if ($activity->is_paid)
+                            <td>
+                                @if ($participant->payment && $participant->payment->activity_id == $activity->id)
+                                    @if ($participant->payment->midtrans_transaction_status === 'settlement')
+                                        <span class="badge bg-success text-white badge-custom">Terbayar</span>
+                                    @elseif ($participant->payment->midtrans_transaction_status === 'pending')
+                                        <span class="badge bg-warning text-white badge-custom">Belum dibayar</span>
+                                    @endif
+                                @else
+                                    <span class="badge bg-warning badge-custom">Belum Ada Pembayaran</span>
+                                @endif
+                            </td>
+                        @endif
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ $activity->is_paid ? 4 : 3 }}" class="text-center">
+                            <div class="alert alert-danger">
+                                Belum ada peserta yang mendaftar.
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+        <div class="mt-4">
+            {{ $participants->appends(request()->except('participantsPage'))->links('pagination::bootstrap-5') }}
+        </div>
+        <div class="mt-4 d-flex justify-content-end">
+            <a href="{{ route('listactivities.index') }}" class="btn btn-secondary">Kembali</a>
+        </div>
+    </x-card>
+</x-app-layout> --}}

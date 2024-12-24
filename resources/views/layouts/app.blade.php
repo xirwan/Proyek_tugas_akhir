@@ -72,7 +72,7 @@
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Penjadwalan</span>
                         </x-side-link>
-                        {{-- <x-side-link1 href="#" :active="request()->is('sunday-school*')" icon="bx bx-home-smile" class="nav-parent" :items="[
+                        <x-side-link1 href="#" :active="request()->is('sunday-school*')" icon="bx bx-home-smile" class="nav-parent" :items="[
                             ['url' => url('sunday-school/sunday-classes'), 'label' => 'List Kelas',],
                             ['url' => url('sunday-school/qr-code/children'), 'label' => 'List Anak',],
                             ['url' => url('#'), 'label' => 'Absensi', 'items' => [
@@ -83,7 +83,7 @@
                             ],
                         ]">
                             <span>Sekolah Minggu</span>
-                        </x-side-link1> --}}
+                        </x-side-link1>
 
                         <x-side-link href="#" :active="request()->is('activities*') || request()->is('activity*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],

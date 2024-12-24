@@ -12,49 +12,47 @@ class MemberBaptistController extends Controller
 {
     public function index()
     {
-        // Mendapatkan data baptist dengan kelas terkait beserta jamnya
-        $baptists = Baptist::with(['classes' => function ($query) {
-            $query->select('id', 'id_baptist', 'day', 'start', 'end'); // Pastikan kolom start dan end tersedia
-        }])->get();
+        // Mendapatkan data jadwal pembaptisan dengan detail pertemuan
+        $baptists = Baptist::with('details')->get();
 
-        // Ambil daftar kelas yang sudah didaftarkan oleh pengguna yang sedang login
-        $registeredClasses = Auth::user()->member ? Auth::user()->member->memberBaptists->pluck('id_baptist_class')->toArray() : [];
+        // Ambil daftar detail pertemuan yang sudah didaftarkan oleh pengguna yang sedang login
+        $registeredDetails = Auth::user()->member 
+            ? Auth::user()->member->memberBaptists->pluck('id_baptist_class_detail')->toArray() 
+            : [];
 
         // Cek apakah user sudah mendaftar
-        $isAlreadyRegistered = !empty($registeredClasses);
+        $isAlreadyRegistered = !empty($registeredDetails);
 
-        return view('memberbaptist.index', compact('baptists', 'registeredClasses', 'isAlreadyRegistered'));
+        return view('memberbaptist.index', compact('baptists', 'registeredDetails', 'isAlreadyRegistered'));
     }
+
 
     public function register(Request $request)
     {
-        // Ambil ID dari permintaan user langsung, tanpa dekripsi
-        $baptistId = $request->baptist_id;
-        $baptistClassId = $request->baptist_class_id;
-
         // Validasi data input
         $request->validate([
             'baptist_id' => 'required',
-            'baptist_class_id' => 'required',
+            'baptist_detail_id' => 'required',
         ]);
+
+        $baptistDetailId = $request->baptist_detail_id;
 
         // Ambil id_member dari pengguna yang sedang login
         $idMember = Auth::user()->member->id;
 
-        // Cek apakah user sudah mendaftar di kelas baptis yang sama
+        // Cek apakah user sudah mendaftar di detail pertemuan yang sama
         $existingRegistration = MemberBaptist::where('id_member', $idMember)
-                                            ->where('id_baptist_class', $baptistClassId)
+                                            ->where('id_baptist_class_detail', $baptistDetailId)
                                             ->first();
 
         if ($existingRegistration) {
-            // Jika sudah terdaftar, redirect kembali dengan pesan error
-            return redirect()->back()->with('error', 'Anda sudah terdaftar di kelas baptis ini.');
+            return redirect()->back()->with('error', 'Anda sudah terdaftar di detail pertemuan ini.');
         }
 
-        // Simpan data pendaftaran jika belum terdaftar di kelas yang sama
+        // Simpan data pendaftaran
         MemberBaptist::create([
             'id_member' => $idMember,
-            'id_baptist_class' => $baptistClassId,
+            'id_baptist_class_detail' => $baptistDetailId,
         ]);
 
         return redirect()->route('portal')->with('success', 'Pendaftaran berhasil.');
@@ -65,25 +63,29 @@ class MemberBaptistController extends Controller
         $user = Auth::user();
         $member = $user->member;
 
-        // Dapatkan kelas baptis yang diikuti member ini
-        $memberBaptist = MemberBaptist::with(['baptistClass.details'])->where('id_member', $member->id)->first();
+        // Dapatkan detail pertemuan yang diikuti member ini
+        $memberBaptist = MemberBaptist::with(['classDetail.baptist'])->where('id_member', $member->id)->first();
 
         if (!$memberBaptist) {
-            return redirect()->back()->with('error', 'Anda belum terdaftar di kelas baptis.');
+            return redirect()->back()->with('error', 'Anda belum terdaftar di jadwal pembaptisan.');
         }
 
-        $class = $memberBaptist->baptistClass;
-        $details = $class->details()->paginate(10);
+        $classDetail = $memberBaptist->classDetail;
+        $baptist = $classDetail->baptist;
+
+        // Ambil detail pertemuan dari jadwal pembaptisan
+        $details = $baptist->details()->paginate(10);
 
         // Mengambil kehadiran untuk setiap pertemuan berdasarkan id_member dari tabel BaptistAttendance
         $attendance = BaptistAttendance::where('id_member', $member->id)
-                                    ->whereIn('id_baptist_class_detail', $details->pluck('id'))
-                                    ->pluck('status', 'id_baptist_class_detail');
+                                        ->whereIn('id_baptist_class_detail', $details->pluck('id'))
+                                        ->pluck('status', 'id_baptist_class_detail');
 
         // Mengirim tanggal saat ini ke view
         $today = now()->toDateString();
 
-        return view('memberbaptist.class', compact('class', 'details', 'attendance', 'today'));
+        return view('memberbaptist.class', compact('classDetail', 'details', 'attendance', 'today'));
     }
+
 
 }

@@ -41,7 +41,7 @@
 
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
-                            ['url' => url('activities-list'), 'label' => 'List Kegiatan'],
+                            ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
@@ -94,76 +94,25 @@
                         </x-side-link>
 
                     @endif
-                    
-                    {{-- <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')" class="nav-parent" :items="[
-                        ['url' => url('/attendance-seminars'), 'label' => 'List Peserta Seminar'],
+                    {{-- joel --}}
+
+                    <x-side-link href="#" :active="request()->is('seminars*') || request()->is('attendance-seminars*') || request()->is('generate-seminar*')" class="nav-parent" :items="[
+                        ['url' => url('seminars'), 'label' => 'List Seminar'],
+                        ['url' => url('attendance-seminars'), 'label' => 'List Peserta Seminar'],
+                        ['url' => url('generate-seminar'), 'label' => 'List Setifikat Seminar'],
                     ]">
                         <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                         <span>Seminar</span>
-                    </x-side-link> --}}
-
-                    {{-- <x-side-link href="{{url ('seminars')}}" :active="request()->is('seminars*')">
-                        <i class="bx bx-user-plus" aria-hidden="true"></i>
-                        <span>Seminar</span>
-                    </x-side-link> --}}
+                    </x-side-link>
                     
-                    
-                {{-- <x-side-link href="{{url ('branch')}}" :active="request()->is('branch*')">
-                    <i class="bx bx-building-house" aria-hidden="true"></i>
-                    <span>Cabang</span>
-                </x-side-link>
-                
-                <x-side-link href="{{url ('role')}}" :active="request()->is('role')">
-                    <i class="bx bx-user-plus" aria-hidden="true"></i>
-                    <span>Role</span>
-                </x-side-link>
-
-                <x-side-link href="{{url ('position')}}" :active="request()->is('position')">
-                    <i class="bx bx-user-plus" aria-hidden="true"></i>
-                    <span>Posisi</span>
-                </x-side-link>
-    
-                <x-side-link href="{{url ('member')}}" :active="request()->is('member*')">
-                    <i class="bx bx-user" aria-hidden="true"></i>
-                    <span>Anggota</span>
-                </x-side-link>
-
-                <x-side-link href="#" :active="request()->is('schedule*') || request()->is('type*') || request()->is('category*')" class="nav-parent" :items="[
-                    ['url' => url('master-data/schedule'), 'label' => 'List Jadwal'],
-                    ['url' => url('master-data/type'), 'label' => 'Tipe Jadwal'],
-                    ['url' => url('master-data/category'), 'label' => 'Kategori Jadwal'],
-                ]">
-                    <i class="bx bx-calendar" aria-hidden="true"></i>
-                    <span>Jadwal</span>
-                </x-side-link>
-    
-                <x-side-link href="{{url ('sunday-classes')}}" :active="request()->is('sunday-classes*')">
-                    <i class="bx bx-layout" aria-hidden="true"></i>
-                    <span>List Kelas Sekolah Minggu</span>
-                </x-side-link>
-    
-                <x-side-link href="{{url ('qr-code/children')}}" :active="request()->is('qr-code/children')">
-                    <i class="bx bx-layout" aria-hidden="true"></i>
-                    <span>Generate QR Anak Sekolah Minggu</span>
-                </x-side-link>
-
-                <x-side-link href="#" :active="request()->is('attendance*')" class="nav-parent" :items="[
-                    ['url' => url('/attendance/class'), 'label' => 'Absensi Sekolah Minggu'],
-                    ['url' => url('/attendance/history'), 'label' => 'Riwayat Absensi Sekolah Minggu'],
-                ]">
-                    <i class="bx bx-calendar" aria-hidden="true"></i>
-                    <span>Absensi</span>
-                </x-side-link>--}}
-
-                    {{-- <x-side-link href="#" :active="request()->is('baptist*')" class="nav-parent" :items="[
+                    <x-side-link href="#" :active="request()->is('baptist*') || request()->is('generate-pembaptisan*')" class="nav-parent" :items="[
                         ['url' => url('baptist'), 'label' => 'List Jadwal Pembaptisan'],
-                        ['url' => url('baptist-classes'), 'label' => 'List Kelas Pembaptisan'],
-                    ]">
+                        ['url' => url('generate-pembaptisan'), 'label' => 'List Setifikat Pembaptisan'],
+                        ]">
                         <i class="bx bx-calendar" aria-hidden="true"></i>
                         <span>Pembaptisan</span>
-                    </x-side-link> --}}
+                    </x-side-link>
 
-                    
                 </x-sidebar>
 
 				<section role="main" class="content-body">

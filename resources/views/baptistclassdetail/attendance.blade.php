@@ -1,30 +1,46 @@
 <x-app-layout>
+    <style>
+        .badge-custom {
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+    </style>
+    @if (session('success'))
+        <div id="alert" class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <x-card>
         <x-slot name="header">
             Absensi Kelas Pembaptisan - Tanggal: {{ $classDetail->date }}
         </x-slot>
 
-        {{-- Encrypt ID untuk dikirimkan ke route --}}
         <form action="{{ route('baptist-class-detail.markAttendance', encrypt($classDetail->id)) }}" method="POST">
             @csrf
-            <table class="table table-responsive-md mb-0">
+            <table class="table table-responsive-md mb-0 text-center">
                 <thead>
-                    <tr class="text-center">
+                    <tr>
                         <th>No</th>
                         <th>Nama Peserta</th>
                         <th>Status Kehadiran</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($classDetail->baptistClass->members as $index => $memberBaptist)
-                        <tr class="text-center">
+                    @forelse($classDetail->memberBaptists as $index => $memberBaptist)
+                        <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $memberBaptist->member->firstname }} {{ $memberBaptist->member->lastname }}</td>
                             <td>
-                                <select name="attendance[{{ $memberBaptist->member->id }}]" class="form-control">
-                                    <option value="Hadir" {{ old("attendance.{$memberBaptist->member->id}") == 'Hadir' ? 'selected' : '' }}>Hadir</option>
-                                    <option value="Tidak Hadir" {{ old("attendance.{$memberBaptist->member->id}") == 'Tidak Hadir' ? 'selected' : '' }}>Tidak Hadir</option>
-                                </select>
+                                @php
+                                    $attendanceStatus = $classDetail->attendances->firstWhere('id_member', $memberBaptist->member->id);
+                                @endphp
+                                @if ($attendanceStatus)
+                                    {{-- Sudah diabsen --}}
+                                    <span class="badge badge-success badge-custom">Sudah Hadir</span>
+                                @else
+                                    {{-- Checkbox untuk absensi --}}
+                                    <input type="checkbox" name="attendance[{{ $memberBaptist->member->id }}]" value="Hadir" class="form-check-input">
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -41,7 +57,7 @@
 
             <div class="mt-4 text-right">
                 <button type="submit" class="btn btn-primary">Simpan Absensi</button>
-                <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+                <a href="{{ route ('baptist.index') }}" class="btn btn-success">Kembali</a>
             </div>
         </form>
     </x-card>

@@ -52,7 +52,7 @@
                         </td>
                     </tr>
                 @empty
-                    <div class="p-3 mb-2 bg-danger text-white">
+                    <div class="alert alert-danger">
                         Data Laporan belum tersedia.
                     </div>
                 @endforelse

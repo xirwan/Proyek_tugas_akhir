@@ -5,7 +5,7 @@
             <x-slot name="header">
                 Informasi
             </x-slot>    
-            Anda sudah mendaftar di kelas pembaptisan.
+            Anda sudah mendaftar di jadwal pembaptisan.
         </x-card>
     @else
         <!-- Notifikasi Error -->
@@ -23,10 +23,10 @@
                     <h2 class="card-title">Pendaftaran Baptis</h2>
                 </header>
                 <div class="card-body">
-                    {{-- Pilih Baptist --}}
+                    {{-- Pilih Jadwal Baptis --}}
                     <div class="form-group">
                         <label for="baptist_id" class="form-label">Pilih Tanggal Pembaptisan</label>
-                        <select name="baptist_id" id="baptist_id" class="form-control" required onchange="displayBaptistClasses(this)">
+                        <select name="baptist_id" id="baptist_id" class="form-control" required onchange="displayBaptistDetails(this)">
                             <option value="" disabled selected>Pilih Tanggal Pembaptisan</option>
                             @foreach($baptists as $baptist)
                                 <option value="{{ $baptist->id }}">{{ $baptist->date }}</option>
@@ -34,11 +34,11 @@
                         </select>
                     </div>
 
-                    {{-- Pilih Kelas Baptist (akan diisi berdasarkan pilihan Baptist) --}}
+                    {{-- Pilih Detail Pertemuan (akan diisi berdasarkan pilihan Baptis) --}}
                     <div class="form-group">
-                        <label for="baptist_class_id" class="form-label">Pilih Kelas Baptist</label>
-                        <select name="baptist_class_id" id="baptist_class_id" class="form-control" required>
-                            <option value="" disabled selected>Pilih Kelas Baptist</option>
+                        <label for="baptist_detail_id" class="form-label">Pilih Detail Pertemuan</label>
+                        <select name="baptist_detail_id" id="baptist_detail_id" class="form-control" required>
+                            <option value="" disabled selected>Pilih Detail Pertemuan</option>
                         </select>
                     </div>
                 </div>
@@ -46,45 +46,40 @@
                 <footer class="card-footer text-right">
                     <button type="submit" class="btn btn-primary">Daftar</button>
                     <button type="reset" class="btn btn-default">Reset</button>
-                    <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
+                    <a href="{{ route ('portal') }}" class="btn btn-success">Kembali</a>
                 </footer>
             </section>
         </form>
     @endif
 
-        {{-- Menambahkan data pendaftaran kelas yang sudah diambil oleh pengguna ke JavaScript --}}
-        <script>
-            // Data kelas Baptist dari Blade ke JavaScript
-            const baptistData = @json($baptists);
-            // Daftar kelas yang sudah didaftarkan oleh pengguna yang sedang login
-            const registeredClasses = @json($registeredClasses);
+    {{-- JavaScript untuk Mengisi Detail Pertemuan --}}
+    <script>
+        const baptistData = @json($baptists);
+        const registeredDetails = @json($registeredDetails);
 
-            function displayBaptistClasses(selectElement) {
-                const baptistId = selectElement.value;
-                const classSelect = document.getElementById('baptist_class_id');
-                
-                // Kosongkan pilihan kelas
-                classSelect.innerHTML = '<option value="">Pilih Kelas Baptist</option>';
+        function displayBaptistDetails(selectElement) {
+            const baptistId = selectElement.value;
+            const detailSelect = document.getElementById('baptist_detail_id');
 
-                // Cari data Baptist yang dipilih dan isi opsi kelas
-                const selectedBaptist = baptistData.find(baptist => baptist.id == baptistId);
-                if (selectedBaptist) {
-                    selectedBaptist.classes.forEach(classItem => {
-                        const option = document.createElement('option');
-                        option.value = classItem.id;
+            // Kosongkan opsi detail
+            detailSelect.innerHTML = '<option value="" disabled selected>Pilih Detail Pertemuan</option>';
 
-                        // Format nama kelas dengan hari dan waktu
-                        const timeInfo = `(${classItem.start} - ${classItem.end})`;
-                        option.textContent = `${classItem.day} ${timeInfo}`;
+            // Cari data baptist yang dipilih dan isi opsi detail
+            const selectedBaptist = baptistData.find(baptist => baptist.id == baptistId);
+            if (selectedBaptist) {
+                selectedBaptist.details.forEach(detail => {
+                    const option = document.createElement('option');
+                    option.value = detail.id;
+                    option.textContent = `Tanggal: ${detail.date}`;
 
-                        // Cek apakah kelas ini sudah didaftarkan, jika ya, disable option
-                        if (registeredClasses.includes(classItem.id)) {
-                            option.disabled = true;
-                        }
+                    // Disable jika sudah terdaftar
+                    if (registeredDetails.includes(detail.id)) {
+                        option.disabled = true;
+                    }
 
-                        classSelect.appendChild(option);
-                    });
-                }   
+                    detailSelect.appendChild(option);
+                });
             }
-        </script>
+        }
+    </script>
 </x-user>

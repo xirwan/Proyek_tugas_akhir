@@ -27,6 +27,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\SeminarController;
 use App\Http\Middleware\CheckMemberStatus;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\GenerateCertification;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -151,19 +152,25 @@ Route::middleware('auth')->group(function () {
 });
 
 //joel
+Route::get('/generate-seminar', [GenerateCertification::class, 'indexSeminar'])->name('generate.indexseminar');
+
+Route::get('/generate-seminar/{id}/members', [GenerateCertification::class, 'showMemberSeminar'])->name('memberseminars.list');
+
+Route::post('/generate-seminar/{id}/members/generate', [GenerateCertification::class, 'generateCertificateSeminar'])->name('generate.certificateseminar');
+
+Route::get('/generate-seminar/{id}/members/view-certificate', [GenerateCertification::class, 'viewCertificateSeminar'])->name('download.certificateseminar');
+
+Route::get('/generate-pembaptisan', [GenerateCertification::class, 'indexPembaptisan'])->name('generate.indexpembaptisan');
+
+Route::get('/generate-pembaptisan/{id}/detail', [GenerateCertification::class, 'indexPembaptisanDetail'])->name('generate.indexpembaptisandetail');
+
+Route::get('/generate-pembaptisan/{id}/detail/members', [GenerateCertification::class, 'showMemberPembaptisan'])->name('memberpembaptisan.list');
+
+Route::post('/generate-pembaptisan/{id}/detail/members/generate', [GenerateCertification::class, 'generateCertificatePembaptisan'])->name('generate.certificatepembaptisan');
+
+Route::get('/generate-pembaptisan/{id}/detail/members/view-certificate', [GenerateCertification::class, 'viewCertificatePembaptisan'])->name('download.certificatepembaptisan');
+
 Route::resource('baptist', BaptistController::class);
-
-Route::resource('baptist-classes', BaptistClassesController::class);
-
-Route::get('/baptist-classes/{id}/members', [BaptistClassesController::class, 'viewClassMembers'])->name('baptist-classes.viewClassMembers');
-
-Route::get('/baptist-classes/members/{id}/adjust', [BaptistClassesController::class, 'showAdjustClassForm'])->name('baptist-classes.showAdjustClassForm');
-
-Route::post('/baptist-classes/members/{id}/adjust', [BaptistClassesController::class, 'adjustClass'])->name('baptist-classes.adjustClass');
-
-Route::get('/baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndRescheduleForm'])->name('baptist-class-detail.cancelAndRescheduleForm');
-
-Route::post('/baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndReschedule'])->name('baptist-class-detail.cancelAndReschedule');
 
 Route::get('/baptist-class-detail/index/{encryptedId}', [BaptistClassDetailController::class, 'index'])->name('baptist-class-detail.index');
 
@@ -195,10 +202,24 @@ Route::get('/member-seminars', [SeminarController::class, 'indexMember'])->name(
 
 Route::post('/member-seminars/register/{id}', [SeminarController::class, 'register'])->name('seminars.registermember');
 
+Route::get('/member-seminars/certificate', [GenerateCertification::class, 'seminarCertificates'])->name('seminars.certificate');
+
+Route::get('/member-baptist', [MemberBaptistController::class, 'index'])->name('memberbaptist.index');
+
+Route::post('/member-baptist/register', [MemberBaptistController::class, 'register'])->name('memberbaptist.register');
+
+Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
+
+Route::get('/member-baptist/certificate', [GenerateCertification::class, 'baptistCertificates'])->name('baptist.certificate');
+
 Route::middleware('auth')->group(function () {
     Route::get('/certifications/upload', [CertificationController::class, 'showUploadForm'])->name('certifications.uploadForm');
     Route::post('/certifications/upload', [CertificationController::class, 'uploadCertificate'])->name('certifications.upload');
 });
+
+// Route::get('/baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndRescheduleForm'])->name('baptist-class-detail.cancelAndRescheduleForm');
+
+// Route::post('/baptist-class-detail/{classDetail}/cancel-reschedule', [BaptistClassDetailController::class, 'cancelAndReschedule'])->name('baptist-class-detail.cancelAndReschedule');
 
 // Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 
@@ -207,17 +228,5 @@ Route::middleware('auth')->group(function () {
 // Route::get('/qr-code/checkin/{id}', [AttendanceController::class, 'checkIn'])->name('qr-code.checkin');
 
 // Route::post('/qr-code/checkin', [AttendanceController::class, 'processCheckIn'])->name('attendance.processCheckIn');
-
-// Route::get('register-baptist', [MemberBaptistController::class, 'index'])->name('member-baptist.index');
-
-// Route::get('register-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('member-baptist.classes');
-
-// Route::get('/member-baptist/classes/{encryptedId}', [MemberBaptistController::class, 'getBaptistClasses'])->name('memberbaptist.classes');
-
-Route::get('/member-baptist', [MemberBaptistController::class, 'index'])->name('memberbaptist.index');
-
-Route::post('/member-baptist/register', [MemberBaptistController::class, 'register'])->name('memberbaptist.register');
-
-Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
 require __DIR__.'/auth.php';

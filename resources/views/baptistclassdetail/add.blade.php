@@ -8,47 +8,27 @@
             </ul>
         </div>
     @endif  
-    <form action="{{ route('baptist-class-detail.store', encrypt($baptistclass->id)) }}" class="form-horizontal form-bordered" method="POST">
+    <form action="{{ route('baptist-class-detail.store', encrypt($baptist->id)) }}" class="form-horizontal form-bordered" method="POST">
         @csrf
         <section class="card">
             <header class="card-header">
-                <h2 class="card-title">Buat Detail Pertemuan Kelas Pembaptisan</h2>
+                <h2 class="card-title">Buat Detail Pertemuan Pembaptisan</h2>
             </header>
             <div class="card-body">
-                <!-- Tampilkan informasi tentang Kelas Pembaptisan -->
+                <!-- Informasi tentang Tanggal Baptis -->
                 <div class="form-group">
-                    <label for="baptist_class_info">Kelas Pembaptisan:</label>
-                    <p id="baptist_class_info"><strong>{{ $baptistclass->baptist->date }}</strong> - Hari: <strong>{{ $baptistclass->day }}</strong></p>
+                    <label for="baptist_date_info">Tanggal Baptis:</label>
+                    <p id="baptist_date_info"><strong>{{ $baptist->date }}</strong></p>
                 </div>
 
-                <!-- Input Tanggal Mulai -->
-                <x-date-picker 
-                    name="start_date" 
-                    label="Tanggal Mulai" 
-                    :required="true" 
-                    placeholder="Pilih Tanggal Mulai" 
-                />
-
-                <!-- Input Jumlah Pertemuan -->
-                <x-input-number 
-                label="Jumlah Pertemuan" 
-                name="number_of_sessions" 
-                placeholder="Masukkan jumlah pertemuan" 
-                :required="true" 
-                :min="1" 
-                :step="1" 
-                errorMessage="{{ $errors->first('number_of_sessions') }}"
-                />
-
-
-                <!-- Deskripsi -->
-                <x-input-area 
-                    name="description" 
-                    id="inputdeskripsi" 
-                    label="Deskripsi" 
-                    placeholder="Masukkan deskripsi untuk pertemuan" 
-                    :required="false" 
-                />
+                <!-- Input Tanggal Pertemuan -->
+                <div class="form-group">
+                    <label for="date">Tanggal Pertemuan</label>
+                    <input type="date" id="date" name="start_date" class="form-control" required placeholder="Pilih Tanggal Pertemuan">
+                    @error('date')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Simpan</button>

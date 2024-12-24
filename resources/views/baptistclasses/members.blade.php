@@ -11,7 +11,7 @@
             Daftar Peserta di Kelas {{ $class->day }}
         </x-slot>
 
-        <table class="table table-responsive-md mb-0">
+        <table class="table table-responsive-md mb-0 text-center">
             <thead>
                 <tr class="text-center">
                     <th>No</th>

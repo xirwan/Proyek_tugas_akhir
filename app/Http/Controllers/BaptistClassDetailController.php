@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Baptist;
 use App\Models\BaptistClass;
 use App\Models\BaptistClassDetail;
 use App\Models\BaptistAttendance;
@@ -16,73 +17,51 @@ class BaptistClassDetailController extends Controller
     public function index($encryptedId)
     {
         $id = decrypt($encryptedId);
-        $baptistclass = BaptistClass::findOrFail($id);
-        $details = BaptistClassDetail::where('id_baptist_class', $id)->paginate(10);
-        return view('baptistclassdetail.index', compact('baptistclass', 'details'));
+        $baptist = Baptist::findOrFail($id);
+        $details = BaptistClassDetail::where('id_baptist', $id)->paginate(10);
+        return view('baptistclassdetail.index', compact('baptist', 'details'));
     }
+    
 
     /**
      * Tampilkan form untuk membuat pertemuan kelas otomatis.
      */
     public function create($encryptedId)
-    {   
+    {
         $id = decrypt($encryptedId);
-        $baptistclass = BaptistClass::findOrFail($id);
-        return view('baptistclassdetail.add', compact('baptistclass'));
+        $baptist = Baptist::findOrFail($id);
+        return view('baptistclassdetail.add', compact('baptist'));
     }
-
     /**
      * Simpan pertemuan kelas otomatis ke database.
      */
     public function store(Request $request, $encryptedId)
     {
         $id = decrypt($encryptedId);
+
         // Validasi input dari admin
         $request->validate([
             'start_date' => 'required|date',
-            'number_of_sessions' => 'required|integer|min:1',
         ]);
 
-        $baptistclass = BaptistClass::findOrFail($id);
+        $baptist = Baptist::findOrFail($id);
         $startDate = Carbon::parse($request->start_date);
-        $numberOfSessions = $request->number_of_sessions;
-        // Pemetaan nama hari dari bahasa Inggris ke bahasa Indonesia
-        $daysMap = [
-            'Sunday' => 'Minggu',
-            'Monday' => 'Senin',
-            'Tuesday' => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis',
-            'Friday' => 'Jumat',
-            'Saturday' => 'Sabtu',
-        ];
 
-        // Dapatkan nama hari dalam bahasa Inggris dari Carbon
-        $dayOfWeekInEnglish = $startDate->format('l');
-
-        // Konversi nama hari ke bahasa Indonesia
-        $dayOfWeekInIndonesian = $daysMap[$dayOfWeekInEnglish];
-
-        // Pastikan tanggal awal sesuai dengan hari yang ditentukan di baptist_class
-        $dayOfWeek = $baptistclass->day; // Nama hari dalam bahasa Indonesia
-        if ($dayOfWeekInIndonesian !== $dayOfWeek) {
-            return redirect()->back()->withErrors(['start_date' => 'Tanggal awal harus sesuai dengan hari ' . $dayOfWeek]);
+        // Pastikan tanggal awal berada sebelum tanggal baptis
+        if ($startDate->greaterThanOrEqualTo(Carbon::parse($baptist->date))) {
+            return redirect()->back()->withErrors(['start_date' => 'Tanggal pertemuan harus sebelum tanggal baptis.']);
         }
 
-        // Buat entri untuk setiap pertemuan berdasarkan jumlah sesi
-        for ($i = 0; $i < $numberOfSessions; $i++) {
-            $date = $startDate->copy()->addWeeks($i);
+        // Simpan detail pertemuan
+        BaptistClassDetail::create([
+            'id_baptist' => $id,
+            'date' => $startDate,
+            'description' => 'Pertemuan persiapan untuk baptis',
+            'status' => 'Active',
+            'is_rescheduled' => false,
+        ]);
 
-            BaptistClassDetail::create([
-                'id_baptist_class' => $id,
-                'date' => $date,
-                'description' => null,
-                'status' => 'Active',
-                'is_rescheduled' => false,
-            ]);
-        }
-
-        return redirect()->route('baptist-classes.index')->with('success', 'Detail pertemuan berhasil dibuat.');
+        return redirect()->route('baptist-class-detail.index', encrypt($id))->with('success', 'Pertemuan berhasil dibuat.');
     }
 
     /**
@@ -128,46 +107,40 @@ class BaptistClassDetailController extends Controller
 
     public function attendanceForm($encryptedClassDetailId)
     {
-        // Dekripsi ID pertemuan kelas
         $classDetailId = decrypt($encryptedClassDetailId);
 
-        // Ambil detail pertemuan dengan data peserta
-        $classDetail = BaptistClassDetail::with('baptistClass.members.member')->findOrFail($classDetailId);
+        // Ambil detail kelas dengan data peserta dari relasi memberBaptists
+        $classDetail = BaptistClassDetail::with(['memberBaptists.member', 'attendances.member'])->findOrFail($classDetailId);
 
         return view('baptistclassdetail.attendance', compact('classDetail'));
     }
 
     public function markAttendance(Request $request, $encryptedClassDetailId)
     {
-        // Dekripsi ID pertemuan kelas
         $classDetailId = decrypt($encryptedClassDetailId);
 
         // Validasi input
         $request->validate([
             'attendance' => 'required|array',
-            'attendance.*' => 'in:Hadir,Tidak Hadir',
         ]);
 
-        // Cari detail kelas berdasarkan ID yang didekripsi
-        $classDetail = BaptistClassDetail::findOrFail($classDetailId);
+        $classDetail = BaptistClassDetail::with('attendances')->findOrFail($classDetailId);
 
-        // Update atau buat data absensi untuk setiap peserta
         foreach ($request->attendance as $memberId => $status) {
-            BaptistAttendance::updateOrCreate(
-                [
+            // Periksa apakah peserta sudah diabsen
+            $existingAttendance = $classDetail->attendances->firstWhere('id_member', $memberId);
+            if (!$existingAttendance) {
+                // Hanya buat absensi untuk peserta yang belum diabsen
+                BaptistAttendance::create([
                     'id_member' => $memberId,
                     'id_baptist_class_detail' => $classDetail->id,
-                ],
-                [
-                    'status' => $status
-                ]
-            );
+                    'status' => $status,
+                ]);
+            }
         }
 
-        // Redirect dengan ID yang terenkripsi kembali
-        return redirect()->route('baptist-class-detail.index', encrypt($classDetail->id_baptist_class))->with('success', 'Absensi berhasil disimpan.');
+        return redirect()->route('baptist-class-detail.attendanceForm', encrypt($classDetail->id))
+                        ->with('success', 'Absensi berhasil disimpan.');
     }
-
-
 
 }

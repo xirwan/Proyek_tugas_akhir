@@ -7,11 +7,11 @@
 
     <x-card>
         <x-slot name="header">
-            Detail Kelas Pembaptisan
+            Detail Jadwal Pembaptisan
         </x-slot>
 
         <div>
-            <p><strong>Kelas Baptis:</strong> {{ $class->day }}, {{ $class->start }} - {{ $class->end }} (Tanggal Baptis: {{ $class->baptist->date }})</p>
+            <p><strong>Tanggal Baptis:</strong> {{ $classDetail->baptist->date }}</p>
             <p><strong>Jumlah Pertemuan:</strong> {{ $details->total() }}</p>
         </div>
 
@@ -46,10 +46,9 @@
                     </tr>
                 @endforelse
             </tbody>
+            <div class="mt-4">
+                {{ $details->links() }}
+            </div>
         </table>
     </x-card>
-    <div class="mt-4">
-        {{ $details->links() }}
-        <a href="{{ url()->previous() }}" class="btn btn-success">Kembali</a>
-    </div>
 </x-user>

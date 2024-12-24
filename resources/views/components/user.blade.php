@@ -27,22 +27,30 @@
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
                         </x-side-link>
+                        {{-- joel --}}
                         {{-- <x-side-link href="{{route ('seminars.indexmember')}}" :active="request()->is('member-seminar*')">
-                            <i class="bx bx-layout" aria-hidden="true"></i>
+                            <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Seminar</span>
                         </x-side-link> --}}
-                        {{-- <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
+                        <x-side-link href="#" :active="request()->is('member-seminar*')" class="nav-parent" :items="[
+                            ['url' => route('seminars.indexmember'), 'label' => 'Daftar Seminar'],
+                            ['url' => route('seminars.certificate'), 'label' => 'Sertifikat Seminar'],
+                        ]">
+                            <i class="bx bx-calendar" aria-hidden="true"></i>
+                            <span>Seminar</span>
+                        </x-side-link>
+                        <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
                             ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
                             ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],
+                            ['url' => route('baptist.certificate'), 'label' => 'Sertifikat Pembaptisan'],
                         ]">
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Pembaptisan</span>
-                        </x-side-link> --}}
-                        {{-- <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('coba')">
-                            <i class="bx bx-layout" aria-hidden="true"></i>
+                        </x-side-link>
+                        <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('certifications/upload')">
+                            <i class="bx bx-user-plus" aria-hidden="true"></i>
                             <span>Pengajuan Keanggotaan</span>
-                        </x-side-link> --}}
-                        
+                        </x-side-link>
                     </x-sidebar>
                     <section role="main" class="content-body">
                         <header class="page-header">

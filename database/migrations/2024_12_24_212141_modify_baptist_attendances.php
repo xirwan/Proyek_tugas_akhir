@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('seminars', function (Blueprint $table) {
+        //
+        Schema::table('baptist_attendances', function (Blueprint $table) {
             //
-            $table->time('start')->after('event_date');
+            $table->string('certificate_url')->nullable(); // Path sertifikat (jika tersedia)
         });
     }
 
@@ -22,9 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('seminars', function (Blueprint $table) {
+        //
+        Schema::table('baptist_attendances', function (Blueprint $table) {
             //
-            $table->dropColumn('start');
+            $table->dropColumn('certificate_url');
         });
     }
 };

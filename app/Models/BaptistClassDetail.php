@@ -13,33 +13,37 @@ class BaptistClassDetail extends Model
         'description',
         'status',
         'is_rescheduled',
-        'rescheduled_date',
+        'reschedule_date',
         'original_class_detail_id',
-        'id_baptist_class',
+        'id_baptist',
     ];
-    public function baptistClass()
+    // Relasi ke Baptist
+    public function baptist()
     {
-        return $this->belongsTo(BaptistClass::class, 'id_baptist_class');
+        return $this->belongsTo(Baptist::class, 'id_baptist');
     }
 
+    // Relasi ke BaptistAttendance
     public function attendances()
     {
         return $this->hasMany(BaptistAttendance::class, 'id_baptist_class_detail');
     }
 
+    // Relasi untuk class detail yang asli (reschedule)
     public function originalClassDetail()
     {
         return $this->belongsTo(BaptistClassDetail::class, 'original_class_detail_id');
     }
 
+    // Relasi untuk class detail pengganti (reschedule)
     public function replacementClasses()
     {
         return $this->hasMany(BaptistClassDetail::class, 'original_class_detail_id');
     }
 
-    public function details()
+    public function memberBaptists()
     {
-        return $this->hasMany(BaptistClassDetail::class, 'id_baptist_class');
+        return $this->hasMany(MemberBaptist::class, 'id_baptist_class_detail');
     }
 
 }

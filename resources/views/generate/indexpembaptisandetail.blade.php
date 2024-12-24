@@ -31,7 +31,7 @@
                         <td>
                             {{-- Tampilkan tombol Absensi jika pertemuan sesuai tanggal dan waktu --}}
                             @if ($detail->date === $today && $currentTime >= '00:00')
-                                <a href="{{ route('baptist-class-detail.attendanceForm', encrypt($detail->id)) }}" class="btn btn-primary">Absensi</a>
+                                <a href="{{ route('memberpembaptisan.list', encrypt($detail->id)) }}" class="btn btn-primary">Lihat Peserta</a>
                             @else
                                 <span class="text-muted">Belum Waktu Absensi</span>
                             @endif
@@ -44,7 +44,7 @@
                 @endforelse
             </tbody>
         </table>
-        <a href="{{ route ('baptist.index') }}" class="btn btn-success">Kembali</a>
+        <a href="{{ route ('generate.indexpembaptisan') }}" class="btn btn-success">Kembali</a>
     </x-card>
     <div class="mt-4">
         {{-- Pagination --}}

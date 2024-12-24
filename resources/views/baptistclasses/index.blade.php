@@ -11,9 +11,9 @@
         
         <a href="{{ route('baptist-classes.create') }}" class="btn btn-md btn-success mb-3">Tambah Kelas Pembaptisan</a>
 
-        <table class="table table-responsive-md mb-0">
+        <table class="table table-responsive-md mb-0 text-center">
             <thead>
-                <tr class="text-center">
+                <tr>
                     <th>No</th>
                     <th>Tanggal Baptis</th>
                     <th>Hari</th>
@@ -36,25 +36,25 @@
                         <td>{{ $class->end }}</td>
                         <td>{{ $class->description }}</td>
                         <td>{{ $class->status }}</td>
-                        <td class="actions text-center">
-                            <a href="{{ route('baptist-classes.show', encrypt($class->id)) }}"><i class="el el-info-circle"></i></a>
-                        </td>
-                        <td class="text-center">
+                        <td>
                             @if($class->details->count() > 0)
                                 <a href="{{ route('baptist-class-detail.index', encrypt($class->id)) }}" class="btn btn-success w-50">{{ $class->details->count() }}</a>
                             @else
-                                <a href="{{ route('baptist-class-detail.create', encrypt($class->id)) }}" class="btn btn-primary">
+                                <a href="{{ route('baptist-class-detail.create', encrypt($class->id)) }}" class="btn btn-sm btn-primary">
                                     Buat pertemuan
                                 </a>
                             @endif
                         </td>
-                        <td class="text-center">
+                        <td>
                             {{-- {{ $class->members->count() }} --}}
                             @if($class->members->count() > 0)
                                 <a href="{{ route ('baptist-classes.viewClassMembers', encrypt($class->id)) }}" class="btn btn-success w-50">{{ $class->members->count() }}</a>
                             @else
                                     <p class="text-danger">Belum ada perserta</p>
                             @endif
+                        </td>
+                        <td class="actions text-center">
+                            <a href="{{ route('baptist-classes.show', encrypt($class->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>
                     </tr>
                 @empty

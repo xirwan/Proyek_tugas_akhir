@@ -13,9 +13,20 @@ class Baptist extends Model
         'description',
         'status',
     ];
-    public function classes()
+
+    public function classDetails()
     {
-        return $this->hasMany(BaptistClass::class, 'id_baptist');
+        return $this->hasMany(BaptistClassDetail::class, 'id_baptist');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(MemberBaptist::class, 'id_baptist');
+    }
+
+    public function details()
+    {
+        return $this->hasMany(BaptistClassDetail::class, 'id_baptist');
     }
 
 }

@@ -18,6 +18,23 @@ class ActivityPayment extends Model
         'payment_status',
     ];
 
+    //midtrans
+    // protected $fillable = [
+    //     'parent_id',
+    //     'activity_id',
+    //     'total_children',
+    //     'total_amount',
+    //     'verified_by',
+    //     'midtrans_order_id',
+    //     'midtrans_transaction_status',
+    //     'payment_token',
+    //     'payment_url',
+    //     'child_ids',
+    // ];
+    // protected $casts = [
+    //     'child_ids' => 'array',
+    // ];
+
      // Relasi ke member (orang tua yang melakukan pembayaran)
      public function parent()
      {

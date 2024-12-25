@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model
 {
     use HasFactory;
+    //kalau midtrans hilangkan payment deadline
     protected $fillable = [
         'created_by',
         'approved_by',

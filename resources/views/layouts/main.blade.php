@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="{{ asset('admintemp/img/logo.jpg') }}" type="image/png">
     <meta charset="utf-8">
     <title>GBI Sungai Yordan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -226,64 +227,46 @@
 
           {{-- AUTH --}}
           @auth
+            {{-- SuperAdmin dan Admin --}}
             @role('SuperAdmin|Admin')
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle"
-                   href="#"
-                   id="adminDropdown"
-                   role="button"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                  {{ Auth::user()->name }}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-                  <li>
-                    <a class="dropdown-item" href="{{ route('dashboard') }}">
-                      Dashboard
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('dashboard') }}">
+                        <i class="fa-solid fa-chart-line me-2"></i> Dashboard
                     </a>
-                  </li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                      @csrf
-                      <button type="submit" class="dropdown-item">
-                        Logout
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-              </li>
+                </li>
             @endrole
 
+            {{-- Jemaat --}}
             @role('Jemaat')
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle"
-                   href="#"
-                   id="jemaatDropdown"
-                   role="button"
-                   data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                  {{ Auth::user()->name }}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="jemaatDropdown">
-                  <li>
-                    <a class="dropdown-item" href="{{ route('portal') }}">
-                      Portal
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('portal') }}">
+                        <i class="fa-solid fa-door-open me-2"></i> Portal
                     </a>
-                  </li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                      @csrf
-                      <button type="submit" class="dropdown-item">
-                        Logout
-                      </button>
-                    </form>
-                  </li>
-                </ul>
-              </li>
+                </li>
             @endrole
+            {{-- Dropdown untuk semua pengguna --}}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <i class="fa-solid fa-user me-2"></i> {{ Auth::user()->name }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
           @endauth
+
         </ul>
       </div>
     </div>
@@ -361,10 +344,8 @@
       </div>
     </div>
   </footer>
-  
-{{-- ================ END FOOTER ================= --}}
-
   {{-- ================ END FOOTER ================= --}}
+
 
   <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">

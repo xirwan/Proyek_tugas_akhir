@@ -10,6 +10,61 @@
     </div>
   </section>
 
+  <!-- ========== VISI DAN MISI ========== -->
+  <div class="container my-5" id="visi-misi">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="fw-bold" style="color: #0d6efd; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+          Visi dan Misi
+        </h2>
+        <p class="text-muted">Membangun Generasi Muda yang Beriman dan Berkarakter</p>
+      </div>
+    </div>
+    <div class="row d-flex align-items-stretch">
+      <!-- VISI -->
+      <div class="col-md-6 mb-4">
+        <div 
+          class="card shadow-sm border-0 h-100" 
+          style="background: linear-gradient(135deg, #0d6efd, #2b98f0); color: #fff;"
+        >
+          <div class="card-body text-center d-flex flex-column">
+            <div class="mb-3">
+              <i class="fa-solid fa-eye fa-3x"></i>
+            </div>
+            <h5 class="fw-bold">Visi</h5>
+            <p class="mt-2">
+              Menjadi komunitas rohani yang membawa anak-anak dan keluarga lebih dekat kepada Tuhan, 
+              memupuk iman yang kuat, dan menanamkan nilai-nilai Kristiani dalam kehidupan sehari-hari.
+            </p>
+            <div class="mt-auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MISI -->
+      <div class="col-md-6 mb-4">
+        <div 
+          class="card shadow-sm border-0 h-100" 
+          style="background: linear-gradient(135deg, #198754, #23b168); color: #fff;"
+        >
+          <div class="card-body text-center d-flex flex-column">
+            <div class="mb-3">
+              <i class="fa-solid fa-bullseye fa-3x"></i>
+            </div>
+            <h5 class="fw-bold">Misi</h5>
+            <ul class="list-unstyled mt-2 text-start">
+              <li>- Mengadakan kegiatan sekolah minggu yang menyenangkan dan mendidik.</li>
+              <li>- Membimbing anak-anak untuk mengenal Tuhan Yesus lebih dalam.</li>
+              <li>- Membangun komunitas yang saling mendukung secara rohani.</li>
+              <li>- Mendorong keterlibatan keluarga dalam pembentukan iman anak-anak.</li>
+            </ul>
+            <div class="mt-auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== SECTION INFO: 3 Kolom Singkat ========== -->
   <div class="container my-5" id="info">
     <div class="row text-center">
@@ -26,7 +81,7 @@
       <div class="col-md-4 mb-4">
         <img 
           src="{{ asset('admintemp/img/pray.png') }}" 
-          alt="icon1" 
+          alt="icon2" 
           class="mb-3"
           style="width: 60px; height: 60px; object-fit: cover;"
         >
@@ -36,13 +91,63 @@
       <div class="col-md-4 mb-4">
         <img 
           src="{{ asset('admintemp/img/family-member.png') }}" 
-          alt="icon1" 
+          alt="icon3" 
           class="mb-3"
           style="width: 60px; height: 60px; object-fit: cover;"
         >
         <h5 class="fw-bold">Komunitas</h5>
         <p>Memperluas pertemanan rohani bagi semua anggota keluarga.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ========== SECTION CAROUSEL ========== -->
+  <div class="container my-5">
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+      <!-- Indicators -->
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+
+      <!-- Slides -->
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img 
+            src="https://picsum.photos/1920/1080?random=1" 
+            class="d-block w-100" 
+            alt="Slide 1"
+            style="object-fit: cover; height: 400px;"
+          >
+        </div>
+        <div class="carousel-item">
+          <img 
+            src="https://picsum.photos/1920/1080?random=2" 
+            class="d-block w-100" 
+            alt="Slide 2"
+            style="object-fit: cover; height: 400px;"
+          >
+        </div>
+        <div class="carousel-item">
+          <img 
+            src="https://picsum.photos/1920/1080?random=3" 
+            class="d-block w-100" 
+            alt="Slide 3"
+            style="object-fit: cover; height: 400px;"
+          >
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
   </div>
 

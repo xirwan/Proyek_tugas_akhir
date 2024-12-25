@@ -42,10 +42,20 @@
             font-size: 14px;
             text-align: left;
         }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-height: 100px;
+        }
     </style>
 </head>
 <body>
-    <h1>Laporan Absensi Sekolah Minggu</h1>
+    <div class="logo">
+        <img src="{{ public_path('admintemp/img/logo.png') }}" alt="Logo">
+    </div>
+    <h1>Laporan Absensi GBI Sungai Yordan</h1>
     <div class="info">
         <p><strong>Kelas:</strong> {{ $class ? $class->name : 'Semua Kelas' }}</p>
         <p><strong>Minggu:</strong> {{ $weekOf }}</p>

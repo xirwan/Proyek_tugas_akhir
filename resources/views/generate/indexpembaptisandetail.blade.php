@@ -29,12 +29,7 @@
                         <td>{{ $detail->date }}</td>
                         <td>{{ $detail->description ?? 'Tidak ada deskripsi' }}</td>
                         <td>
-                            {{-- Tampilkan tombol Absensi jika pertemuan sesuai tanggal dan waktu --}}
-                            @if ($detail->date === $today && $currentTime >= '00:00')
-                                <a href="{{ route('memberpembaptisan.list', encrypt($detail->id)) }}" class="btn btn-primary">Lihat Peserta</a>
-                            @else
-                                <span class="text-muted">Belum Waktu Absensi</span>
-                            @endif
+                            <a href="{{ route('memberpembaptisan.list', encrypt($detail->id)) }}" class="btn btn-primary">Lihat Peserta</a>
                         </td>
                     </tr>
                 @empty

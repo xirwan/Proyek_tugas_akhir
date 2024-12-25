@@ -12,6 +12,19 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
     />
 
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+      integrity="sha512-Ho3XqikA9z2bhtNxL7KFKxryJ0pqul9CDiHA7Zuo9pmk5Flxj8DqPPj88RhmvgIEyrwH+juo8fRU5l/Z3SBUsw==" 
+      crossorigin="anonymous" 
+      referrerpolicy="no-referrer" 
+    />
+
     <!-- FA (ikon sosial media, dsb.) -->
     <link 
       rel="stylesheet"
@@ -144,6 +157,15 @@
     }
     .footer-link:hover {
       color: #0d6efd;           /* Warna teks saat hover (sesuai navbar) */
+    }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* Zoom efek saat hover */
     }
     </style>
 </head>

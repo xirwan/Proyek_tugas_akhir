@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:SuperAdmin')->group(function () {
         Route::prefix('master-data')->group(function () {
             Route::resource('schedule', ScheduleController::class);
+            Route::get('/schedule-member', [ScheduleController::class, 'indexMember'])->name('schedule.member.index');
+            Route::post('/schedule-member/{id}/qr/generate', [ScheduleController::class, 'generateQRCode'])->name('schedule.qr.generate');
             Route::post('/schedule/{id}/activate', [ScheduleController::class, 'activate'])->name('schedule.activate');
             Route::resource('category', CategoryController::class);
             Route::post('/category/{id}/activate', [CategoryController::class, 'activate'])->name('category.activate');
@@ -144,9 +146,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('childrens-activities')->group(function(){
             Route::get('/', [ActivityController::class, 'indexParent'])->name('activities.parent.index');
             Route::get('/{id}/register', [ActivityController::class, 'registerForm'])->name('activities.register.form');
-            // Route::get('/{id}/register-free', [ActivityController::class, 'registerFormfree'])->name('activities.registerfree.form');
+            Route::get('/{id}/register-free', [ActivityController::class, 'registerFormfree'])->name('activities.registerfree.form');
             Route::post('/{id}/register', [ActivityController::class, 'register'])->name('activities.register.children');
-            // Route::post('/{id}/register-free', [ActivityController::class, 'registerfree'])->name('activities.registerfree.children');
+            Route::post('/{id}/register-free', [ActivityController::class, 'registerfree'])->name('activities.registerfree.children');
             Route::get('/{id}', [ActivityController::class, 'showParent'])->name('activities.parent.show');
             Route::post('/{id}/upload-payment', [ActivityController::class, 'uploadPayment'])->name('activities.upload.payment');
         });
@@ -216,6 +218,28 @@ Route::post('/member-baptist/register', [MemberBaptistController::class, 'regist
 Route::get('/member-baptist/class-details', [MemberBaptistController::class, 'showDetails'])->name('memberbaptist.details');
 
 Route::get('/member-baptist/certificate', [GenerateCertification::class, 'baptistCertificates'])->name('baptist.certificate');
+
+Route::get('/activities-member', [ActivityController::class, 'indexMember'])->name('activities.member.index');
+
+Route::get('/activities-member/free/{activityId}', [ActivityController::class, 'registerSelfFormFree'])->name('activities.selfregisterfree.form');
+
+Route::post('/activities-member/free/{activityId}', [ActivityController::class, 'registerSelfFree'])->name('activities.selfregisterfree');
+
+Route::get('/activity-list-member', [ActivityController::class, 'indexAdminMember'])->name('listactivitiesmember.index');
+
+Route::get('/member/activities/{id}/participants', [ActivityController::class, 'viewSelfParticipants'])->name('activities.member.participants');
+
+Route::get('/member-scan', [ScheduleController::class, 'showMemberScan'])->name('attendance.member.scan');
+
+Route::post('/member-scan/checkin', [ScheduleController::class, 'checkin'])->name('attendance.checkin');
+
+Route::get('/member-scan/history', [ScheduleController::class, 'viewMemberAttendance'])->name('attendance.memberView');
+
+Route::get('/member-checklist', [ScheduleController::class, 'indexAttendance'])->name('attendance.admin');
+
+Route::get('/member-checklist/manual/{schedule}', [ScheduleController::class, 'manualCheckin'])->name('attendance.adminmanual');
+
+Route::post('/member-checklist/manual/{schedule}', [ScheduleController::class, 'storeManualCheckin'])->name('attendance.manual.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/certifications/upload', [CertificationController::class, 'showUploadForm'])->name('certifications.uploadForm');

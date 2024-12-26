@@ -1,4 +1,4 @@
-<x-user>
+{{-- <x-user>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .badge-custom {
@@ -9,17 +9,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 5px; /* Sesuaikan jarak antar tombol */
+            gap: 5px;
         }
     </style>
-    {{-- Pesan Sukses --}}
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
-
-    {{-- Filter Pencarian --}}
     <x-card>
         <x-slot name="header">
             Daftar Kegiatan
@@ -47,8 +44,6 @@
                 </div>
             </div>
         </form>        
-
-        {{-- Tabel Data --}}
         <table class="table table-responsive-md mb-0 text-center">
             <thead>
                 <tr>
@@ -143,15 +138,13 @@
                 @endforelse
             </tbody>            
         </table>
-
-        {{-- Navigasi Pagination --}}
         <div class="mt-5">
             {{ $activities->links() }}
         </div>
     </x-card>
-</x-user>
+</x-user> --}}
 {{-- form jika pakai midtrans --}}
-{{-- <x-user>
+<x-user>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .badge-custom {
@@ -299,4 +292,4 @@
             {{ $activities->links() }}
         </div>
     </x-card>
-</x-user> --}}
+</x-user>

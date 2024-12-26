@@ -8,6 +8,10 @@ use Illuminate\View\View;
 use App\Models\Schedule;
 use App\Models\Category;
 use App\Models\Type;
+use App\Models\AttendanceMember;
+use App\Models\Member;
+use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Carbon\Carbon;
 use App\Models\MemberScheduleMonthly;
 
@@ -41,7 +45,36 @@ class ScheduleController extends Controller
         $schedules = $query->paginate(10);
 
         return view('schedule.index', compact('schedules', 'filterStatus'));
-}
+    }
+
+    public function indexMember(Request $request) : View
+    {
+        // Ambil filter status dari request
+        $filterStatus = $request->query('status');
+
+        // Query jadwal dengan urutan hari
+        $query = Schedule::with(['type', 'category'])
+            ->orderByRaw("
+                CASE 
+                    WHEN day = 'Senin' THEN 1
+                    WHEN day = 'Selasa' THEN 2
+                    WHEN day = 'Rabu' THEN 3
+                    WHEN day = 'Kamis' THEN 4
+                    WHEN day = 'Jumat' THEN 5
+                    WHEN day = 'Sabtu' THEN 6
+                    WHEN day = 'Minggu' THEN 7
+                END
+            ");
+
+        // Tambahkan filter status jika ada
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+
+        $schedules = $query->paginate(10);
+
+        return view('schedule.memberindex', compact('schedules', 'filterStatus'));
+    }
 
 
     public function create() : View
@@ -200,6 +233,191 @@ class ScheduleController extends Controller
         return redirect()->route('schedule.index')->with([
             'success' => 'Jadwal berhasil diaktifkan kembali!'
         ]);
+    }
+
+    public function generateQRCode(Request $request, $id)
+    {
+        $schedule = Schedule::findOrFail($id);
+
+        // Pastikan direktori untuk menyimpan QR code ada
+        $qrDirectory = storage_path("app/public/qr_code_schedules");
+        if (!file_exists($qrDirectory)) {
+            mkdir($qrDirectory, 0755, true);
+        }
+
+        // Generate QR code
+        $qrPath = "qr_code_schedules/schedule_{$id}.png";
+        QrCode::format('png')
+            ->size(300)
+            ->generate($schedule->id, storage_path("app/public/{$qrPath}"));
+
+        // Simpan path ke database
+        $schedule->update(['qr_code_path' => $qrPath]);
+
+        return redirect()->back()->with('success', 'QR Code berhasil di-generate.');
+    }
+
+    public function showMemberScan()
+    {
+        return view('scan');
+    }
+
+    public function checkin(Request $request)
+    {
+        $scheduleId = $request->input('schedule_id');
+
+        // Ambil member_id dari user yang login
+        $memberId = Auth::user()->member->id; // Pastikan relasi user -> member ada di model User
+
+        // Validasi jadwal
+        $schedule = Schedule::find($scheduleId);
+        if (!$schedule) {
+            return redirect()->back()->withErrors('QR Code tidak valid.');
+        }
+
+        // Validasi hari
+        $currentDay = now()->format('l'); // Hari saat ini dalam bahasa Inggris
+        $dayMapping = [
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu',
+            'Sunday' => 'Minggu',
+        ];
+
+        if ($dayMapping[$currentDay] !== $schedule->day) {
+            return redirect()->back()->withErrors('Hari ini bukan jadwal yang sesuai.');
+        }
+
+        // Validasi waktu
+        $currentTime = now();
+        $startTime = \Carbon\Carbon::parse($schedule->start);
+        $endTime = \Carbon\Carbon::parse($schedule->end);
+
+        if ($currentTime->lt($startTime) || $currentTime->gt($endTime)) {
+            return redirect()->back()->withErrors('Absensi hanya dapat dilakukan dalam waktu yang ditentukan.');
+        }
+
+        // Validasi absensi minggu ini
+        $currentWeekStart = now()->startOfWeek();
+        $currentWeekEnd = now()->endOfWeek();
+
+        $alreadyCheckedIn = AttendanceMember::where('schedule_id', $scheduleId)
+            ->where('member_id', $memberId)
+            ->whereBetween('scanned_at', [$currentWeekStart, $currentWeekEnd])
+            ->exists();
+
+        if ($alreadyCheckedIn) {
+            return redirect()->back()->withErrors('Anda sudah melakukan absensi untuk minggu ini.');
+        }
+
+        // Simpan absensi
+        AttendanceMember::create([
+            'schedule_id' => $scheduleId,
+            'member_id' => $memberId,
+            'scanned_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Absensi berhasil dicatat.');
+    }
+
+
+    public function viewMemberAttendance()
+    {
+        $memberId = Auth::user()->member->id; // Ambil ID member dari user yang login
+
+        // Ambil riwayat absensi member
+        $attendanceRecords = AttendanceMember::where('member_id', $memberId)
+            ->with('schedule') // Relasi ke jadwal
+            ->orderBy('scanned_at', 'desc')
+            ->get();
+
+    
+        return view('history', compact('attendanceRecords'));
+    }
+
+    public function manualCheckin($scheduleId)
+    {
+        // Ambil jadwal
+        $schedule = Schedule::findOrFail($scheduleId);
+
+        // Ambil semua member
+        $members = Member::paginate(10);
+
+        // Tentukan rentang minggu ini
+        $currentWeekStart = now()->startOfWeek();
+        $currentWeekEnd = now()->endOfWeek();
+
+        // Ambil absensi minggu ini untuk jadwal tertentu
+        $attendanceRecords = AttendanceMember::where('schedule_id', $scheduleId)
+            ->whereBetween('scanned_at', [$currentWeekStart, $currentWeekEnd])
+            ->get();
+
+        // Kirim data ke view
+        return view('manual_checkin', compact('schedule', 'members', 'attendanceRecords'));
+    }
+
+    public function storeManualCheckin(Request $request, $scheduleId)
+    {
+        // Ambil jadwal
+        $schedule = Schedule::findOrFail($scheduleId);
+
+        // Ambil ID member yang di-checklist
+        $checkedMembers = $request->input('member_ids', []);
+
+        // Tentukan rentang minggu ini
+        $currentWeekStart = now()->startOfWeek();
+        $currentWeekEnd = now()->endOfWeek();
+
+        // Simpan absensi manual untuk setiap member yang di-checklist
+        foreach ($checkedMembers as $memberId) {
+            // Pastikan absensi belum tercatat minggu ini
+            $alreadyCheckedIn = AttendanceMember::where('schedule_id', $scheduleId)
+                ->where('member_id', $memberId)
+                ->whereBetween('scanned_at', [$currentWeekStart, $currentWeekEnd])
+                ->exists();
+
+            if (!$alreadyCheckedIn) {
+                AttendanceMember::create([
+                    'schedule_id' => $scheduleId,
+                    'member_id' => $memberId,
+                    'scanned_at' => now(),
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Absensi manual berhasil diperbarui.');
+    }
+
+    public function indexAttendance(Request $request) : View
+    {
+        // Ambil filter status dari request
+        $filterStatus = $request->query('status');
+
+        // Query jadwal dengan urutan hari
+        $query = Schedule::with(['type', 'category'])
+            ->orderByRaw("
+                CASE 
+                    WHEN day = 'Senin' THEN 1
+                    WHEN day = 'Selasa' THEN 2
+                    WHEN day = 'Rabu' THEN 3
+                    WHEN day = 'Kamis' THEN 4
+                    WHEN day = 'Jumat' THEN 5
+                    WHEN day = 'Sabtu' THEN 6
+                    WHEN day = 'Minggu' THEN 7
+                END
+            ");
+
+        // Tambahkan filter status jika ada
+        if ($filterStatus) {
+            $query->where('status', $filterStatus);
+        }
+
+        $schedules = $query->paginate(10);
+
+        return view('attendance', compact('schedules', 'filterStatus'));
     }
 
 

@@ -47,6 +47,17 @@
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Pembaptisan</span>
                         </x-side-link>
+                        <x-side-link href="{{route ('activities.member.index')}}" :active="request()->is('activities-member*')">
+                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
+                            <span>Kegiatan 'Joel'</span>
+                        </x-side-link>
+                        <x-side-link href="#" :active="request()->is('member-scan*')" class="nav-parent" :items="[
+                            ['url' => route('attendance.member.scan'), 'label' => 'Scan'],
+                            ['url' => route('attendance.memberView'), 'label' => 'Riwayat'],
+                        ]">
+                            <i class="bx bxs-camera" aria-hidden="true"></i>
+                            <span>Absensi</span>
+                        </x-side-link>
                         <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('certifications/upload')">
                             <i class="bx bx-user-plus" aria-hidden="true"></i>
                             <span>Pengajuan Keanggotaan</span>

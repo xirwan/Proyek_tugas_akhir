@@ -45,6 +45,10 @@ class Activity extends Model
         return $this->hasMany(MemberActivityRegistration::class, 'activity_id');
     }
 
+    public function registrationmembers()
+    {
+        return $this->hasMany(SelfActivityRegistration::class, 'activity_id');
+    }
 
     // Relasi ke pembayaran aktivitas
     public function payments()

@@ -9,7 +9,8 @@ use App\Models\Member;
 use App\Models\Activity;
 use App\Models\User;
 use App\Models\MemberActivityRegistration;
-Use App\Models\ActivityPayment;
+use App\Models\ActivityPayment;
+use App\Models\SelfActivityRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -71,31 +72,46 @@ class ActivityController extends Controller
 
     //     return response()->json(['message' => 'Callback received successfully']);
     // }
-    // public function registerFormfree($activityId)
-    // {
-    //     $activity = Activity::findOrFail($activityId);
+    public function registerFormfree($activityId)
+    {
+        $activity = Activity::findOrFail($activityId);
 
-    //     // Ambil semua anak milik orang tua
-    //     $allChildren = Auth::user()->member->children;
+        // Ambil semua anak milik orang tua
+        $allChildren = Auth::user()->member->children;
 
-    //     // Ambil ID anak yang sudah terdaftar di kegiatan ini
-    //     $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
-    //         ->where('registered_by', Auth::user()->member->id)
-    //         ->pluck('child_id')
-    //         ->toArray();
+        // Ambil ID anak yang sudah terdaftar di kegiatan ini
+        $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+            ->where('registered_by', Auth::user()->member->id)
+            ->pluck('child_id')
+            ->toArray();
 
-    //     // Filter anak yang belum terdaftar
-    //     $unregisteredChildren = $allChildren->whereNotIn('id', $registeredChildrenIds);
+        // Filter anak yang belum terdaftar
+        $unregisteredChildren = $allChildren->whereNotIn('id', $registeredChildrenIds);
 
-    //     // Cari pembayaran terkait kegiatan ini
-    //     $payment = ActivityPayment::where('activity_id', $activityId)
-    //         ->where('parent_id', Auth::user()->member->id)
-    //         ->where('midtrans_transaction_status', 'pending') // Transaksi dengan status pending
-    //         ->first();
+        // Cari pembayaran terkait kegiatan ini
+        // $payment = ActivityPayment::where('activity_id', $activityId)
+        //     ->where('parent_id', Auth::user()->member->id)
+        //     ->where('midtrans_transaction_status', 'pending')
+        //     ->first();
 
-    //     // Kirim data ke view
-    //     return view('activities.childrenregisterfree', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren', 'payment'));
-    // }
+        // Kirim data ke view
+        return view('activities.childrenregisterfree', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren'));
+    }
+    public function registerSelfFormFree($activityId)
+    {
+        $activity = Activity::findOrFail($activityId);
+
+        // Periksa apakah pengguna sudah terdaftar
+        $isAlreadyRegistered = SelfActivityRegistration::where('activity_id', $activityId)
+            ->where('member_id', Auth::user()->member->id)
+            ->exists();
+
+        if ($isAlreadyRegistered) {
+            return redirect()->back()->withErrors('Anda sudah terdaftar di kegiatan ini.');
+        }
+
+        return view('activities.selfregisterfree', compact('activity'));
+    }
     // public function registerForm($activityId)
     // {
     //     $activity = Activity::findOrFail($activityId);
@@ -121,96 +137,165 @@ class ActivityController extends Controller
     //     // Kirim data ke view
     //     return view('activities.childrenregister', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren', 'payment'));
     // }
-    // public function indexParent(Request $request)
-    // {
-    //     // Ambil semua kegiatan yang sudah disetujui
-    //     $activities = Activity::where('status', 'approved');
+    public function indexParent(Request $request)
+    {
+        // Ambil semua kegiatan yang sudah disetujui
+        $activities = Activity::where('status', 'approved');
 
-    //     // Filter berdasarkan jenis kegiatan
-    //     if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
-    //         $activities->where('is_paid', $request->is_paid);
-    //     }
+        // Filter berdasarkan jenis kegiatan
+        if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
+            $activities->where('is_paid', $request->is_paid);
+        }
 
-    //     // Ambil anak yang terhubung dengan pengguna saat ini
-    //     $children = Auth::user()->member->children;
+        // Ambil anak yang terhubung dengan pengguna saat ini
+        $children = Auth::user()->member->children;
 
-    //     // Ambil semua registrasi anak untuk kegiatan
-    //     $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
+        // Ambil semua registrasi anak untuk kegiatan
+        $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
 
-    //     // Filter berdasarkan status pendaftaran
-    //     if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
-    //         $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
-    //         if ($request->is_registered == '1') {
-    //             // Sudah didaftarkan
-    //             $activities->whereIn('id', $registeredActivityIds);
-    //         } elseif ($request->is_registered == '0') {
-    //             // Belum didaftarkan
-    //             $activities->whereNotIn('id', $registeredActivityIds);
-    //         }
-    //     }
+        // Filter berdasarkan status pendaftaran
+        if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
+            $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
+            if ($request->is_registered == '1') {
+                // Sudah didaftarkan
+                $activities->whereIn('id', $registeredActivityIds);
+            } elseif ($request->is_registered == '0') {
+                // Belum didaftarkan
+                $activities->whereNotIn('id', $registeredActivityIds);
+            }
+        }
 
-    //     // Paginate hasil query
-    //     $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
+        // Paginate hasil query
+        $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
 
-    //     // Periksa apakah tombol daftar harus muncul
-    //     foreach ($activities as $activity) {
-    //         // Anak-anak yang belum terdaftar untuk kegiatan ini
-    //         $unregisteredChildren = $children->pluck('id')->diff(
-    //             MemberActivityRegistration::where('activity_id', $activity->id)
-    //                 ->pluck('child_id')
-    //         );
+        // Periksa apakah tombol daftar harus muncul
+        foreach ($activities as $activity) {
+            // Anak-anak yang belum terdaftar untuk kegiatan ini
+            $unregisteredChildren = $children->pluck('id')->diff(
+                MemberActivityRegistration::where('activity_id', $activity->id)
+                    ->pluck('child_id')
+            );
         
-    //         // Periksa apakah ada anak yang belum terdaftar
-    //         $hasUnregisteredChildren = $unregisteredChildren->isNotEmpty();
+            // Periksa apakah ada anak yang belum terdaftar
+            $hasUnregisteredChildren = $unregisteredChildren->isNotEmpty();
         
-    //         // Periksa apakah masih dalam rentang waktu pendaftaran
-    //         $isWithinRegistrationPeriod = now()->between($activity->registration_open_date, $activity->registration_close_date);
+            // Periksa apakah masih dalam rentang waktu pendaftaran
+            $isWithinRegistrationPeriod = now()->between($activity->registration_open_date, $activity->registration_close_date);
         
-    //         // Tentukan apakah tombol daftar muncul
-    //         $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
-    //     }        
+            // Tentukan apakah tombol daftar muncul
+            $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
+        }        
 
-    //     return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
-    // }
-    // public function registerfree(Request $request, $activityId)
-    // {
+        return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
+    }
+    public function indexMember(Request $request)
+    {
+        // Ambil semua kegiatan yang sudah disetujui
+        $activities = Activity::where('status', 'approved');
+
+        // Filter berdasarkan jenis kegiatan (berbayar/tidak)
+        if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
+            $activities->where('is_paid', $request->is_paid);
+        }
+
+        // Ambil semua registrasi member untuk kegiatan
+        $registeredActivities = SelfActivityRegistration::where('member_id', Auth::user()->member->id)->pluck('activity_id');
+
+        // Filter berdasarkan status pendaftaran
+        if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
+            if ($request->is_registered == '1') {
+                // Sudah didaftarkan
+                $activities->whereIn('id', $registeredActivities);
+            } elseif ($request->is_registered == '0') {
+                // Belum didaftarkan
+                $activities->whereNotIn('id', $registeredActivities);
+            }
+        }
+
+        // Paginate hasil query
+        $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
+
+        // Periksa apakah tombol daftar harus muncul
+        foreach ($activities as $activity) {
+            // Periksa apakah member sudah terdaftar
+            $isRegistered = $registeredActivities->contains($activity->id);
+
+            // Periksa apakah masih dalam rentang waktu pendaftaran
+            $isWithinRegistrationPeriod = now()->between($activity->registration_open_date, $activity->registration_close_date);
+
+            // Tentukan apakah tombol daftar muncul
+            $activity->showRegisterButton = !$isRegistered && $isWithinRegistrationPeriod;
+        }
+
+        return view('activities.memberindex', compact('activities'));
+    }
+    public function registerfree(Request $request, $activityId)
+    {
         
-    //     $activity = Activity::findOrFail($activityId);
+        $activity = Activity::findOrFail($activityId);
 
-    //     // Validasi input
-    //     $request->validate([
-    //         'child_ids' => 'required|array|min:1',
-    //         'child_ids.*' => 'exists:members,id',
-    //     ]);
+        // Validasi input
+        $request->validate([
+            'child_ids' => 'required|array|min:1',
+            'child_ids.*' => 'exists:members,id',
+        ]);
 
-    //     // Ambil ID orang tua yang sedang login
-    //     $parentId = Auth::user()->member->id;
+        // Ambil ID orang tua yang sedang login
+        $parentId = Auth::user()->member->id;
 
-    //     // Ambil ID anak yang sudah terdaftar untuk kegiatan ini
-    //     $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
-    //         ->where('registered_by', $parentId)
-    //         ->pluck('child_id')
-    //         ->toArray();
+        // Ambil ID anak yang sudah terdaftar untuk kegiatan ini
+        $registeredChildrenIds = MemberActivityRegistration::where('activity_id', $activityId)
+            ->where('registered_by', $parentId)
+            ->pluck('child_id')
+            ->toArray();
 
-    //     // Filter anak baru dari input
-    //     $newChildrenIds = array_diff($request->child_ids, $registeredChildrenIds);
+        // Filter anak baru dari input
+        $newChildrenIds = array_diff($request->child_ids, $registeredChildrenIds);
 
-    //     if (empty($newChildrenIds)) {
-    //         return redirect()->back()->withErrors('Semua anak yang dipilih sudah terdaftar.');
-    //     }
+        if (empty($newChildrenIds)) {
+            return redirect()->back()->withErrors('Semua anak yang dipilih sudah terdaftar.');
+        }
 
-    //     // Masukkan anak baru ke tabel pendaftaran
-    //     foreach ($newChildrenIds as $childId) {
-    //         MemberActivityRegistration::create([
-    //             'activity_id' => $activityId,
-    //             'child_id' => $childId,
-    //             'registered_by' => $parentId,
-    //         ]);
-    //     }
+        // Masukkan anak baru ke tabel pendaftaran
+        foreach ($newChildrenIds as $childId) {
+            MemberActivityRegistration::create([
+                'activity_id' => $activityId,
+                'child_id' => $childId,
+                'registered_by' => $parentId,
+            ]);
+        }
 
-    //     // Jika kegiatan tidak berbayar, kembali ke daftar kegiatan
-    //     return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
-    // }
+        // Jika kegiatan tidak berbayar, kembali ke daftar kegiatan
+        return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
+    }
+    public function registerSelfFree(Request $request, $activityId)
+    {
+        $activity = Activity::findOrFail($activityId);
+
+        // Validasi apakah member sudah terdaftar
+        $isAlreadyRegistered = SelfActivityRegistration::where('activity_id', $activityId)
+            ->where('member_id', Auth::user()->member->id)
+            ->exists();
+
+        if ($isAlreadyRegistered) {
+            return redirect()->back()->withErrors('Anda sudah terdaftar di kegiatan ini.');
+        }
+
+        // Periksa apakah kegiatan memiliki batas maksimal peserta
+        $isFull = $activity->max_participants && $activity->registrations->count() >= $activity->max_participants;
+
+        if ($isFull) {
+            return redirect()->back()->withErrors('Kegiatan ini sudah penuh.');
+        }
+
+        // Daftarkan member ke kegiatan
+        SelfActivityRegistration::create([
+            'activity_id' => $activityId,
+            'member_id' => Auth::user()->member->id,
+        ]);
+
+        return redirect()->route('activities.member.index')->with('success', 'Anda berhasil mendaftarkan diri ke kegiatan.');
+    }
     // public function register(Request $request, $activityId)
     // {
     //     $activity = Activity::findOrFail($activityId);
@@ -317,6 +402,7 @@ class ActivityController extends Controller
 
     //     return view('activities.showparent', compact('activity', 'children', 'childrenRegistered'));
     // }
+    //midtrans selesai
 
     public function index(Request $request)
     {
@@ -356,61 +442,57 @@ class ActivityController extends Controller
         return view('activities.index', compact('activities', 'isSuperadmin', 'admins'));
     }
 
+    // public function indexParent(Request $request)
+    // {
+    //     // Ambil semua kegiatan yang sudah disetujui
+    //     $activities = Activity::where('status', 'approved');
 
-    public function indexParent(Request $request)
-    {
-        // Ambil semua kegiatan yang sudah disetujui
-        $activities = Activity::where('status', 'approved');
+    //     // Filter berdasarkan jenis kegiatan
+    //     if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
+    //         $activities->where('is_paid', $request->is_paid);
+    //     }
 
-        // Filter berdasarkan jenis kegiatan
-        if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
-            $activities->where('is_paid', $request->is_paid);
-        }
+    //     // Ambil anak yang terhubung dengan pengguna saat ini
+    //     $children = Auth::user()->member->children;
 
-        // Ambil anak yang terhubung dengan pengguna saat ini
-        $children = Auth::user()->member->children;
+    //     // Ambil semua registrasi anak untuk kegiatan
+    //     $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
 
-        // Ambil semua registrasi anak untuk kegiatan
-        $registeredChildren = MemberActivityRegistration::whereIn('child_id', $children->pluck('id'))->get();
+    //     // Filter berdasarkan status pendaftaran
+    //     if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
+    //         $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
+    //         if ($request->is_registered == '1') {
+    //             // Sudah didaftarkan
+    //             $activities->whereIn('id', $registeredActivityIds);
+    //         } elseif ($request->is_registered == '0') {
+    //             // Belum didaftarkan
+    //             $activities->whereNotIn('id', $registeredActivityIds);
+    //         }
+    //     }
 
-        // Filter berdasarkan status pendaftaran
-        if ($request->has('is_registered') && in_array($request->is_registered, ['0', '1'], true)) {
-            $registeredActivityIds = $registeredChildren->pluck('activity_id')->unique();
-            if ($request->is_registered == '1') {
-                // Sudah didaftarkan
-                $activities->whereIn('id', $registeredActivityIds);
-            } elseif ($request->is_registered == '0') {
-                // Belum didaftarkan
-                $activities->whereNotIn('id', $registeredActivityIds);
-            }
-        }
+    //     // Paginate hasil query
+    //     $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
 
-        // Paginate hasil query
-        $activities = $activities->orderBy('start_date', 'asc')->paginate(10);
+    //     // Periksa apakah tombol daftar harus muncul
+    //     foreach ($activities as $activity) {
+    //         $allChildrenRegistered = $children->pluck('id')->diff(
+    //             MemberActivityRegistration::where('activity_id', $activity->id)
+    //                 ->pluck('child_id')
+    //         )->isEmpty();
 
-        // Periksa apakah tombol daftar harus muncul
-        foreach ($activities as $activity) {
-            $allChildrenRegistered = $children->pluck('id')->diff(
-                MemberActivityRegistration::where('activity_id', $activity->id)
-                    ->pluck('child_id')
-            )->isEmpty();
+    //         // Tombol daftar muncul hanya jika:
+    //         // - Anak belum semuanya terdaftar
+    //         // - Bukti pembayaran belum diunggah jika kegiatan berbayar
+    //         // - Masih dalam rentang waktu pendaftaran
+    //         $activity->showRegisterButton = !$allChildrenRegistered &&
+    //             (!$activity->is_paid || !ActivityPayment::where('parent_id', Auth::user()->member->id)
+    //                 ->where('activity_id', $activity->id)
+    //                 ->exists()) &&
+    //             now()->between($activity->registration_open_date, $activity->registration_close_date);
+    //     }
 
-            // Tombol daftar muncul hanya jika:
-            // - Anak belum semuanya terdaftar
-            // - Bukti pembayaran belum diunggah jika kegiatan berbayar
-            // - Masih dalam rentang waktu pendaftaran
-            $activity->showRegisterButton = !$allChildrenRegistered &&
-                (!$activity->is_paid || !ActivityPayment::where('parent_id', Auth::user()->member->id)
-                    ->where('activity_id', $activity->id)
-                    ->exists()) &&
-                now()->between($activity->registration_open_date, $activity->registration_close_date);
-        }
-
-        return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
-    }
-
-
-
+    //     return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
+    // }
 
     public function indexAdmin(Request $request)
     {
@@ -418,9 +500,12 @@ class ActivityController extends Controller
 
         return view('activities.adminindex', compact('activities'));
     }
+    public function indexAdminMember(Request $request)
+    {
+        $activities = Activity::where('status', 'approved')->with('registrations')->paginate(10);
 
-    
-
+        return view('activities.adminmemberindex', compact('activities'));
+    }
     public function viewParticipants($id)
     {
         $activity = Activity::with(['payments.parent'])->findOrFail($id);
@@ -445,6 +530,23 @@ class ActivityController extends Controller
         return view('activities.adminparticipants', compact('activity', 'participants', 'payments'));
     }
 
+    public function viewSelfParticipants($id)
+    {
+        $activity = Activity::findOrFail($id);
+
+        // Ambil halaman saat ini untuk peserta
+        $participantsPage = request('participantsPage', 1);
+
+        // Daftar peserta yang mendaftarkan diri sendiri
+        $participantsQuery = SelfActivityRegistration::where('activity_id', $id)
+            ->with('member');
+
+        // Pagination
+        $participants = $this->paginateQuery($participantsQuery->get(), 10, $participantsPage, 'participantsPage');
+
+        return view('activities.adminmemberparticipants', compact('activity', 'participants'));
+    }
+
     private function paginateQuery(Collection $items, $perPage, $currentPage, $pageName = 'page')
     {
         $currentItems = $items->forPage($currentPage, $perPage);
@@ -453,9 +555,6 @@ class ActivityController extends Controller
             'pageName' => $pageName,
         ]);
     }
-
-
-
 
     public function registerForm($activityId)
     {
@@ -475,7 +574,6 @@ class ActivityController extends Controller
 
         return view('activities.childrenregister', compact('activity', 'allChildren', 'registeredChildrenIds', 'unregisteredChildren'));
     }
-
 
     public function register(Request $request, $activityId)
     {
@@ -528,7 +626,6 @@ class ActivityController extends Controller
         return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
     }
 
-
     public function showParent($id)
     {
         $activity = Activity::where('id', $id)
@@ -541,12 +638,13 @@ class ActivityController extends Controller
         $childrenRegistered = $activity->registrations->pluck('child_id')->toArray();
         $children = Auth::user()->member->children;
 
-        // Periksa apakah tanggal payment_deadline sudah lewat
-        $isDeadlinePassed = now()->greaterThan($activity->payment_deadline);
+        // Periksa apakah tanggal payment_deadline sudah lewat, tangani jika null
+        $isDeadlinePassed = $activity->payment_deadline 
+            ? now()->greaterThan($activity->payment_deadline) 
+            : false;
 
         return view('activities.showparent', compact('activity', 'children', 'childrenRegistered', 'isDeadlinePassed'));
-}
-
+    }
 
     public function uploadPayment(Request $request, $activityId)
     {
@@ -594,7 +692,6 @@ class ActivityController extends Controller
         return redirect()->route('activities.parent.show', $activityId)
             ->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi.');
     }
-
 
     public function verifyPayment(Request $request, $id)
     {
@@ -654,7 +751,6 @@ class ActivityController extends Controller
    
         return redirect()->back()->with('success', 'Pembayaran berhasil ditolak.');
     }
-
 
     public function create()
     {
@@ -862,7 +958,6 @@ class ActivityController extends Controller
 
         return redirect()->route('activities.index')->with(['success' => 'Kegiatan berhasil diperbarui!']);
     }
-
 
     public function approveActivity($id)
     {

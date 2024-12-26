@@ -22,16 +22,16 @@
                         <td>{{ $loop->iteration + $activities->firstItem() - 1 }}</td>
                         <td>{{ $activity->title }}</td>
                         <td>{{ $activity->start_date }}</td>
-                        <td>{{ $activity->registrations->count() }}</td>
+                        <td>{{ $activity->registrationmembers->count() }}</td>
                         <td>
                             @if ($activity->max_participants)
-                                {{ $activity->max_participants - $activity->registrations->count() }}
+                                {{ $activity->max_participants - $activity->registrationmembers->count() }}
                             @else
                                 Tidak Ditentukan
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('activities.participants.view', $activity->id) }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('activities.member.participants', $activity->id) }}" class="btn btn-primary btn-sm">
                                 Lihat Peserta
                             </a>
                         </td>

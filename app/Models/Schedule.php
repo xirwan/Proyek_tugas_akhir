@@ -17,6 +17,7 @@ class Schedule extends Model
         'description',
         'category_id',
         'type_id',
+        'qr_code_path',
     ];
 
     public function category()

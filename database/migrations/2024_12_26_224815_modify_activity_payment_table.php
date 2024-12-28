@@ -13,7 +13,7 @@ return new class extends Migration
     {
         //
         Schema::table('activity_payments', function (Blueprint $table) {
-            $table->string('payment_method')->after('total_amount'); // 'manual' atau 'midtrans'        
+            $table->string('payment_method')->nullable()->after('total_amount'); // 'manual' atau 'midtrans'        
             $table->string('midtrans_order_id')->nullable()->after('verified_by'); // Untuk Midtrans
             $table->string('midtrans_transaction_status')->nullable()->after('midtrans_order_id'); // Status transaksi
             $table->string('payment_token')->nullable()->after('midtrans_transaction_status'); // Token dari Midtrans

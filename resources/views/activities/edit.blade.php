@@ -15,7 +15,7 @@
             </header>
             <div class="card-body">
                 <div class="row form-group">
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="form-group">
                             <label for="is_paid" class="form-label">Apakah Berbayar?</label>
                             <select name="is_paid" id="is_paid" class="form-control">
@@ -24,7 +24,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         {{-- Tampilkan biaya kosong jika tidak berbayar dan biaya = 0.00 --}}
                         <x-input-number 
                             name="price" 
@@ -34,6 +34,17 @@
                             value="{{ $activity->is_paid == 0 && $activity->price == 0 ? '' : old('price', $activity->price) }}" 
                             min="0" 
                             step="5000" 
+                        />
+                    </div>
+                    <div class="col-lg-4">
+                        {{-- Tampilkan biaya kosong jika tidak berbayar dan biaya = 0.00 --}}
+                        <x-input-num 
+                            label="Nomor Rekening" 
+                            name="account_number" 
+                            id="account_number" 
+                            placeholder="Masukkan nomor rekening Anda" 
+                            maxlength="16" 
+                            value="{{ $activity->account_number }}"
                         />
                     </div>
                 </div>
@@ -52,22 +63,28 @@
                             label="Tanggal Pendaftaran Dibuka" 
                             name="registration_open_date" 
                             :required="true" 
-                            min="{{ date('Y-m-d') }}" 
+                            min="{{ $activity->registration_open_date < now()->format('Y-m-d') ? $activity->registration_open_date : now()->format('Y-m-d') }}" 
                             max="{{ date('Y-m-d', strtotime('+1 year')) }}"
                             value="{{ old('registration_open_date', $activity->registration_open_date) }}"
                         />
+                        @if ($activity->registration_open_date < now()->format('Y-m-d'))
+                            <small class="text-muted">Tanggal pendaftaran sudah berlalu, Anda masih bisa mengeditnya.</small>
+                        @endif
                     </div>
                     <div class="col-lg-4">
                         <x-date-picker 
                             label="Tanggal Pendaftaran Ditutup" 
                             name="registration_close_date" 
                             :required="true" 
-                            min="{{ date('Y-m-d') }}" 
+                            min="{{ $activity->registration_close_date < now()->format('Y-m-d') ? $activity->registration_close_date : now()->format('Y-m-d') }}" 
                             max="{{ date('Y-m-d', strtotime('+1 year')) }}"
                             value="{{ old('registration_close_date', $activity->registration_close_date) }}"
                         />
+                        @if ($activity->registration_close_date < now()->format('Y-m-d'))
+                            <small class="text-muted">Tanggal penutupan sudah berlalu, Anda masih bisa mengeditnya.</small>
+                        @endif
                     </div>
-                </div>
+                </div>                
                 <div class="row form-group">
                     <div class="col-lg-6">
                         <x-date-picker 

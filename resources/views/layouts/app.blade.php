@@ -4,6 +4,17 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 		{{-- <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> --}}
         @include('admin.css')        
+        {{-- <style>
+    
+            #sidebar-left .nav-main ul li a {
+                color: white !important;
+            }
+    
+            #sidebar-left .nav-main ul li a:hover {
+                background-color: #0056b3 !important; /* Hover dengan biru lebih gelap */
+                color: white !important;
+            }
+        </style> --}}
 	</head>
 	<body>
         <section class="body">
@@ -32,7 +43,7 @@
                             ['url' => url('#'), 'label' => 'Absensi', 'items' => [
                                     ['url' => url('sunday-school/attendance/class-admin'), 'label' => 'Scan',],
                                     ['url' => url('sunday-school/attendance/history'), 'label' => 'Riwayat Absensi Sekolah Minggu',],
-                                    ['url' => url('sunday-school/reports'), 'label' => 'Laporan Sekolah Minggu',],
+                                    ['url' => url('sunday-school/reports/mentor'), 'label' => 'Laporan Sekolah Minggu',],
                                 ],
                             ],
                         ]">

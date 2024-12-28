@@ -59,6 +59,9 @@
     <div class="info">
         <p><strong>Kelas:</strong> {{ $class ? $class->name : 'Semua Kelas' }}</p>
         <p><strong>Minggu:</strong> {{ $weekOf }}</p>
+        @if ($mentor)
+            <p><strong>Pembina:</strong> {{ $mentor->firstname . ' ' . $mentor->lastname }}</p>
+        @endif
         <p><strong>Tanggal Cetak:</strong> {{ now()->format('d-m-Y H:i') }}</p>
     </div>
 

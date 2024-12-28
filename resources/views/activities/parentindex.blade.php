@@ -219,11 +219,27 @@
                             @if ($isFull)
                                 <span class="badge bg-danger text-white badge-custom">Penuh</span>
                             @elseif ($isRegistered)
-                                <span class="badge bg-success text-white badge-custom">Sudah Didaftarkan</span>
+                                @php
+                                    $payment = $activity->payments->where('parent_id', Auth::user()->member->id)->first();
+                                @endphp
+                        
+                                @if ($activity->is_paid)
+                                    @if (!$payment)
+                                        <span class="badge bg-warning text-white badge-custom">Belum Dibayar</span>
+                                    @elseif ($payment->payment_status === 'Diproses')
+                                        <span class="badge bg-info text-white badge-custom">Menunggu Verifikasi</span>
+                                    @elseif ($payment->payment_status === 'Berhasil')
+                                        <span class="badge bg-success text-white badge-custom">Sudah Dibayar</span>
+                                    @else
+                                        <span class="badge bg-danger text-white badge-custom">Pembayaran Ditolak</span>
+                                    @endif
+                                @else
+                                    <span class="badge bg-success text-white badge-custom">Sudah Didaftarkan</span>
+                                @endif
                             @else
                                 <span class="badge bg-secondary text-white badge-custom">Belum Didaftarkan</span>
                             @endif
-                        </td>
+                        </td>                        
                         <td>
                             @if ($isFull)
                                 <span class="badge bg-danger text-white badge-custom">Slot Kegiatan Sudah Penuh</span>

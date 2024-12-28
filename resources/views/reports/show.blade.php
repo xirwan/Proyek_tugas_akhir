@@ -70,7 +70,12 @@
             </div>
             <footer class="card-footer text-right">
                 <button type="submit" class="btn btn-primary">Edit</button>
-                <a href="{{ route('admin.reports.index') }}" class="btn btn-success">Kembali</a>
+            
+                @if (Auth::user()->hasRole('SuperAdmin'))
+                    <a href="{{ route('admin.reports.index') }}" class="btn btn-success">Kembali</a>
+                @elseif (Auth::user()->hasRole('Admin'))
+                    <a href="{{ route('mentor.reports.index') }}" class="btn btn-success">Kembali</a>
+                @endif
             </footer>
         </section>
     </form>

@@ -107,11 +107,13 @@ Route::middleware('auth')->group(function () {
                 Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
                 Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');
                 Route::get('/get-valid-weeks/{classId}', [ReportController::class, 'getValidWeeks']);
+                Route::get('/get-valid-weeks-for-mentor/{class_id}', [ReportController::class, 'getValidWeeksForMentor']);
                 Route::post('/store', [ReportController::class, 'store'])->name('admin.reports.store');
                 Route::get('/show/{id}', [ReportController::class, 'show'])->name('admin.reports.show');
                 Route::get('/download/{id}', [ReportController::class, 'download'])->name('admin.reports.download');
                 Route::put('/update/{id}', [ReportController::class, 'update'])->name('admin.reports.update');
                 Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
+                Route::get('/mentor', [ReportController::class, 'indexForMentor'])->name('mentor.reports.index');
             });
         });
         Route::prefix('activities')->group(function(){

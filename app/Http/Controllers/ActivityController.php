@@ -783,6 +783,11 @@ class ActivityController extends Controller
                     }
                 },
             ],
+            'account_number' => [
+                'required_if:is_paid,true',
+                'nullable',
+                'numeric',
+            ],
             'payment_deadline' => [
                 'required_if:is_paid,true', // Wajib diisi jika kegiatan berbayar
                 'nullable',
@@ -815,16 +820,19 @@ class ActivityController extends Controller
             'price.required_if' => 'Harga wajib diisi jika kegiatan berbayar.',
             'price.numeric' => 'Harga harus berupa angka.',
             'price.min' => 'Harga tidak boleh bernilai negatif.',
+            'account_number.required_if' => 'Nomor rekening wajib diisi jika kegiatan berbayar.',
+            'account_number.numeric' => 'Nomor rekening harus berupa angka.',
             'max_participants.required' => 'Jumlah maksimal peserta wajib diisi.',
             'max_participants.integer' => 'Jumlah maksimal peserta harus berupa bilangan bulat.',
             'max_participants.min' => 'Jumlah maksimal peserta harus lebih dari nol.',
         ]);
-         // Upload file proposal
+
+        // Upload file proposal
         $proposalPath = null;
         if ($request->hasFile('proposal_file')) {
             $proposalPath = $request->file('proposal_file')->store('proposals', 'public'); // Simpan di folder 'proposals'
         }
-        //Upload file poster
+        // Upload file poster
         $posterPath = null;
         if ($request->hasFile('poster_file')) {
             $posterPath = $request->file('poster_file')->store('posters', 'public'); // Simpan di folder 'posters'
@@ -837,6 +845,7 @@ class ActivityController extends Controller
             'description' => $request->description,
             'is_paid' => $request->is_paid,
             'price' => $request->price ?? 0,
+            'account_number' => $request->account_number ?? null, // Tambahkan nomor rekening
             'start_date' => $request->start_date,
             'registration_open_date' => $request->registration_open_date,
             'registration_close_date' => $request->registration_close_date,
@@ -849,6 +858,7 @@ class ActivityController extends Controller
 
         return redirect()->route('activities.index')->with(['success' => 'Pengajuan Kegiatan Berhasil Disimpan!']);
     }
+
 
     public function show($id)
     {
@@ -864,81 +874,75 @@ class ActivityController extends Controller
 
     public function update(Request $request, $id)
     {
-        $activity = Activity::findOrFail($id); // Ambil data aktivitas berdasarkan ID
+        $activity = Activity::findOrFail($id);
 
-        // Validasi data
-        $request->validate([
+        // Periksa status dan peran pengguna
+        $userRole = Auth::user()->roles->first()->name; // Ambil peran pengguna
+        $currentStatus = $activity->status;
+
+        // Atur validasi dinamis
+        $today = now()->format('Y-m-d'); // Tanggal hari ini
+        $validationRules = [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_paid' => 'required|boolean',
             'start_date' => 'required|date|after_or_equal:today',
-            'registration_open_date' => 'required|date|after_or_equal:today|before_or_equal:start_date',
-            'registration_close_date' => 'required|date|after_or_equal:today|after_or_equal:registration_open_date|before_or_equal:start_date',
             'proposal_file' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'poster_file' => 'nullable|file|mimes:pdf,jpeg,png,jpg,gif|max:2048', 
-            'max_participants' => 'required|integer|min:1',   
+            'poster_file' => 'nullable|file|mimes:pdf,jpeg,png,jpg,gif|max:2048',
+            'max_participants' => 'required|integer|min:1',
             'price' => [
                 'required_if:is_paid,true',
                 'nullable',
                 'numeric',
                 'min:0',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->is_paid == false && $value) {
-                        $fail('Harga tidak boleh diisi jika kegiatan tidak berbayar.');
-                    }
-                    if (fmod($value, 1) !== 0.0) {
-                        $fail('Harga harus berupa angka bulat tanpa desimal.');
-                    }
-                },
+            ],
+            'account_number' => [
+                'required_if:is_paid,true',
+                'nullable',
+                'numeric',
             ],
             'payment_deadline' => [
-                'required_if:is_paid,true', // Wajib diisi jika kegiatan berbayar
+                'required_if:is_paid,true',
                 'nullable',
                 'date',
-                'after_or_equal:today',
                 'before_or_equal:start_date',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->is_paid) {
-                        if ($value < $request->registration_open_date) {
-                            $fail('Tanggal batas pembayaran tidak boleh kurang dari tanggal pendaftaran dibuka.');
-                        }
-                        if ($value > $request->registration_close_date) {
-                            $fail('Tanggal batas pembayaran tidak boleh lebih dari tanggal pendaftaran ditutup.');
-                        }
-                    }
-                },
             ],
-        ], [
-            'start_date.after_or_equal' => 'Tanggal mulai tidak boleh kurang dari hari ini.',
-            'registration_open_date.after_or_equal' => 'Tanggal pembukaan pendaftaran tidak boleh kurang dari hari ini.',
-            'registration_open_date.before_or_equal' => 'Tanggal pembukaan pendaftaran tidak boleh melebihi tanggal mulai kegiatan.',
-            'registration_close_date.after_or_equal' => 'Tanggal penutupan pendaftaran tidak boleh kurang dari hari ini atau tanggal pembukaan pendaftaran.',
-            'registration_close_date.before_or_equal' => 'Tanggal penutupan pendaftaran tidak boleh melebihi tanggal mulai kegiatan.',
-            'payment_deadline.after_or_equal' => 'Batas waktu pembayaran tidak boleh kurang dari hari ini.',
-            'payment_deadline.before_or_equal' => 'Batas waktu pembayaran tidak boleh melebihi tanggal mulai kegiatan.',
-            'proposal_file.required' => 'Proposal kegiatan wajib diunggah.',
-            'proposal_file.max' => 'Ukuran file proposal tidak boleh lebih dari 2 MB.',
-            'poster_file.required' => 'Poster kegiatan wajib diunggah.',
-            'poster_file.max' => 'Ukuran file poster tidak boleh lebih dari 2 MB.',
-            'price.required_if' => 'Harga wajib diisi jika kegiatan berbayar.',
-            'price.numeric' => 'Harga harus berupa angka.',
-            'price.min' => 'Harga tidak boleh bernilai negatif.',
-            'max_participants.required' => 'Jumlah maksimal peserta wajib diisi.',
-            'max_participants.integer' => 'Jumlah maksimal peserta harus berupa bilangan bulat.',
-            'max_participants.min' => 'Jumlah maksimal peserta harus lebih dari nol.',
-        ]);
+        ];
+
+        // Validasi tanggal pendaftaran dibuka
+        if ($activity->registration_open_date < $today) {
+            // Jika tanggal pendaftaran sudah berlalu, tidak perlu validasi terhadap hari ini
+            $validationRules['registration_open_date'] = 'required|date|before_or_equal:start_date';
+        } else {
+            $validationRules['registration_open_date'] = 'required|date|after_or_equal:today|before_or_equal:start_date';
+        }
+
+        // Validasi tanggal pendaftaran ditutup
+        if ($activity->registration_close_date < $today) {
+            // Jika tanggal penutupan sudah berlalu, tidak perlu validasi terhadap hari ini
+            $validationRules['registration_close_date'] = 'required|date|after_or_equal:registration_open_date|before_or_equal:start_date';
+        } else {
+            $validationRules['registration_close_date'] = 'required|date|after_or_equal:today|after_or_equal:registration_open_date|before_or_equal:start_date';
+        }
+
+        // Lakukan validasi
+        $request->validate($validationRules);
 
         // Kelola file proposal baru jika diunggah
         $proposalPath = $activity->proposal_file; // Tetap gunakan file lama jika tidak ada file baru
-
         if ($request->hasFile('proposal_file')) {
             $proposalPath = $request->file('proposal_file')->store('proposals', 'public'); // Ganti dengan file baru
         }
 
         $posterPath = $activity->poster_file; // Tetap gunakan file lama jika tidak ada file baru
-
         if ($request->hasFile('poster_file')) {
             $posterPath = $request->file('poster_file')->store('posters', 'public'); // Ganti dengan file baru
+        }
+
+        // Ubah status untuk pengajuan ulang
+        $newStatus = $currentStatus;
+        if ($currentStatus === 'rejected' && $userRole === 'Admin') {
+            $newStatus = 'pending_approval'; // Pengajuan ulang oleh Admin
         }
 
         // Update data aktivitas
@@ -951,13 +955,17 @@ class ActivityController extends Controller
             'registration_open_date' => $request->registration_open_date,
             'registration_close_date' => $request->registration_close_date,
             'payment_deadline' => $request->payment_deadline,
-            'proposal_file' => $proposalPath, // Simpan path file baru atau tetap gunakan file lama
+            'proposal_file' => $proposalPath,
             'poster_file' => $posterPath,
             'max_participants' => $request->max_participants,
+            'account_number' => $request->account_number,
+            'status' => $newStatus, // Update status berdasarkan kondisi
         ]);
 
         return redirect()->route('activities.index')->with(['success' => 'Kegiatan berhasil diperbarui!']);
     }
+
+
 
     public function approveActivity($id)
     {

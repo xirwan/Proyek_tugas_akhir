@@ -76,14 +76,14 @@
                         $totalChildren = count($childrenRegistered);
                         $totalCost = $totalChildren * $activity->price;
                     @endphp
-
+                    <p><strong>Nomor Rekening:</strong> {{ $activity->account_number ?? 'Tidak tersedia' }}</p>
                     <p><strong>Total Anak yang Didaftarkan:</strong> {{ $totalChildren }}</p>
                     <p><strong>Total Biaya:</strong> Rp{{ number_format($totalCost, 0, ',', '.') }}</p>
                     <h5>Status Pembayaran</h5>
                     @if (!$payment)
                         <p class="text-muted">Belum Upload Bukti Pembayaran</p>
                     @elseif ($payment->payment_status === 'Diproses')
-                        <span class="badge bg-warning badge-custom">Menunggu Verifikasi</span>
+                        <span class="badge bg-warning text-black badge-custom">Menunggu Verifikasi</span>
                     @elseif ($payment->payment_status === 'Berhasil')
                         <span class="badge bg-success text-white badge-custom">Terverifikasi</span>
                     @elseif ($payment->payment_status === 'Ditolak')

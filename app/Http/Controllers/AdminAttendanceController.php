@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SundaySchoolPresence;
 use App\Models\SundaySchoolClass;
+use App\Models\MemberScheduleMonthly;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -77,11 +78,22 @@ class AdminAttendanceController extends Controller
         // Ambil informasi kelas jika ada kelas yang dipilih
         $class = $selectedClassId !== 'all' ? SundaySchoolClass::find($selectedClassId) : null;
 
+        // Cari pembina berdasarkan jadwal yang sesuai
+        $scheduleQuery = MemberScheduleMonthly::with('member')
+            ->where('schedule_date', $selectedWeek);
+        if ($selectedClassId !== 'all') {
+            $scheduleQuery->whereHas('scheduleSundaySchoolClass', function ($query) use ($selectedClassId) {
+                $query->where('id', $selectedClassId);
+            });
+        }
+        $mentor = $scheduleQuery->first();
+
         // Generate PDF
         $pdf = Pdf::loadView('attendance.attendance-pdf', [
             'presences' => $presences,
             'class' => $class,
             'weekOf' => $selectedWeek === 'all' ? 'Semua Minggu' : $selectedWeek,
+            'mentor' => $mentor ? $mentor->member : null,
         ]);
 
         // Nama file PDF berdasarkan pilihan
@@ -94,4 +106,5 @@ class AdminAttendanceController extends Controller
         // Return file PDF untuk diunduh
         return $pdf->stream($fileName);
     }
+
 }

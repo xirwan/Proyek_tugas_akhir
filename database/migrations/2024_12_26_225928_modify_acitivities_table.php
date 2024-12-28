@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('activities', function (Blueprint $table) {
             //
-            $table->string('qris_path')->nullable()->after('payment_deadline');
+            $table->string('account_number')->nullable()->after('payment_deadline');
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('activities', function (Blueprint $table) {
             //
-            $table->dropColumn('qris_path');
+            $table->dropColumn('account_number');
         });
     }
 };

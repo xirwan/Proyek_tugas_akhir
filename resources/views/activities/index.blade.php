@@ -10,6 +10,10 @@
             align-items: center;
             gap: 10px; /* Sesuaikan jarak antar tombol */
         }
+        .btn-edit {
+            background-color: #17a2b8; /* Warna biru untuk tombol edit */
+            color: white;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @if (session('success'))
@@ -102,6 +106,39 @@
                         <td>
                             <div class="btn-group-custom">
                                 <a href="{{ route('activities.show', $activity->id) }}" class="btn btn-primary btn-sm">Detail</a>
+                                
+                                @if (auth()->user()->hasRole('SuperAdmin'))
+                                    @if ($activity->status !== 'pending_approval' && $activity->status !== 'rejected')
+                                        <a href="{{ route('activities.edit', $activity->id) }}" class="btn btn-edit btn-sm">Edit</a>
+                                    @endif
+                                @elseif (auth()->user()->hasRole('Admin') && ($activity->status === 'pending_approval' || $activity->status === 'rejected'))
+                                    <a href="{{ route('activities.edit', $activity->id) }}" class="btn btn-success btn-sm">Edit</a>
+                                @endif
+                        
+                                {{-- Tombol untuk melihat alasan penolakan --}}
+                                @if ($activity->status === 'rejected' && $activity->rejection_reason)
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#reasonModal-{{ $activity->id }}">
+                                        Lihat Alasan
+                                    </button>
+                        
+                                    {{-- Modal untuk alasan penolakan --}}
+                                    <div class="modal fade" id="reasonModal-{{ $activity->id }}" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="reasonModalLabel">Alasan Penolakan</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>{{ $activity->rejection_reason }}</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                         
                                 @if (auth()->user()->hasRole('SuperAdmin') && $activity->status === 'pending_approval')
                                     {{-- Tombol Setujui --}}
@@ -123,13 +160,13 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Masukkan alasan penolakan" required></textarea>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="submit" class="btn btn-danger">Tolak</button>
-                                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batal</button>
                                                     </div>
                                                 </div>
                                             </form>
@@ -137,7 +174,7 @@
                                     </div>
                                 @endif
                             </div>
-                        </td>                        
+                        </td>                                                
                     </tr>
                 @empty
                     <tr>

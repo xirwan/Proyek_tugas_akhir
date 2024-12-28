@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Report;
+use App\Models\MemberScheduleMonthly;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 
@@ -19,15 +21,65 @@ class ReportController extends Controller
         return view('reports.index', compact('reports'));
     }
 
+    public function indexForMentor()
+    {
+        // Dapatkan ID pembina dari user yang sedang login
+        $mentorId = Auth::user()->member->id;
+
+        // Ambil ID kelas yang sesuai dengan jadwal pembina
+        $classIds = DB::table('member_schedule_monthly')
+            ->join('schedules_sunday_school_class', 'member_schedule_monthly.schedules_sunday_school_class_id', '=', 'schedules_sunday_school_class.id')
+            ->where('member_schedule_monthly.member_id', $mentorId)
+            ->pluck('schedules_sunday_school_class.sunday_school_class_id');
+
+        // Ambil week_of yang sesuai dengan jadwal pembina
+        $validWeeks = DB::table('member_schedule_monthly')
+            ->where('member_id', $mentorId)
+            ->pluck('schedule_date');
+
+        // Ambil laporan sesuai dengan kelas dan minggu yang valid
+        $reports = Report::whereIn('sunday_school_class_id', $classIds)
+            ->whereIn('week_of', $validWeeks)
+            ->orderBy('week_of', 'desc')
+            ->paginate(10);
+
+        return view('reports.index', compact('reports'));
+    }
+
+
     // Show the form to create a new report
     public function create()
     {
-        // Retrieve all distinct week_of values from sunday_school_presences for dropdown
-        // $weeks = DB::table('sunday_school_presences')->distinct()->pluck('week_of','week_of')->toArray();
-        // Ambil semua kelas sekolah minggu
-        $classes = DB::table('sunday_school_classes')->where('status', 'Active')->pluck('name', 'id');
-        return view('reports.add', compact('classes'));
+        // Ambil user yang sedang login
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        // Periksa apakah user adalah pembina
+        if ($user->hasRole('Admin')) {
+            $mentorId = $user->member->id; // Dapatkan ID member pembina
+
+            // Ambil hanya kelas yang sesuai dengan jadwal pembina
+            // Ambil hanya kelas yang sesuai dengan jadwal pembina
+            $classes = DB::table('sunday_school_classes')
+            ->join('schedules_sunday_school_class', 'sunday_school_classes.id', '=', 'schedules_sunday_school_class.sunday_school_class_id')
+            ->join('member_schedule_monthly', 'schedules_sunday_school_class.id', '=', 'member_schedule_monthly.schedules_sunday_school_class_id')
+            ->where('member_schedule_monthly.member_id', $mentorId)
+            ->where('sunday_school_classes.status', 'Active')
+            ->distinct()
+            ->pluck('sunday_school_classes.name', 'sunday_school_classes.id');
+
+            $weeksEndpoint = '/sunday-school/reports/get-valid-weeks-for-mentor';
+        } else {
+            // Jika bukan pembina (SuperAdmin), ambil semua kelas
+            $classes = DB::table('sunday_school_classes')->where('status', 'Active')->pluck('name', 'id');
+            // Endpoint untuk SuperAdmin
+            $weeksEndpoint = '/sunday-school/reports/get-valid-weeks';
+        }
+
+        return view('reports.add', compact('classes', 'weeksEndpoint'));
     }
+
+
     
     public function store(Request $request)
     {
@@ -167,5 +219,26 @@ class ReportController extends Controller
 
         return response()->json(['weeks' => $weeks]);
     }
+
+    public function getValidWeeksForMentor($classId)
+    {
+        $mentorId = Auth::user()->member->id; // Ambil ID pembina yang sedang login
+
+
+        $weeks = DB::table('member_schedule_monthly')
+            ->join('schedules_sunday_school_class', 'member_schedule_monthly.schedules_sunday_school_class_id', '=', 'schedules_sunday_school_class.id')
+            ->join('sunday_school_presences', 'member_schedule_monthly.schedule_date', '=', 'sunday_school_presences.week_of')
+            ->join('sunday_school_members', 'sunday_school_presences.member_id', '=', 'sunday_school_members.member_id')
+            ->where('member_schedule_monthly.member_id', $mentorId)
+            ->where('schedules_sunday_school_class.sunday_school_class_id', $classId)
+            ->where('sunday_school_members.sunday_school_class_id', $classId)
+            ->distinct()
+            ->pluck('member_schedule_monthly.schedule_date');
+
+        return response()->json(['weeks' => $weeks]);
+    }
+
+
+
 
 }

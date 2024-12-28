@@ -1,56 +1,3 @@
-{{-- <x-app-layout>
-    <x-card>
-        <x-slot name="header">
-            Detail Aktivitas: {{ $activity->title }}
-        </x-slot>
-        @if ($activity->status === 'rejected')
-            <div class="alert alert-danger">
-                <strong>Alasan Penolakan:</strong> {{ $activity->rejection_reason }}
-            </div>
-        @endif
-        <div class="mb-3">
-            <strong>Judul:</strong> {{ $activity->title }}
-        </div>
-        <div class="mb-3">
-            <strong>Deskripsi:</strong> {{ $activity->description ?? '-' }}
-        </div>
-        <div class="mb-3">
-            <strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $activity->status)) }}
-        </div>
-        <div class="mb-3">
-            <strong>Jumlah Peserta:</strong> {{ $activity->max_participants }}
-        </div>
-        <div class="mb-3">
-            <strong>Tanggal Kegiatan:</strong> {{ $activity->start_date }}
-        </div>
-        <div class="mb-3">
-            <strong>Tanggal Pendaftaran:</strong> {{ $activity->registration_open_date }} Hingga {{ $activity->registration_close_date }}
-        </div>
-        <div class="mb-3">
-            <strong>Batas Pembayaran:</strong> {{ $activity->payment_deadline ?? 'Tidak Ada' }}
-        </div>
-        <div class="mb-3">
-            <strong>Biaya:</strong> {{ $activity->is_paid ? 'Rp' . number_format($activity->price, 0, ',', '.') : 'Gratis' }}
-        </div>
-        <div class="mb-3">
-            <strong>Proposal Kegiatan:</strong>
-            @if ($activity->proposal_file)
-                <a href="{{ asset('storage/' . $activity->proposal_file) }}" target="_blank" class="btn btn-primary btn-sm">Lihat Proposal Kegiatan</a>
-            @else
-                Tidak ada file proposal kegiatan
-            @endif
-        </div>
-        <div class="mb-3">
-            <strong>Poster Kegiatan:</strong>
-            @if ($activity->poster_file)
-                <a href="{{ asset('storage/' . $activity->poster_file) }}" target="_blank" class="btn btn-primary btn-sm">Lihat Poster Kegiatan</a>
-            @else
-                Tidak ada file poster kegiatan
-            @endif
-        </div>
-        <a href="{{ route('activities.index') }}" class="btn btn-success">Kembali</a>
-    </x-card>
-</x-app-layout> --}}
 <x-app-layout>
     <section class="card">
         <header class="card-header">
@@ -58,7 +5,7 @@
         </header>
         <div class="card-body">
             <div class="row form-group">
-                <div class="col-lg-6">
+                <div class="col-lg-4">
                     <div class="form-group">
                         <label for="is_paid" class="form-label">Apakah Berbayar?</label>
                         <select name="is_paid" id="is_paid" class="form-control" disabled>
@@ -67,17 +14,42 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <x-input-number 
-                        name="price" 
-                        id="inputPrice" 
-                        label="Biaya (Jika Berbayar)" 
-                        placeholder="Masukkan biaya kegiatan" 
-                        value="{{ $activity->is_paid == 0 && $activity->price == 0 ? '' : old('price', $activity->price) }}" 
-                        min="0" 
-                        step="5000" 
-                        :disabled="true" 
-                    />
+                <div class="col-lg-4">
+                    @if ($activity->is_paid)
+                        <x-input-number 
+                            name="price" 
+                            id="inputPrice" 
+                            label="Biaya (Jika Berbayar)" 
+                            placeholder="Masukkan biaya kegiatan" 
+                            value="{{ old('price', $activity->price) }}" 
+                            min="0" 
+                            step="5000" 
+                            :disabled="true" 
+                        />
+                    @else
+                        <div class="form-group">
+                            <label for="price" class="form-label">Biaya</label>
+                            <p class="form-control-plaintext">Tidak Berbayar</p>
+                        </div>
+                    @endif
+                </div>
+                <div class="col-lg-4">
+                    @if ($activity->is_paid)
+                        <x-input-num 
+                            label="Nomor Rekening" 
+                            name="account_number" 
+                            id="account_number" 
+                            placeholder="Masukkan nomor rekening Anda" 
+                            maxlength="16" 
+                            value="{{ $activity->account_number }}"
+                            :disabled="true"
+                        />
+                    @else
+                        <div class="form-group">
+                            <label for="account_number" class="form-label">Nomor Rekening</label>
+                            <p class="form-control-plaintext">Tidak Berbayar</p>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="row form-group">
@@ -116,14 +88,21 @@
             </div>
             <div class="row form-group">
                 <div class="col-lg-6">
-                    <x-date-picker 
-                        label="Batas Waktu Pembayaran (Jika Berbayar)" 
-                        name="payment_deadline" 
-                        min="{{ date('Y-m-d') }}" 
-                        max="{{ date('Y-m-d', strtotime('+1 year')) }}"
-                        value="{{ old('payment_deadline', $activity->payment_deadline) }}"
-                        :disabled="true"
-                    />
+                    @if ($activity->is_paid)
+                        <x-date-picker 
+                            label="Batas Waktu Pembayaran (Jika Berbayar)" 
+                            name="payment_deadline" 
+                            min="{{ date('Y-m-d') }}" 
+                            max="{{ date('Y-m-d', strtotime('+1 year')) }}"
+                            value="{{ old('payment_deadline', $activity->payment_deadline) }}"
+                            :disabled="true"
+                        />
+                    @else
+                        <div class="form-group">
+                            <label for="payment_deadline" class="form-label">Batas Waktu Pembayaran</label>
+                            <p class="form-control-plaintext">Tidak Berbayar</p>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-lg-6">
                     <x-input-number 

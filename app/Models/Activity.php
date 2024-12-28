@@ -25,6 +25,7 @@ class Activity extends Model
         'rejection_reason',
         'poster_file',
         'max_participants',
+        'account_number',
     ];
 
     // Relasi ke member (admin yang membuat aktivitas)

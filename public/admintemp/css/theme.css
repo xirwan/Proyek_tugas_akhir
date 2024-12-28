@@ -262,6 +262,7 @@ a:active {
 
 	html.fixed .sidebar-left .nano-content {
 		padding-bottom: 50px;
+		/* background-color: #007bff !important; */
 	}
 
 	/* Layout Fixed - Sidebar Left Collapsed */

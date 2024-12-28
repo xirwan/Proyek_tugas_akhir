@@ -14,16 +14,16 @@
             </header>
             <div class="card-body">
                 <div class="row form-group">
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <div class="form-group">
                             <label for="is_paid" class="form-label">Apakah Berbayar?</label>
                             <select name="is_paid" id="is_paid" class="form-control">
-                                <option value="0">Tidak</option>
-                                <option value="1">Ya</option>
+                                <option value="0" {{ old('is_paid') == '0' ? 'selected' : '' }}>Tidak</option>
+                                <option value="1" {{ old('is_paid') == '1' ? 'selected' : '' }}>Ya</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-4">
                         <x-input-number 
                             name="price" 
                             id="inputPrice" 
@@ -32,6 +32,15 @@
                             value="{{ old('price') }}" 
                             min="0" 
                             step="5000" 
+                        />
+                    </div>
+                    <div class="col-lg-4">
+                        <x-input-num 
+                            label="Nomor Rekening" 
+                            name="account_number" 
+                            id="account_number" 
+                            placeholder="Masukkan nomor rekening Anda" 
+                            maxlength="16" 
                         />
                     </div>
                 </div>

@@ -13,28 +13,29 @@ class AdminAttendanceController extends Controller
     // Fungsi untuk menampilkan riwayat absensi dengan filter dan pagination
     public function attendanceHistory(Request $request)
     {
-        $selectedClassId = $request->input('class_id', null); // Default ke null
-        $selectedWeek = $request->input('week_of', null); // Default ke null
+        $selectedClassId = $request->input('class_id', null);
+        $selectedWeek = $request->input('week_of', null);
+        $useDateRange = $request->input('use_date_range', false);
+        $startDate = $request->input('start_date', null);
+        $endDate = $request->input('end_date', null);
 
-        // Ambil semua kelas
         $classes = SundaySchoolClass::all();
-
-        // Ambil tanggal week_of unik dari tabel absensi
         $weeks = SundaySchoolPresence::select('week_of')
             ->distinct()
             ->orderBy('week_of', 'desc')
             ->get()
-            ->pluck('week_of', 'week_of') // Format: ['2024-11-12' => '2024-11-12']
-            ->prepend('Semua Minggu', 'all'); // Tambahkan opsi "Semua Minggu"
+            ->pluck('week_of', 'week_of')
+            ->prepend('Semua Minggu', 'all');
 
-        // Jika admin belum memilih filter, tampilkan halaman tanpa data absensi
-        if (is_null($selectedClassId) || is_null($selectedWeek)) {
-            return view('attendance.class-attendance-history', compact('classes', 'weeks', 'selectedClassId', 'selectedWeek'))
-                ->with('presences', collect()); // Kirim presences kosong
-        }
-
-        // Query absensi dengan pagination
         $query = SundaySchoolPresence::with('member', 'member.sundaySchoolClasses');
+
+        if ($useDateRange && $startDate && $endDate) {
+            $query->whereBetween('week_of', [$startDate, $endDate]);
+        } else {
+            if ($selectedWeek !== 'all') {
+                $query->whereDate('week_of', $selectedWeek);
+            }
+        }
 
         if ($selectedClassId !== 'all') {
             $query->whereHas('member.sundaySchoolClasses', function ($q) use ($selectedClassId) {
@@ -42,15 +43,10 @@ class AdminAttendanceController extends Controller
             });
         }
 
-        if ($selectedWeek !== 'all') {
-            $query->whereDate('week_of', $selectedWeek);
-        }
+        $presences = $query->paginate(10)->appends($request->query());
 
-        $presences = $query->paginate(10)->appends(request()->query()); // Tambahkan query string ke pagination
-
-        return view('attendance.class-attendance-history', compact('classes', 'presences', 'selectedClassId', 'selectedWeek', 'weeks'));
+        return view('attendance.class-attendance-history', compact('classes', 'presences', 'selectedClassId', 'selectedWeek', 'weeks', 'startDate', 'endDate', 'useDateRange'));
     }
-
 
     // Fungsi untuk export data absensi ke PDF
     public function exportToPdf(Request $request)

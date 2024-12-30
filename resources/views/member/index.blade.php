@@ -12,6 +12,9 @@
         <form method="GET" action="{{ route('member.index') }}" class="mb-4">
             <div class="row">
                 <div class="col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama atau email" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-4">
                     <select name="status" class="form-control">
                         <option value="">Semua Status</option>
                         <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>

@@ -21,23 +21,37 @@ use Carbon\Carbon;
 
 class MemberController extends Controller
 {
-    public function index(Request $request) : View
+    public function index(Request $request): View
     {
-        // Ambil filter status dari query parameter
+        // Ambil filter status dan pencarian dari query parameter
         $filterStatus = $request->query('status');
+        $search = $request->query('search');
 
         // Query anggota dengan relasi yang diperlukan
         $query = Member::with('branch', 'user', 'position');
 
-        // Terapkan filter jika status diberikan
+        // Terapkan filter status jika diberikan
         if ($filterStatus) {
             $query->where('status', $filterStatus);
         }
 
+        // Terapkan pencarian jika ada keyword pencarian
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'LIKE', "%{$search}%")
+                ->orWhere('lastname', 'LIKE', "%{$search}%")
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('email', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        // Paginate hasil pencarian
         $members = $query->paginate(5);
 
-        return view('member.index', compact('members', 'filterStatus'));
+        return view('member.index', compact('members', 'filterStatus', 'search'));
     }
+
 
     
     public function create() : View

@@ -243,6 +243,10 @@ Route::get('/member-checklist/manual/{schedule}', [ScheduleController::class, 'm
 
 Route::post('/member-checklist/manual/{schedule}', [ScheduleController::class, 'storeManualCheckin'])->name('attendance.manual.store');
 
+Route::get('/attendance-members/report', [ScheduleController::class, 'generateReport'])->name('attendance.member.report');
+
+Route::get('/attendance-members/report/form/{id}', [ScheduleController::class, 'showForm'])->name('attendance.report.form');
+
 Route::middleware('auth')->group(function () {
     Route::get('/certifications/upload', [CertificationController::class, 'showUploadForm'])->name('certifications.uploadForm');
     Route::post('/certifications/upload', [CertificationController::class, 'uploadCertificate'])->name('certifications.upload');

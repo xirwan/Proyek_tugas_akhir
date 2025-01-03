@@ -9,9 +9,7 @@
         <x-slot name="header">
             List Jadwal
         </x-slot>
-
-        <a href="{{ route('schedule.create') }}" class="btn btn-md btn-success mb-3">Tambah Jadwal</a>
-        <form method="GET" action="{{ route('schedule.index') }}" class="mb-4">
+        <form method="GET" action="{{ route('attendance.admin') }}" class="mb-4">
             <div class="row">
                 <div class="col-lg-4">
                     <select name="status" class="form-control">
@@ -22,7 +20,7 @@
                 </div>
                 <div class="col-lg-4">
                     <button type="submit" class="btn btn-primary">Filter</button>
-                    <a href="{{ route('schedule.index') }}" class="btn btn-secondary">Reset</a>
+                    <a href="{{ route('attendance.admin') }}" class="btn btn-secondary">Reset</a>
                 </div>
             </div>
         </form>
@@ -39,7 +37,7 @@
                     <th>Deskripsi</th>
                     <th>QR Code</th>
                     <th>Absensi Manual</th>
-                    <th>Detail</th>
+                    <th>Laporan</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,7 +88,7 @@
                             <a href="{{ route('attendance.adminmanual', $schedule->id) }}" class="btn btn-warning btn-sm text-white">Absensi Manual</a>
                         </td>
                         <td class="actions text-center">
-                            <a href="{{ route('schedule.show', encrypt($schedule->id)) }}"><i class="el el-info-circle"></i></a>
+                            <a href="{{ route('attendance.report.form', $schedule->id) }}" class="btn btn-success btn-sm text-white">Laporan</a>
                         </td>
                     </tr>
                 @empty

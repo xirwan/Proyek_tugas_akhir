@@ -126,7 +126,7 @@
                         <span>Pembaptisan</span>
                     </x-side-link>
 
-                    <x-side-link href="{{url ('/member-checklist')}}" :active="request()->is('member-checklist*')">
+                    <x-side-link href="{{url ('/member-checklist')}}" :active="request()->is('member-checklist*') || request()->is('attendance-members*')">
                         <i class="bx bxs-check-square" aria-hidden="true"></i>
                         <span>Absensi Joel</span>
                     </x-side-link>

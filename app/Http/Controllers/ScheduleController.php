@@ -12,6 +12,7 @@ use App\Models\AttendanceMember;
 use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use App\Models\MemberScheduleMonthly;
 
@@ -418,6 +419,32 @@ class ScheduleController extends Controller
         $schedules = $query->paginate(10);
 
         return view('attendance', compact('schedules', 'filterStatus'));
+    }
+
+    public function showForm($id)
+    {
+        $schedule = Schedule::findOrFail($id); // Ambil data jadwal berdasarkan ID
+        return view('report-form', compact('schedule')); // Kirim data ke view
+    }
+
+    public function generateReport(Request $request)
+    {
+        // Validasi input rentang waktu
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        // Ambil data sesuai rentang waktu
+        $attendances = \App\Models\AttendanceMember::with(['schedule', 'member'])
+            ->whereBetween('scanned_at', [$request->start_date, $request->end_date])
+            ->get();
+
+        // Generate PDF
+        $pdf = PDF::loadView('report', compact('attendances', 'request'));
+
+        // Return PDF untuk ditampilkan di halaman baru
+        return $pdf->stream('Laporan_Kegiatan.pdf');
     }
 
 

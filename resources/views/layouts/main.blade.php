@@ -135,39 +135,39 @@
         opacity: 0.25; 
       }
       .footer-link {
-      position: relative;
-      color: #fff;              /* Warna teks default */
-      transition: color 0.2s ease;
-      display: inline-block;    /* Pastikan inline-block agar efek garis bekerja */
-      padding-bottom: 2px;      /* Ruang di bawah teks untuk garis */
-      margin: 0.25rem 0;
-      text-decoration: none;
-    }
-    .footer-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0%;
-      height: 2px;
-      background-color: #0d6efd; /* Warna garis bawah (bisa Anda ubah) */
-      transition: width 0.2s ease;
-    }
-    .footer-link:hover::after {
-      width: 100%;
-    }
-    .footer-link:hover {
-      color: #0d6efd;           /* Warna teks saat hover (sesuai navbar) */
-    }
-    .card {
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease-in-out;
-    }
+        position: relative;
+        color: #fff;              /* Warna teks default */
+        transition: color 0.2s ease;
+        display: inline-block;    /* Pastikan inline-block agar efek garis bekerja */
+        padding-bottom: 2px;      /* Ruang di bawah teks untuk garis */
+        margin: 0.25rem 0;
+        text-decoration: none;
+      }
+      .footer-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0%;
+        height: 2px;
+        background-color: #0d6efd; /* Warna garis bawah (bisa Anda ubah) */
+        transition: width 0.2s ease;
+      }
+      .footer-link:hover::after {
+        width: 100%;
+      }
+      .footer-link:hover {
+        color: #0d6efd;           /* Warna teks saat hover (sesuai navbar) */
+      }
+      .card {
+          border-radius: 15px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          transition: transform 0.2s ease-in-out;
+      }
 
-    .card:hover {
-        transform: scale(1.05); /* Zoom efek saat hover */
-    }
+      .card:hover {
+          transform: scale(1.05); /* Zoom efek saat hover */
+      }
     </style>
 </head>
 <body>

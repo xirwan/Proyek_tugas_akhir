@@ -25,6 +25,11 @@ class Seedpositions extends Seeder
             "status"=> "Active",
         ]);
         Position::create([
+            "name"=> "Jemaat Tetap",
+            "description"=> "Jemaat Tetap GBI Sungai Yordan",
+            "status"=> "Active",
+        ]);
+        Position::create([
             "name"=> "Jemaat Remaja",
             "description"=> "Jemaat Remaja GBI Sungai Yordan",
             "status"=> "Active",

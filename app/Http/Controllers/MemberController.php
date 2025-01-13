@@ -98,12 +98,20 @@ class MemberController extends Controller
 
         // Tentukan role berdasarkan posisi yang dipilih
         $positionId = $request->position_id;
-        $roleName = $positionId == Position::where('name', 'Jemaat')->first()->id
-            ? 'Jemaat'
-            : ($positionId == Position::where('name', 'Pembina')->first()->id ? 'Admin' : null);
 
+        // Tentukan role yang sesuai dengan posisi
+        if ($positionId == Position::where('name', 'Jemaat')->first()->id || $positionId == Position::where('name', 'Jemaat Tetap')->first()->id) {
+            $roleName = 'Jemaat';
+        } elseif ($positionId == Position::where('name', 'Jemaat Remaja')->first()->id) {
+            $roleName = 'JemaatRemaja';
+        } else {
+            // Role Pembina untuk posisi selain Jemaat, Jemaat Remaja, dan Jemaat Tetap
+            $roleName = 'Pembina';
+        }
+
+        // Jika role ditemukan, assign role ke user
         if ($roleName) {
-            $user->assignRole($roleName); // Berikan role ke user
+            $user->assignRole($roleName);
         }
 
         // Simpan data anggota ke tabel Member
@@ -252,9 +260,16 @@ class MemberController extends Controller
 
             // Tentukan role berdasarkan posisi
             $positionId = $request->input('position_id');
-            $roleName = $positionId == Position::where('name', 'Jemaat')->first()->id
-                ? 'Jemaat'
-                : ($positionId == Position::where('name', 'Pembina')->first()->id ? 'Admin' : null);
+
+            // Tentukan role berdasarkan posisi
+            if ($positionId == Position::where('name', 'Jemaat')->first()->id || $positionId == Position::where('name', 'Jemaat Tetap')->first()->id) {
+                $roleName = 'Jemaat';
+            } elseif ($positionId == Position::where('name', 'Jemaat Remaja')->first()->id) {
+                $roleName = 'JemaatRemaja';
+            } else {
+                // Role Pembina untuk posisi selain Jemaat, Jemaat Remaja, dan Jemaat Tetap
+                $roleName = 'Pembina';
+            }
 
             if ($roleName) {
                 $user->syncRoles([$roleName]); // Sinkronisasi role

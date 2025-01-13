@@ -88,8 +88,17 @@ class CertificationController extends Controller
         // Perbarui position_id anggota menjadi ID posisi untuk "Jemaat"
         $member = $certification->member; // Ambil relasi member dari sertifikasi
 
-        // Cari ID posisi "Jemaat" di tabel posisi
-        $positionId = Position::where('name', 'Jemaat')->value('id');
+         // Ambil user yang terkait dengan member
+        $user = $member->user;
+
+        // Cek role yang dimiliki oleh user
+        if ($user->hasRole('JemaatRemaja')) {
+            // Jika role adalah "JemaatRemaja", set position_id menjadi "Jemaat Remaja"
+            $positionId = Position::where('name', 'Jemaat Remaja')->value('id');
+        } else {
+            // Jika role adalah "Jemaat", set position_id menjadi "Jemaat"
+            $positionId = Position::where('name', 'Jemaat')->value('id');
+        }
 
         // Perbarui position_id anggota
         if ($positionId) {

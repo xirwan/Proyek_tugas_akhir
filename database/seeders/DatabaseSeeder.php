@@ -25,7 +25,11 @@ class DatabaseSeeder extends Seeder
             Seedcabang::class,
             Seedpositions::class,
             Seedrelasi::class,
+            Seedtipe::class,
+            Seedkategori::class,
+            Seedjadwal::class,
             Seedkelas::class,
+            Seedjadwalsekolahminggu::class,
         ]);        
     }
 }

@@ -18,6 +18,7 @@ class Seedrole extends Seeder
         $superAdminRole = Role::create(['name' => 'SuperAdmin']);
         Role::create(['name' => 'Jemaat']);
         Role::create(['name' => 'Admin']);
+        Role::create(['name' => 'JemaatRemaja']);
         $user = User::find(1);
         if ($user) {
             $user->assignRole($superAdminRole);

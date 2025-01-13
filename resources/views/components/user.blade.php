@@ -15,23 +15,34 @@
                                 <span>Home</span>
                             </a>                        
                         </li>
-                        <x-side-link href="#" :active="request()->is('member/children*') || request()->is('member/register-child*') || request()->is('attendance/parent-view*')" class="nav-parent" :items="[
-                            ['url' => route('member.childrenList'), 'label' => 'List Anak'],
-                            ['url' => route('member.createChildForm'), 'label' => 'Daftar Anak'],
-                            ['url' => route('attendance.parentView'), 'label' => 'Absensi Anak'],
-                        ]">
-                            <i class="bx bx-user" aria-hidden="true"></i>
-                            <span>Anak</span>
-                        </x-side-link>
-                        <x-side-link href="{{route ('activities.parent.index')}}" :active="request()->is('childrens-activities*')">
-                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
-                            <span>Kegiatan</span>
-                        </x-side-link>
+                        @if (auth()->user()->hasRole('JemaatRemaja'))
+                            <x-side-link href="{{route ('activities.member.index')}}" :active="request()->is('activities-member*')">
+                                <i class="bx bxs-calendar-event" aria-hidden="true"></i>
+                                <span>Kegiatan</span>
+                            </x-side-link>
+                            <x-side-link href="#" :active="request()->is('member-scan*')" class="nav-parent" :items="[
+                                ['url' => route('attendance.member.scan'), 'label' => 'Scan'],
+                                ['url' => route('attendance.memberView'), 'label' => 'Riwayat'],
+                            ]">
+                                <i class="bx bxs-camera" aria-hidden="true"></i>
+                                <span>Absensi</span>
+                            </x-side-link>
+                        @endif
+                        @if (auth()->user()->hasRole('Jemaat'))
+                            <x-side-link href="#" :active="request()->is('member/children*') || request()->is('member/register-child*') || request()->is('attendance/parent-view*')" class="nav-parent" :items="[
+                                ['url' => route('member.childrenList'), 'label' => 'List Anak'],
+                                ['url' => route('member.createChildForm'), 'label' => 'Daftar Anak'],
+                                ['url' => route('attendance.parentView'), 'label' => 'Absensi Anak'],
+                            ]">
+                                <i class="bx bx-user" aria-hidden="true"></i>
+                                <span>Anak</span>
+                            </x-side-link>
+                            <x-side-link href="{{route ('activities.parent.index')}}" :active="request()->is('childrens-activities*')">
+                                <i class="bx bxs-calendar-event" aria-hidden="true"></i>
+                                <span>Kegiatan</span>
+                            </x-side-link>
+                        @endif
                         {{-- joel --}}
-                        {{-- <x-side-link href="{{route ('seminars.indexmember')}}" :active="request()->is('member-seminar*')">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
-                            <span>Seminar</span>
-                        </x-side-link> --}}
                         <x-side-link href="#" :active="request()->is('member-seminar*')" class="nav-parent" :items="[
                             ['url' => route('seminars.indexmember'), 'label' => 'Daftar Seminar'],
                             ['url' => route('seminars.certificate'), 'label' => 'Sertifikat Seminar'],
@@ -46,17 +57,6 @@
                         ]">
                             <i class="bx bx-calendar" aria-hidden="true"></i>
                             <span>Pembaptisan</span>
-                        </x-side-link>
-                        <x-side-link href="{{route ('activities.member.index')}}" :active="request()->is('activities-member*')">
-                            <i class="bx bxs-calendar-event" aria-hidden="true"></i>
-                            <span>Kegiatan 'Joel'</span>
-                        </x-side-link>
-                        <x-side-link href="#" :active="request()->is('member-scan*')" class="nav-parent" :items="[
-                            ['url' => route('attendance.member.scan'), 'label' => 'Scan'],
-                            ['url' => route('attendance.memberView'), 'label' => 'Riwayat'],
-                        ]">
-                            <i class="bx bxs-camera" aria-hidden="true"></i>
-                            <span>Absensi</span>
                         </x-side-link>
                         <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('certifications/upload')">
                             <i class="bx bx-user-plus" aria-hidden="true"></i>

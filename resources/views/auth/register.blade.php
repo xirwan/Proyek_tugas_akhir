@@ -116,6 +116,13 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <div class="mt-4">
+            <label for="is_youth" class="inline-flex items-center">
+                <input id="is_youth" type="checkbox" name="is_youth" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-600">{{ __('Mendaftar sebagai remaja?') }}</span>
+            </label>
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
                 {{ __('Already registered?') }}

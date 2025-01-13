@@ -53,6 +53,7 @@
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
                             ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
+                            ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
@@ -73,7 +74,7 @@
                                     ['url' => url('master-data/type'), 'label' => 'Tipe Jadwal',],
                                     ['url' => url('master-data/category'), 'label' => 'Kategori Jadwal',],
                                     ['url' => url('master-data/schedule'), 'label' => 'List Jadwal',],
-                                    ['url' => url('master-data/schedule-member'), 'label' => 'List Jadwal (Joel)',],
+                                    // ['url' => url('master-data/schedule-member'), 'label' => 'Generate kode QR Jadwal',],
                                 ],
                             ],
                         ]">
@@ -100,7 +101,7 @@
                         <x-side-link href="#" :active="request()->is('activities*') || request()->is('activity*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
                             ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
-                            ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan (Joel)'],
+                            ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
@@ -128,7 +129,7 @@
 
                     <x-side-link href="{{url ('/member-checklist')}}" :active="request()->is('member-checklist*') || request()->is('attendance-members*')">
                         <i class="bx bxs-check-square" aria-hidden="true"></i>
-                        <span>Absensi Joel</span>
+                        <span>Absensi Remaja</span>
                     </x-side-link>
 
                 </x-sidebar>

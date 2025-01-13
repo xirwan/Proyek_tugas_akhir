@@ -132,7 +132,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/activity-list', [ActivityController::class, 'indexAdmin'])->name('listactivities.index');
     });
     Route::get('/my-schedule', [MemberScheduleController::class, 'mySchedule'])->middleware(['auth', 'role:Admin'])->name('myschedule.index');
-    Route::middleware('role:Jemaat')->group(function () {
+    Route::middleware('role:Jemaat|JemaatRemaja')->group(function () {
         Route::get('/portal', function () {
             return view('userdashboard');
         })->name('portal')->middleware(CheckMemberStatus::class);

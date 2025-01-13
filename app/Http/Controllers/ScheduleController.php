@@ -345,7 +345,9 @@ class ScheduleController extends Controller
         $schedule = Schedule::findOrFail($scheduleId);
 
         // Ambil semua member
-        $members = Member::paginate(10);
+        $members = Member::whereHas('user.roles', function ($query) {
+            $query->where('name', 'JemaatRemaja');
+        })->paginate(10);
 
         // Tentukan rentang minggu ini
         $currentWeekStart = now()->startOfWeek();

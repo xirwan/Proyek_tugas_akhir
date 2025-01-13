@@ -36,12 +36,6 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // $request->validate([
-        //     'name' => ['required', 'string', 'max:255'],
-        //     'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-        //     'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        // ]);
-
         $request->validate([
             'firstname'         => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
             'lastname'          => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
@@ -55,28 +49,27 @@ class RegisteredUserController extends Controller
             'lastname.regex'        => 'Harap hanya memasukan huruf saja.',
         ]);
 
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        // ]);
-
         $fullname = $request->firstname . ' ' . $request->lastname;
+        $isYouth = $request->has('is_youth');
+        $roleName = $isYouth ? 'JemaatRemaja' : 'Jemaat';
+        $positionName = $isYouth ? 'Jemaat Remaja' : 'Jemaat';
+
+
         $user = User::create([
             'email' => $request->email,
             'name'  => $fullname,
             'password' => Hash::make($request->password),
         ]);
 
-        $role = Role::where('name', 'Jemaat')->first();
+        $role = Role::where('name', $roleName)->first();
         if (!$role) {
-            return redirect()->back()->withErrors('Role "Jemaat" tidak ditemukan.');
+            return redirect()->back()->withErrors('Role tidak ditemukan.');
         }
 
         // Dapatkan position_id berdasarkan nama "Jemaat"
-        $position = Position::where('name', 'Jemaat')->first();
+        $position = Position::where('name', $positionName)->first();
         if (!$position) {
-            return redirect()->back()->withErrors('Posisi "Jemaat" tidak ditemukan.');
+            return redirect()->back()->withErrors('Posisi tidak ditemukan.');
         }
 
         if ($role) {

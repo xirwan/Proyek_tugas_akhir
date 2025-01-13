@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             Seedcabang::class,
             Seedpositions::class,
             Seedrelasi::class,
+            Seedkelas::class,
         ]);        
     }
 }

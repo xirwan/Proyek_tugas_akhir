@@ -219,7 +219,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function active($encryptedId): RedirectResponse
+    public function activate($encryptedId): RedirectResponse
     {
         $id = decrypt($encryptedId);
 

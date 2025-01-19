@@ -14,13 +14,26 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public function listChildren()
+    public function listChildren(Request $request)
     {
-        // Ambil semua anak yang memiliki orang tua dan paginate hasilnya
-        $children = Member::whereHas('parents')->paginate(10);
+        // Ambil input pencarian
+        $search = $request->query('search');
 
-        return view('attendance.children-list', compact('children'));
+        // Ambil semua anak dengan status "Active", memiliki orang tua, dan pencarian berdasarkan nama depan atau belakang
+        $children = Member::where('status', 'Active') // Filter status "Active"
+            ->whereHas('parents') // Hanya anak yang memiliki orang tua
+            ->when($search, function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('firstname', 'like', "%{$search}%")
+                        ->orWhere('lastname', 'like', "%{$search}%");
+                });
+            })
+            ->paginate(10);
+
+        return view('attendance.children-list', compact('children', 'search'));
     }
+
+
 
     public function generateQrForChild($id)
     {
@@ -260,7 +273,7 @@ class AttendanceController extends Controller
         // $weekOf = now()->startOfWeek(Carbon::SUNDAY)->toDateString();
 
         // Dapatkan murid yang terdaftar di kelas ini dengan menyertakan alias untuk `id`
-        $students = Member::whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
+        $students = Member::where('status', 'Active')->whereHas('sundaySchoolClasses', function ($query) use ($class_id) {
             $query->where('sunday_school_classes.id', $class_id); // Tambahkan alias tabel di sini
         })->get();
 

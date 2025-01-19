@@ -82,7 +82,7 @@
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan jadwal ini?');">Nonaktifkan</button>
                 </form>
             @else
-                <form action="{{ route('schedule.active', encrypt($schedule->id)) }}" method="POST" style="display:inline;">
+                <form action="{{ route('schedule.activate', encrypt($schedule->id)) }}" method="POST" style="display:inline;">
                     @csrf
                     <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali jadwal ini?');">Aktifkan</button>
                 </form>

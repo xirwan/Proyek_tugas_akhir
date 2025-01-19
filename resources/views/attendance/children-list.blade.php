@@ -10,6 +10,19 @@
             List Anak Sekolah Minggu
         </x-slot>
         <a href="{{ route('qr-code.generate.all.qr') }}" class="btn btn-md btn-success mb-3">Generate QR Code untuk Semua Anak Tanpa QR</a>
+        <!-- Tombol Tambah Data Anak -->
+        <a href="{{ route('admin.addChild') }}" class="btn btn-md btn-primary mb-3">Tambah Data Anak</a>
+        <form method="GET" action="{{ route('qr-code.children.list') }}" class="mb-4">
+            <div class="row">
+                <div class="col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-4">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="{{ route('qr-code.children.list') }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
         <div class="table-responsive text-center">
             <table class="table mb-0">
                 <thead>

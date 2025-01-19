@@ -17,6 +17,7 @@ use App\Models\Relation;
 use App\Models\MemberRelation;
 use App\Models\SundaySchoolClass;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class MemberController extends Controller
@@ -106,7 +107,7 @@ class MemberController extends Controller
             $roleName = 'JemaatRemaja';
         } else {
             // Role Pembina untuk posisi selain Jemaat, Jemaat Remaja, dan Jemaat Tetap
-            $roleName = 'Pembina';
+            $roleName = 'Admin';
         }
 
         // Jika role ditemukan, assign role ke user
@@ -268,7 +269,7 @@ class MemberController extends Controller
                 $roleName = 'JemaatRemaja';
             } else {
                 // Role Pembina untuk posisi selain Jemaat, Jemaat Remaja, dan Jemaat Tetap
-                $roleName = 'Pembina';
+                $roleName = 'Admin';
             }
 
             if ($roleName) {
@@ -407,6 +408,77 @@ class MemberController extends Controller
         }
 
         return redirect()->route('member.childrenList')->with('success', 'Anak berhasil didaftarkan!');
+    }
+
+    public function createChildByAdmin()
+    {
+        $parents = DB::table('members')
+            ->join('users', 'members.user_id', '=', 'users.id') // Join dengan tabel users
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id') // Join dengan tabel model_has_roles
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id') // Join dengan tabel roles
+            ->where('roles.name', 'Jemaat') // Filter hanya user dengan role "Jemaat"
+            ->select(
+                'members.id', 
+                DB::raw("CONCAT(members.firstname, ' ', members.lastname, ' (', users.email, ')') AS name")
+            )
+            ->get()
+            ->pluck('name', 'id'); // Format: ['id' => 'Nama Lengkap (Email)']
+
+        $relationOptions = Relation::pluck('name', 'id'); // Format: ['id' => 'Nama Relasi']
+
+        return view('attendance.children-add', compact('parents', 'relationOptions'));
+    }
+
+
+
+    public function storeChildByAdmin(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'firstname' => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'lastname' => ['required', 'string', 'regex:/^[a-zA-Z\s]+$/'],
+            'dateofbirth' => 'required|date',
+            'relation_id' => 'required|exists:relations,id',
+            'parent_id' => 'required|exists:members,id', // Validasi untuk orang tua
+        ], [
+            'firstname.regex' => 'Harap hanya memasukkan huruf saja.',
+            'lastname.regex' => 'Harap hanya memasukkan huruf saja.',
+        ]);
+
+        // Temukan orang tua yang dipilih
+        $parentMember = Member::findOrFail($request->input('parent_id'));
+
+        // Dapatkan position_id untuk "Jemaat"
+        $position = Position::where('name', 'Jemaat')->first();
+        if (!$position) {
+            return redirect()->back()->withErrors('Posisi "Jemaat" tidak ditemukan.');
+        }
+
+        // Buat anak sebagai anggota baru
+        $childMember = Member::create([
+            'firstname' => $request->input('firstname'),
+            'lastname' => $request->input('lastname'),
+            'dateofbirth' => $request->input('dateofbirth'),
+            'status' => 'Active',
+            'address' => $parentMember->address,
+            'branch_id' => $parentMember->branch_id,
+            'position_id' => $position->id,
+            'user_id' => null, // Anak tidak memiliki akun user
+        ]);
+
+        // Simpan relasi orang tua dan anak
+        MemberRelation::create([
+            'member_id' => $parentMember->id,
+            'related_member_id' => $childMember->id,
+            'relation_id' => $request->input('relation_id'),
+        ]);
+
+        // Tambahkan anak ke kelas berdasarkan usia
+        $classId = $this->assignClassByAge($childMember);
+        if ($classId) {
+            $childMember->sundaySchoolClasses()->attach($classId);
+        }
+
+        return redirect()->route('qr-code.children.list')->with('success', 'Anak berhasil didaftarkan!');
     }
 
     public function editChild(Member $child)

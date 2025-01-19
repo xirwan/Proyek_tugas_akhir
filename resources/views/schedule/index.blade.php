@@ -36,6 +36,7 @@
                     <th>Mulai</th>
                     <th>Selesai</th>
                     <th>Deskripsi</th>
+                    <th>Status</th>
                     <th>Detail</th>
                 </tr>
             </thead>
@@ -50,6 +51,7 @@
                         <td>{{ \Carbon\Carbon::parse($schedule->start)->format('H:i') }}</td>
                         <td>{{ \Carbon\Carbon::parse($schedule->end)->format('H:i') }}</td>
                         <td>{{ $schedule->description }}</td>
+                        <td>{{ $schedule->status }}</td>
                         <td class="actions text-center">
                             <a href="{{ route('schedule.show', encrypt($schedule->id)) }}"><i class="el el-info-circle"></i></a>
                         </td>

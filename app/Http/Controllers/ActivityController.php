@@ -140,7 +140,8 @@ class ActivityController extends Controller
     public function indexParent(Request $request)
     {
         // Ambil semua kegiatan yang sudah disetujui
-        $activities = Activity::where('status', 'approved');
+        $activities = Activity::where('status', 'approved')
+        ->whereDate('start_date', '>=', now()->toDateString()); // Menambahkan kondisi untuk memfilter kegiatan yang belum lewat
 
         // Filter berdasarkan jenis kegiatan
         if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
@@ -430,7 +431,7 @@ class ActivityController extends Controller
         // Jika Superadmin, tambahkan daftar admin
         $admins = [];
         if ($user->hasRole('SuperAdmin')) {
-            $admins = Member::whereHas('user', function ($query) {
+            $admins = Member::where('status', 'Active')->whereHas('user', function ($query) {
                 $query->role('Admin'); // Hanya ambil anggota yang memiliki peran Admin
             })->get();
         }

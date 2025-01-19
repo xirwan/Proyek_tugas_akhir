@@ -103,6 +103,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
             Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])->name('qr-code.children.generate.qr');
             Route::get('/qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
+            Route::get('/admin/add-child', [MemberController::class, 'createChildByAdmin'])->name('admin.addChild');
+            Route::post('/admin/store-child', [MemberController::class, 'storeChildByAdmin'])->name('admin.storeChild');
             Route::prefix('reports')->group(function () {
                 Route::get('/', [ReportController::class, 'index'])->name('admin.reports.index');
                 Route::get('/create', [ReportController::class, 'create'])->name('admin.reports.create');

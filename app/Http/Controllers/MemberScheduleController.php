@@ -42,9 +42,11 @@ class MemberScheduleController extends Controller
         }
 
         // Ambil data pembina yang memiliki posisi tertentu
-        $members = Member::whereHas('user', function ($query) {
-            $query->role('Admin'); // Menggunakan Spatie untuk memfilter users dengan role 'admin'
-        })->get();
+        $members = Member::where('status', 'Active') // Filter hanya anggota dengan status Active
+        ->whereHas('user', function ($query) {
+            $query->role('Admin'); // Menggunakan Spatie untuk memfilter users dengan role 'Admin'
+        })
+        ->get();
         
 
         // Ambil daftar bulan untuk dropdown
@@ -221,10 +223,11 @@ class MemberScheduleController extends Controller
             ->toArray();
 
         // Mendapatkan opsi member yang belum dijadwalkan
-        $memberOptions = Member::whereHas('user', function ($query) {
-                $query->role('Admin'); // Menggunakan Spatie untuk memfilter user dengan role 'admin'
+        $memberOptions = Member::where('status', 'Active') // Hanya ambil anggota dengan status Active
+            ->whereHas('user', function ($query) {
+                $query->role('Admin'); // Filter user dengan role 'Admin' menggunakan Spatie
             })
-            ->whereNotIn('id', $scheduledMemberIds)
+            ->whereNotIn('id', $scheduledMemberIds) // Kecualikan anggota yang ada di $scheduledMemberIds
             ->get()
             ->mapWithKeys(function ($member) {
                 return [$member->id => $member->firstname . ' ' . $member->lastname];

@@ -27,7 +27,9 @@ class LandingController extends Controller
 
         // Jika Anda hanya ingin menampilkan activity yang sudah di-approve, bisa gunakan:
         // (sesuaikan dengan kolom 'status' di model)
-        $activities = Activity::where('status', 'Approved')->paginate(9);
+        $activities = Activity::where('status', 'Approved')
+        ->whereDate('start_date', '>=', now()) // Membandingkan tanggal event dengan hari ini
+        ->paginate(9);
 
         return view('welcomeactivity', compact('activities'));
     }

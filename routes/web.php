@@ -28,6 +28,8 @@ use App\Http\Controllers\SeminarController;
 use App\Http\Middleware\CheckMemberStatus;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\GenerateCertification;
+use App\Models\Schedule;
+use App\Models\SundaySchoolClass;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -136,7 +138,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-schedule', [MemberScheduleController::class, 'mySchedule'])->middleware(['auth', 'role:Admin'])->name('myschedule.index');
     Route::middleware('role:Jemaat|JemaatRemaja')->group(function () {
         Route::get('/portal', function () {
-            return view('userdashboard');
+            // Ambil data jadwal dengan relasi tipe dan kategori
+            $schedules = Schedule::with(['category', 'type'])->get();
+            $classes = SundaySchoolClass::with('schedules')->get();
+            // Kirim data ke view userdashboard
+            return view('userdashboard', compact('schedules', 'classes'));
         })->name('portal')->middleware(CheckMemberStatus::class);
         Route::prefix('member')->group(function (){
             Route::get('/register-child', [MemberController::class, 'createChildForm'])->name('member.createChildForm')->middleware(['auth', 'verified']);

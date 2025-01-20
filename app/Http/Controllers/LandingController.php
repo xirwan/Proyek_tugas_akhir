@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SundaySchoolClass;
 use App\Models\Activity;
+use App\Models\Schedule;
 
 class LandingController extends Controller
 {
@@ -14,9 +15,9 @@ class LandingController extends Controller
         // Pastikan Model SundayClass dan relasinya sudah di-define:
         // SundayClass -> hasMany -> Schedule
         $classes = SundaySchoolClass::with('schedules')->get();
-
+        $schedules = Schedule::with(['category', 'type'])->get();
         // Kirim data ini ke view landing.blade.php
-        return view('welcome', compact('classes'));
+        return view('welcome', compact('classes', 'schedules'));
     }
 
     public function index()

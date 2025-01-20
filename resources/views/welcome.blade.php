@@ -155,6 +155,77 @@
   <div class="container my-5">
     <div class="row">
       <div class="col text-center">
+        <h2 class="mb-4" id="jadwal">Jadwal Ibadah</h2>
+        <p>Berikut jadwal Ibadah GBI Sungai Yordan:</p>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Jadwal Ibadah</h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th>Nama Jadwal</th>
+                    <th>Tipe</th>
+                    <th>Kategori</th>
+                    <th>Hari</th>
+                    <th>Jam</th>
+                    <th>Deskripsi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if(isset($schedules) && $schedules->count() > 0)
+                    @foreach($schedules as $schedule)
+                      <tr>
+                        <!-- Nama Jadwal -->
+                        <td>{{ $schedule->name ?? '-' }}</td>
+
+                        <!-- Tipe -->
+                        <td>{{ $schedule->type->name ?? '-' }}</td>
+
+                        <!-- Kategori -->
+                        <td>{{ $schedule->category->name ?? '-' }}</td>
+
+                        <!-- Hari -->
+                        <td>{{ ucfirst($schedule->day) }}</td>
+
+                        <!-- Jam -->
+                        <td>
+                          {{ \Carbon\Carbon::parse($schedule->start)->format('H:i') }}
+                          -
+                          {{ \Carbon\Carbon::parse($schedule->end)->format('H:i') }}
+                        </td>
+
+                        <!-- Deskripsi -->
+                        <td>{{ $schedule->description ?? '-' }}</td>
+                      </tr>
+                    @endforeach
+                  @else
+                    <tr>
+                      <td colspan="6" class="text-center">
+                        Belum ada jadwal ibadah yang terdaftar.
+                      </td>
+                    </tr>
+                  @endif
+                </tbody>
+              </table>
+            </div> <!-- end .table-responsive -->
+          </div> <!-- end .card-body -->
+        </div> <!-- end .card -->
+      </div> <!-- end .col -->
+    </div> <!-- end .row -->
+  </div>
+
+  <!-- ========== SECTION TABEL JADWAL KELAS ========== -->
+  <div class="container my-5">
+    <div class="row">
+      <div class="col text-center">
         <h2 class="mb-4" id="jadwal">Jadwal Sekolah Minggu</h2>
         <p>Berikut jadwal sekolah minggu GBI Sungai Yordan:</p>
       </div>
@@ -211,4 +282,5 @@
       </div> <!-- end .col -->
     </div> <!-- end .row -->
   </div>
+
 @endsection

@@ -3,6 +3,17 @@
         <x-slot name="header">
             List Kegiatan
         </x-slot>
+        <form method="GET" action="{{ route('listactivities.index') }}" class="mb-4">
+            <div class="row">
+                <div class="col-lg-3">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama kegiatan" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-3">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ route('listactivities.index') }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
 
         {{-- Tabel Data --}}
         <table class="table table-responsive-md mb-0 text-center">

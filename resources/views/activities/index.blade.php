@@ -45,6 +45,9 @@
         <form method="GET" action="{{ route('activities.index') }}" class="mb-4">
             <div class="row">
                 <div class="col-lg-3">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama kegiatan" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-3">
                     <select name="status" class="form-control">
                         <option value="">Pilih Status</option>
                         <option value="pending_approval" {{ request('status') === 'pending_approval' ? 'selected' : '' }}>Pending Approval</option>
@@ -64,7 +67,7 @@
                         </select>
                     </div>
                 @endif
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('activities.index') }}" class="btn btn-secondary">Reset</a>
                 </div>

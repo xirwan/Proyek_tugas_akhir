@@ -14,6 +14,7 @@ use App\Models\SelfActivityRegistration;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 // use Midtrans\Config;
 // use Midtrans\Snap;
 
@@ -143,6 +144,11 @@ class ActivityController extends Controller
         $activities = Activity::where('status', 'approved')
         ->whereDate('start_date', '>=', now()->toDateString()); // Menambahkan kondisi untuk memfilter kegiatan yang belum lewat
 
+        $search = $request->query('search');
+        if ($search) {
+            $activities->where('title', 'LIKE', "%{$search}%");
+        }
+
         // Filter berdasarkan jenis kegiatan
         if ($request->has('is_paid') && in_array($request->is_paid, ['0', '1'], true)) {
             $activities->where('is_paid', $request->is_paid);
@@ -187,7 +193,7 @@ class ActivityController extends Controller
             $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
         }        
 
-        return view('activities.parentindex', compact('activities', 'children', 'registeredChildren'));
+        return view('activities.parentindex', compact('activities', 'children', 'search', 'registeredChildren'));
     }
     public function indexMember(Request $request)
     {
@@ -425,6 +431,13 @@ class ActivityController extends Controller
             $query->where('status', $request->status);
         }
 
+        $search = $request->query('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%");
+            });
+        }
+
         // Urutkan dan paginasi
         $activities = $query->orderBy('created_at', 'desc')->paginate(10);
 
@@ -438,9 +451,9 @@ class ActivityController extends Controller
 
         // Tentukan apakah pengguna adalah Superadmin
         $isSuperadmin = $user->hasRole('SuperAdmin');
-
+        
         // Kirim data ke view
-        return view('activities.index', compact('activities', 'isSuperadmin', 'admins'));
+        return view('activities.index', compact('activities', 'isSuperadmin', 'admins', 'search'));
     }
 
     // public function indexParent(Request $request)
@@ -497,9 +510,17 @@ class ActivityController extends Controller
 
     public function indexAdmin(Request $request)
     {
-        $activities = Activity::where('status', 'approved')->with('registrations')->paginate(10);
+        $query = Activity::where('status', 'approved')->with('registrations');
+        $search = $request->query('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        $activities = $query->paginate(10);
 
-        return view('activities.adminindex', compact('activities'));
+        return view('activities.adminindex', compact('activities', 'search'));
     }
     public function indexAdminMember(Request $request)
     {
@@ -1003,5 +1024,37 @@ class ActivityController extends Controller
 
         return redirect()->back()->with('success', 'Kegiatan berhasil ditolak.');
     }
+
+    public function history(Request $request)
+{
+    // Ambil data user yang sedang login
+    $user = Auth::user(); 
+    
+    // Cari member_id berdasarkan user_id
+    $member = Member::where('user_id', $user->id)->first();
+    
+    if (!$member) {
+        return redirect()->back()->withErrors(['error' => 'Anda belum terdaftar sebagai pembina.']);
+    }
+
+    // Ambil semua pendaftaran aktivitas yang sudah terlewat oleh waktu nyata tanpa duplikasi activity_id dan registered_by
+    $registrations = MemberActivityRegistration::where('registered_by', $member->id)
+        ->whereHas('activity', function ($query) {
+            // Filter hanya aktivitas yang sudah lewat tanggalnya
+            $query->where('start_date', '<', Carbon::now());
+        })
+        ->select('activity_id', 'registered_by')
+        ->distinct()
+        ->with(['activity', 'activity.creator', 'activity.approver']) // Sertakan relasi jika perlu
+        ->paginate(10);
+
+    // Kirim data ke view
+    return view('activities.history', compact('registrations'));
+}
+
+    
+
+
+
 
 }

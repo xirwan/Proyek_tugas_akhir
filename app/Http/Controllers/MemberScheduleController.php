@@ -296,6 +296,8 @@ class MemberScheduleController extends Controller
 
      
 
+
+
     public function mySchedule(Request $request)
     {
         $user = Auth::user(); // Mendapatkan data pengguna yang sedang login
@@ -310,16 +312,35 @@ class MemberScheduleController extends Controller
 
         $memberId = $member->id;
 
-        // Validasi filter bulan (opsional)
-        $month = $request->input('month');
-        $query = MemberScheduleMonthly::where('member_id', $memberId);
+        // Pemetaan bulan bahasa Inggris ke bahasa Indonesia
+        $monthNamesInIndonesian = [
+            'January' => 'Januari',
+            'February' => 'Februari',
+            'March' => 'Maret',
+            'April' => 'April',
+            'May' => 'Mei',
+            'June' => 'Juni',
+            'July' => 'Juli',
+            'August' => 'Agustus',
+            'September' => 'September',
+            'October' => 'Oktober',
+            'November' => 'November',
+            'December' => 'Desember'
+        ];
 
-        // Filter berdasarkan bulan jika dipilih
-        if ($month) {
-            $query->whereHas('monthlySchedule', function ($query) use ($month) {
-                $query->where('month', $month);
+        // Ambil bulan dan tahun saat ini jika tidak ada input bulan dari pengguna
+        $monthInput = $request->input('month', Carbon::now()->format('F')); // Default ke bulan saat ini dalam bahasa Inggris
+        $year = $request->input('year', now()->year); // Default ke tahun saat ini
+
+        // Map bulan yang diinput dari bahasa Inggris ke bahasa Indonesia
+        $monthInputIndonesian = $monthNamesInIndonesian[$monthInput] ?? 'Januari';  // Default 'Januari' jika bulan tidak valid
+
+        // Query untuk mengambil jadwal sesuai member_id, bulan (nama), dan tahun
+        $query = MemberScheduleMonthly::where('member_id', $memberId)
+            ->whereHas('monthlySchedule', function ($query) use ($monthInputIndonesian, $year) {
+                $query->where('month', $monthInputIndonesian) // Menggunakan nama bulan dalam bahasa Indonesia
+                    ->where('year', $year);
             });
-        }
 
         // Ambil data jadwal dengan paginasi
         $schedules = $query->with([
@@ -328,14 +349,23 @@ class MemberScheduleController extends Controller
             'scheduleSundaySchoolClass.schedule' // Tambahkan relasi untuk jam dan hari
         ])->paginate(10);
 
-        // Daftar nama bulan untuk filter
+        // Daftar nama bulan untuk filter (gunakan nama bulan dalam bahasa Indonesia)
         $months = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ];
 
         return view('scheduling.indexpembina', compact('schedules', 'months'));
     }
-
 
 }

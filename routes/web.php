@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
             Route::patch('/children/{child}', [MemberController::class, 'updateChild'])->name('member.updateChild');
         });
         Route::prefix('childrens-activities')->group(function(){
+            Route::get('/history', [ActivityController::class, 'history'])->name('parent.history');
             Route::get('/', [ActivityController::class, 'indexParent'])->name('activities.parent.index');
             Route::get('/{id}/register', [ActivityController::class, 'registerForm'])->name('activities.register.form');
             Route::get('/{id}/register-free', [ActivityController::class, 'registerFormfree'])->name('activities.registerfree.form');
@@ -162,6 +163,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}', [ActivityController::class, 'showParent'])->name('activities.parent.show');
             Route::post('/{id}/upload-payment', [ActivityController::class, 'uploadPayment'])->name('activities.upload.payment');
         });
+        
         Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
         Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
         Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');

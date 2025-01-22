@@ -167,9 +167,12 @@
         <x-slot name="header">
             Daftar Kegiatan
         </x-slot>
-
-        <form method="GET" action="{{ route('activities.parent.index') }}" class="mb-4">
-            <div class="row">
+        
+        <form method="GET" action="{{ route('activities.parent.index') }}" class="mb-3">
+            <div class="row mb-3">
+                <div class="col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama kegiatan" value="{{ request('search') }}">
+                </div>
                 <div class="col-lg-4">
                     <select name="is_paid" class="form-control">
                         <option value="">Semua Kegiatan</option>
@@ -184,12 +187,16 @@
                         <option value="0" {{ request('is_registered') == '0' ? 'selected' : '' }}>Belum Didaftarkan</option>
                     </select>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-4">
                     <button type="submit" class="btn btn-primary">Filter</button>
                     <a href="{{ route('activities.parent.index') }}" class="btn btn-secondary">Reset</a>
+                    <a href="{{ route('parent.history') }}" class="btn btn-success">Riwayat Kegiatan</a>
                 </div>
             </div>
-        </form>        
+        </form>   
+                    
         <table class="table table-responsive-md mb-0 text-center">
             <thead>
                 <tr>

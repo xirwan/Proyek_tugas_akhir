@@ -166,7 +166,7 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data kegiatan ini?');">Simpan</button>
                 <a href="{{ route('activities.index') }}" class="btn btn-success">Kembali</a>
             </footer>
         </section>

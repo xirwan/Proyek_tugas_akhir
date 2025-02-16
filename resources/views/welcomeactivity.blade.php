@@ -15,7 +15,7 @@
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img 
-            src="https://picsum.photos/1920/1080?random=1" 
+            src="{{ asset('admintemp/img/natal.jpeg') }}" 
             class="d-block w-100" 
             alt="Slide 1"
             style="object-fit: cover; height: 400px;"
@@ -23,7 +23,7 @@
         </div>
         <div class="carousel-item">
           <img 
-            src="https://picsum.photos/1920/1080?random=2" 
+            src="{{ asset('admintemp/img/paskah.jpeg') }}" 
             class="d-block w-100" 
             alt="Slide 2"
             style="object-fit: cover; height: 400px;"
@@ -31,7 +31,7 @@
         </div>
         <div class="carousel-item">
           <img 
-            src="https://picsum.photos/1920/1080?random=3" 
+            src="{{ asset('admintemp/img/pentakosta.jpeg') }}" 
             class="d-block w-100" 
             alt="Slide 3"
             style="object-fit: cover; height: 400px;"

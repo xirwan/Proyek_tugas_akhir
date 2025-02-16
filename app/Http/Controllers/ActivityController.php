@@ -15,6 +15,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use App\Mail\RegistrationSuccessful;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentUploaded;
+use App\Mail\PaymentVerified;
+use App\Mail\PaymentRejected;
 // use Midtrans\Config;
 // use Midtrans\Snap;
 
@@ -182,19 +187,31 @@ class ActivityController extends Controller
                 MemberActivityRegistration::where('activity_id', $activity->id)
                     ->pluck('child_id')
             );
-        
+            
             // Periksa apakah ada anak yang belum terdaftar
             $hasUnregisteredChildren = $unregisteredChildren->isNotEmpty();
-        
+            
             // Periksa apakah masih dalam rentang waktu pendaftaran
             $isWithinRegistrationPeriod = now()->between($activity->registration_open_date, $activity->registration_close_date);
-        
+            
+            // Periksa apakah kegiatan berbayar dan apakah pembayaran sudah berhasil
+            $payment = $activity->payments->where('parent_id', Auth::user()->member->id)->first();
+            $isPaid = $activity->is_paid && $payment && in_array($payment->payment_status, ['Berhasil', 'Diproses']);
+            
             // Tentukan apakah tombol daftar muncul
-            $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
-        }        
+            // Kegiatan berbayar hanya memungkinkan daftar jika anak belum terdaftar dan pembayaran belum selesai
+            if ($activity->is_paid) {
+                $alreadyRegistered = $registeredChildren->where('activity_id', $activity->id)->isNotEmpty();
+                $activity->showRegisterButton = !$alreadyRegistered && $hasUnregisteredChildren  && $isWithinRegistrationPeriod && !$isPaid;
+            } else {
+                // Kegiatan tidak berbayar, tombol daftar bisa muncul jika anak belum terdaftar
+                $activity->showRegisterButton = $hasUnregisteredChildren && $isWithinRegistrationPeriod;
+            }
+        }
 
         return view('activities.parentindex', compact('activities', 'children', 'search', 'registeredChildren'));
     }
+
     public function indexMember(Request $request)
     {
         // Ambil semua kegiatan yang sudah disetujui
@@ -536,14 +553,45 @@ class ActivityController extends Controller
         $participantsPage = request('participantsPage', 1);
         $paymentsPage = request('paymentsPage', 1);
 
+        // Ambil input pencarian dan status pembayaran dari request
+        $search = request('search');
+        $paymentStatus = request('payment_status');
+
         // Daftar peserta kegiatan
         $participantsQuery = MemberActivityRegistration::where('activity_id', $id)
             ->with(['child', 'parent', 'payment' => function ($query) use ($id) {
                 $query->where('activity_id', $id);
             }]);
 
+        // Pencarian untuk nama anak atau orang tua pada peserta
+        if ($search) {
+            $participantsQuery->where(function ($query) use ($search) {
+                $query->whereHas('child', function ($childQuery) use ($search) {
+                    $childQuery->where('firstname', 'like', "%$search%")
+                            ->orWhere('lastname', 'like', "%$search%");
+                })
+                ->orWhereHas('parent', function ($parentQuery) use ($search) {
+                    $parentQuery->where('firstname', 'like', "%$search%")
+                                ->orWhere('lastname', 'like', "%$search%");
+                });
+            });
+        }
+
         // Daftar pembayaran
         $paymentsQuery = ActivityPayment::where('activity_id', $id)->with('parent');
+
+        // Filter berdasarkan status pembayaran
+        if ($paymentStatus) {
+            $paymentsQuery->where('payment_status', $paymentStatus);
+        }
+
+        // Pencarian pada tabel pembayaran berdasarkan nama orang tua
+        if ($search) {
+            $paymentsQuery->whereHas('parent', function ($parentQuery) use ($search) {
+                $parentQuery->where('firstname', 'like', "%$search%")
+                            ->orWhere('lastname', 'like', "%$search%");
+            });
+        }
 
         // Pagination
         $participants = $this->paginateQuery($participantsQuery->get(), 10, $participantsPage, 'participantsPage');
@@ -643,9 +691,9 @@ class ActivityController extends Controller
             ]);
         }
 
+        Mail::to(Auth::user()->email)->send(new RegistrationSuccessful($activity));
 
-        // Jika kegiatan tidak berbayar, kembali ke daftar kegiatan
-        return redirect()->route('activities.parent.index')->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
+        return redirect()->route('activities.parent.show', $activityId)->with('success', 'Anak berhasil didaftarkan ke kegiatan.');
     }
 
     public function showParent($id)
@@ -701,7 +749,7 @@ class ActivityController extends Controller
                 ->count();
             $totalAmount = $activity->price * $totalChildren;
 
-            ActivityPayment::create([
+            $payment= ActivityPayment::create([
                 'parent_id' => Auth::user()->member->id,
                 'activity_id' => $activityId,
                 'total_children' => $totalChildren,
@@ -709,7 +757,15 @@ class ActivityController extends Controller
                 'payment_proof' => $paymentProofPath,
                 'payment_status' => 'Diproses',
             ]);
+
+
         }
+
+        // Ambil email admin yang membuat aktivitas
+        $adminEmail = $activity->creator->user->email;
+
+        // Kirim email hanya kepada admin yang membuat aktivitas
+        Mail::to($adminEmail)->send(new PaymentUploaded($payment));
 
         return redirect()->route('activities.parent.show', $activityId)
             ->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi.');
@@ -740,6 +796,7 @@ class ActivityController extends Controller
         $payment->payment_status = 'Berhasil';
         $payment->verified_by = Auth::id(); // Asumsikan pengguna saat ini adalah admin
         $payment->save();
+        Mail::to($payment->parent->user->email)->send(new PaymentVerified($payment));
 
         return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi.');
     }
@@ -769,6 +826,7 @@ class ActivityController extends Controller
         $payment->payment_status = 'Ditolak';
         $payment->verified_by = Auth::id(); // Asumsikan pengguna saat ini adalah admin
         $payment->save();
+        Mail::to($payment->parent->user->email)->send(new PaymentRejected($payment));
 
    
         return redirect()->back()->with('success', 'Pembayaran berhasil ditolak.');

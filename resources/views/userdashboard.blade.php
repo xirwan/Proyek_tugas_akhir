@@ -2,10 +2,13 @@
         use Illuminate\Support\Facades\Auth;
         use Carbon\Carbon;
         use App\Models\Activity;
+        use App\Models\News;
 
         $user = Auth::user()->load('member.children');
         $firstname = $user->member->firstname ?? 'Nama Depan';
         $lastname = $user->member->lastname ?? 'Nama Belakang';
+        $news = News::where('status', 'published')->latest()->take(5)->get();
+
 
         $activitiesCount = Activity::where('status', 'Approved')
             ->whereDate('start_date', '>=', Carbon::now()->toDateString())
@@ -24,7 +27,8 @@
         }
     @endphp
 <x-user>
-
+    
+    
     @if (session('success'))
         <div id="alert" class="alert alert-success">
             {{ session('success') }}
@@ -205,7 +209,45 @@
                     </div>
                 </section>
             </div>
-        </div>         
+        </div>
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <section class="card card-featured-primary h-100">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Kegiatan Terbaru</h4>
+                        @if ($news->count() > 0)
+                            <ul class="list-group">
+                                @foreach($news as $new)
+                                    <li class="list-group-item">
+                                            <h3>{{ $new->title }}</h3>
+                                            <p>{{ \Illuminate\Support\Str::limit($new->content, 100) }}</p>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageModal{{ $new->id }}">
+                                                Lihat Poster
+                                            </button>
+                                    </li>
+                                     <!-- Modal untuk menampilkan gambar -->
+                                    <div class="modal fade" id="imageModal{{ $new->id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ $new->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="imageModalLabel{{ $new->id }}">{{ $new->title }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <img src="{{ asset('storage/' . $new->image) }}" alt="Poster Berita" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-center">Tidak ada kegiatan yang tersedia.</p>
+                        @endif
+                    </div>
+                </section>
+            </div>
+        </div>                 
     @endif
     @if (auth()->user()->hasRole('JemaatRemaja'))
         <div class="row">
@@ -281,4 +323,5 @@
             </div>
         </div>
     @endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </x-user>

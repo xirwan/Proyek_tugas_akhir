@@ -4,11 +4,44 @@
             {{ session('success') }}
         </div>
     @endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <x-card>
         <x-slot name="header">
             List Anggota
         </x-slot>
         <a href= "{{ route('member.create') }}" class="btn btn-md btn-success mb-3">Tambah Anggota</a>
+        {{-- <a href= "{{ route('member.report') }}" class="btn btn-md btn-primary mb-3">Cetak PDF</a> --}}
+         <!-- Tombol untuk memicu modal cetak PDF -->
+         <button type="button" class="btn btn-md btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#pdfModal">
+            Cetak PDF
+        </button>
+        <!-- Modal untuk memilih posisi dan mencetak PDF -->
+        <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="GET" action="{{ route('member.report') }}" target="_blank">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="pdfModalLabel">Pilih Posisi untuk Laporan PDF</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times</button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Pilihan posisi -->
+                            <x-select-box 
+                                label="Posisi Anggota"
+                                name="position_id" 
+                                :options="$positions->pluck('name', 'id')->prepend('Semua Posisi', 'all')" 
+                                placeholder="Pilih Posisi" 
+                                :required="true" 
+                                :selected="old('position_id')" 
+                            />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Cetak PDF</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <form method="GET" action="{{ route('member.index') }}" class="mb-4">
             <div class="row">
                 <div class="col-lg-4">

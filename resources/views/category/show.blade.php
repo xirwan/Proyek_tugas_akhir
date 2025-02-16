@@ -18,7 +18,7 @@
                     <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$category->status" :required="true"/>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data kategori jadwal ini?');">Edit</button>
             </form>
                 @if($category->status === 'Active')
                     <form action="{{ route('category.destroy', encrypt($category->id)) }}" method="POST" style="display:inline;">

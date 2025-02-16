@@ -35,6 +35,27 @@
             Peserta Kegiatan: {{ $activity->title }}
         </x-slot>
 
+        <form method="GET" action="{{ route('activities.participants.view', $activity->id) }}" class="mb-3">
+            <div class="row">
+                <div class="col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Cari Nama Anak atau Orang Tua" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-4">
+                    <select name="payment_status" class="form-control">
+                        <option value="">Semua Status Pembayaran</option>
+                        <option value="Berhasil" {{ request('payment_status') === 'Berhasil' ? 'selected' : '' }}>Terverifikasi</option>
+                        <option value="Diproses" {{ request('payment_status') === 'Diproses' ? 'selected' : '' }}>Belum Diverifikasi</option>
+                        <option value="Ditolak" {{ request('payment_status') === 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    </select>
+                </div>
+                
+                <div class="col-lg-4">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ route('activities.participants.view', $activity->id) }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>
+
         {{-- Tabel Data Peserta --}}
         <h5>Daftar Peserta</h5>
         <table class="table table-responsive-md mb-0 text-center">

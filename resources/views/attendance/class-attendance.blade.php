@@ -16,7 +16,7 @@
         </x-slot>
         <form action="{{ route('attendance.manualCheckin', $class->id) }}" method="POST">
         @csrf
-            <table class="table">
+            <table class="table text-center">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -57,7 +57,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <button type="submit" class="btn btn-primary">Simpan Checklist Manual</button>
+            <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin dengan checklist absensi ini?');">Simpan Checklist Manual</button>
             <a href="{{ route ('attendance.classList') }}" class="btn btn-default">Kembali</a>
         </form>
     </x-card>

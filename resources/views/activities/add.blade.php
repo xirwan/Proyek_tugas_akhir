@@ -130,4 +130,41 @@
             </footer>
         </section>
     </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const isPaidSelect = document.getElementById('is_paid');
+            const priceInput = document.getElementById('inputPrice');
+            const accountNumberInput = document.getElementById('account_number');
+            const paymentDeadlineInput = document.getElementById('payment_deadline');
+            const resetButton = document.querySelector('button[type="reset"]'); // Tombol reset
+    
+            function toggleFields() {
+                if (isPaidSelect.value == '0') {
+                    // Disable fields if "Tidak" is selected
+                    priceInput.disabled = true;
+                    accountNumberInput.disabled = true;
+                    paymentDeadlineInput.disabled = true;
+                } else {
+                    // Enable fields if "Ya" is selected
+                    priceInput.disabled = false;
+                    accountNumberInput.disabled = false;
+                    paymentDeadlineInput.disabled = false;
+                }
+            }
+    
+            // Run the toggle function on page load
+            toggleFields();
+    
+            // Add event listener for changes to the is_paid select
+            isPaidSelect.addEventListener('change', toggleFields);
+    
+            // Tambahkan event listener untuk tombol reset
+            if (resetButton) {
+                resetButton.addEventListener('click', function () {
+                    // Pastikan toggleFields dipanggil kembali setelah reset
+                    setTimeout(toggleFields, 10); // Menggunakan setTimeout untuk memastikan form ter-reset sebelum toggle dijalankan
+                });
+            }
+        });
+    </script>        
 </x-app-layout>

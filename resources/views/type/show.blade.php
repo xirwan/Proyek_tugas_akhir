@@ -46,7 +46,7 @@
 
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data tipe jadwal ini?');">Edit</button>
         </form>
 
                 @if($type->status === 'Active')

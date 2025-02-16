@@ -56,7 +56,7 @@
                 <x-select-box label="Jenis Relasi" name="relation_id" :options="$relationoptions" placeholder="Pilih Relasi" :required="true" :selected="old('relation_id', $relationId)" />
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data anak ini?');">Edit</button>
                 <button type="reset" class="btn btn-default">Reset</button>
                 <a href="{{ route ('member.childrenList') }}" class="btn btn-success">Kembali</a>
             </footer>

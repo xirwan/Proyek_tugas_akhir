@@ -127,6 +127,7 @@
             const weekOfField = document.getElementById('week_of');
             const resetButton = document.getElementById('resetButton');
             const form = document.querySelector('form');
+            const url = window.location.href.split('?')[0]; // Ambil URL tanpa query string
     
             // Fungsi untuk toggle visibilitas rentang tanggal
             const toggleDateRangeFields = () => {
@@ -149,6 +150,8 @@
                 weekOfField.removeAttribute('disabled'); // Pastikan pilihan minggu aktif kembali
                 dateRangeFields.style.display = 'none'; // Sembunyikan rentang tanggal
                 useDateRangeCheckbox.checked = false; // Set checkbox menjadi unchecked
+                 // Arahkan kembali ke URL tanpa query string untuk reset filter
+                window.location.href = url;
             });
             // Panggil fungsi saat halaman dimuat
             toggleDateRangeFields();

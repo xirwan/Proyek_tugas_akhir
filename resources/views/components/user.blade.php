@@ -29,6 +29,17 @@
                             </x-side-link>
                         @endif
                         @if (auth()->user()->hasRole('Jemaat'))
+                            <x-side-link href="{{ route('userprofile.edit') }}" :active="request()->is('user/profile')">
+                                <i class="bx bx-user-circle" aria-hidden="true"></i>
+                                <span>Profil</span>
+                            </x-side-link>
+                            <x-side-link href="#" :active="request()->is('member/prayer-schedule') || request()->is('member/sunday-school-schedule')" class="nav-parent" :items="[
+                                ['url' => route('prayer.schedule'), 'label' => 'Jadwal Ibadah'],
+                                ['url' => route('sunday.schedule'), 'label' => 'Jadwal Kelas Sekolah Minggu'],
+                            ]">
+                                <i class="bx bxs-calendar" aria-hidden="true"></i>
+                                <span>Jadwal</span>
+                            </x-side-link>
                             <x-side-link href="#" :active="request()->is('member/children*') || request()->is('member/register-child*') || request()->is('attendance/parent-view*')" class="nav-parent" :items="[
                                 ['url' => route('member.childrenList'), 'label' => 'List Anak'],
                                 ['url' => route('member.createChildForm'), 'label' => 'Daftar Anak'],
@@ -42,26 +53,6 @@
                                 <span>Kegiatan</span>
                             </x-side-link>
                         @endif
-                        {{-- joel --}}
-                        <x-side-link href="#" :active="request()->is('member-seminar*')" class="nav-parent" :items="[
-                            ['url' => route('seminars.indexmember'), 'label' => 'Daftar Seminar'],
-                            ['url' => route('seminars.certificate'), 'label' => 'Sertifikat Seminar'],
-                        ]">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
-                            <span>Seminar</span>
-                        </x-side-link>
-                        <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
-                            ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
-                            ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],
-                            ['url' => route('baptist.certificate'), 'label' => 'Sertifikat Pembaptisan'],
-                        ]">
-                            <i class="bx bx-calendar" aria-hidden="true"></i>
-                            <span>Pembaptisan</span>
-                        </x-side-link>
-                        <x-side-link href="{{url ('certifications/upload')}}" :active="request()->is('certifications/upload')">
-                            <i class="bx bx-user-plus" aria-hidden="true"></i>
-                            <span>Pengajuan Keanggotaan</span>
-                        </x-side-link>
                     </x-sidebar>
                     <section role="main" class="content-body">
                         <header class="page-header">

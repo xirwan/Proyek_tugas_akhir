@@ -27,7 +27,11 @@ class AdminAttendanceController extends Controller
             ->pluck('week_of', 'week_of')
             ->prepend('Semua Minggu', 'all');
 
-        $query = SundaySchoolPresence::with('member', 'member.sundaySchoolClasses');
+            $query = SundaySchoolPresence::with('member', 'member.sundaySchoolClasses')
+            ->leftJoin('sunday_school_members', 'sunday_school_presences.member_id', '=', 'sunday_school_members.member_id')
+            ->leftJoin('sunday_school_classes', 'sunday_school_members.sunday_school_class_id', '=', 'sunday_school_classes.id')
+            ->orderBy('sunday_school_classes.name', 'asc') // Urutkan berdasarkan nama kelas
+            ->select('sunday_school_presences.*'); // Pilih semua kolom dari tabel utama        
 
         if ($useDateRange && $startDate && $endDate) {
             $query->whereBetween('week_of', [$startDate, $endDate]);
@@ -53,18 +57,32 @@ class AdminAttendanceController extends Controller
     {
         $selectedClassId = $request->input('class_id', 'all'); // Default ke 'all'
         $selectedWeek = $request->input('week_of', 'all'); // Default ke 'all'
+        $startDate = $request->input('start_date'); // Tanggal mulai
+        $endDate = $request->input('end_date'); // Tanggal akhir
 
         // Ambil absensi berdasarkan filter kelas dan minggu
         $presences = SundaySchoolPresence::with('member', 'member.sundaySchoolClasses')
+            ->leftJoin('sunday_school_members', 'sunday_school_presences.member_id', '=', 'sunday_school_members.member_id')
+            ->leftJoin('sunday_school_classes', 'sunday_school_members.sunday_school_class_id', '=', 'sunday_school_classes.id')
+            ->leftJoin('members', 'sunday_school_members.member_id', '=', 'members.id')
+            ->orderBy('sunday_school_classes.name', 'asc') // Urutkan berdasarkan nama kelas
+            ->orderBy('members.firstname', 'asc') // Urutkan berdasarkan nama kelas
+            ->select('sunday_school_presences.*')
             ->when($selectedClassId !== 'all', function ($query) use ($selectedClassId) {
                 return $query->whereHas('member.sundaySchoolClasses', function ($q) use ($selectedClassId) {
                     $q->where('sunday_school_classes.id', $selectedClassId);
                 });
             })
-            ->when($selectedWeek !== 'all', function ($query) use ($selectedWeek) {
+            // Filter berdasarkan selectedWeek jika start_date dan end_date tidak ada
+            ->when($selectedWeek !== 'all' && !$startDate && !$endDate, function ($query) use ($selectedWeek) {
                 return $query->whereDate('week_of', $selectedWeek);
             })
-            ->get(); // Semua data untuk PDF
+            // Filter berdasarkan rentang tanggal jika start_date dan end_date ada
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                return $query->whereBetween('week_of', [$startDate, $endDate]);
+            })
+            // Jika tidak ada filter minggu atau tanggal, maka ambil semua data
+            ->get();
 
         // Jika tidak ada data presences, kembali dengan pesan error
         if ($presences->isEmpty()) {
@@ -84,12 +102,31 @@ class AdminAttendanceController extends Controller
         }
         $mentor = $scheduleQuery->first();
 
+        // Ambil presensi yang memiliki check_in yang tidak null (hanya yang hadir)
+        $presencesWithCheckIn = $presences->filter(function ($presence) {
+            return $presence->check_in !== null;
+        });
+
+        // Kelompokkan presensi berdasarkan member_id dan hitung jumlah absensi per anak
+        $attendanceCountPerChild = $presencesWithCheckIn->groupBy('member_id')->map(function ($group) {
+            return $group->count(); // Menghitung jumlah presensi per anak
+        });
+
+        // Urutkan attendanceCountPerChild berdasarkan urutan member_id yang ada pada $presences
+        $attendanceCountPerChild = $attendanceCountPerChild->sortKeysUsing(function ($keyA, $keyB) use ($presences) {
+            $memberA = $presences->firstWhere('member_id', $keyA)->member;
+            $memberB = $presences->firstWhere('member_id', $keyB)->member;
+            
+            return strcmp($memberA->firstname, $memberB->firstname); // Bandingkan berdasarkan firstname
+        });
+
         // Generate PDF
         $pdf = Pdf::loadView('attendance.attendance-pdf', [
             'presences' => $presences,
             'class' => $class,
-            'weekOf' => $selectedWeek === 'all' ? 'Semua Minggu' : $selectedWeek,
+            'weekOf' => $startDate && $endDate ? "{$startDate} hingga {$endDate}" : ($selectedWeek === 'all' ? 'Semua Minggu' : $selectedWeek),
             'mentor' => $mentor ? $mentor->member : null,
+            'attendanceCountPerChild' => $attendanceCountPerChild, // Kirim data jumlah absensi per anak
         ]);
 
         // Nama file PDF berdasarkan pilihan

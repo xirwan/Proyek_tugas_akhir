@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Activity extends Model
 {
@@ -27,6 +28,24 @@ class Activity extends Model
         'max_participants',
         'account_number',
     ];
+
+    // Event yang dijalankan setelah activity disetujui
+    protected static function booted()
+    {
+        static::updated(function ($activity) {
+            // Pastikan hanya membuat berita jika status menjadi 'approved'
+            if ($activity->isDirty('status') && $activity->status === 'approved') {
+                // Membuat entri berita baru
+                News::create([
+                    'title' => $activity->title,
+                    'slug' => Str::slug($activity->title),
+                    'image' => $activity->poster_file,
+                    'content' => $activity->description . ', Harap membuka menu kegiatan untuk melihat informasi lebih lanjut.',
+                    'status' => 'published',
+                ]);
+            }
+        });
+    }
 
     // Relasi ke member (admin yang membuat aktivitas)
     public function creator()

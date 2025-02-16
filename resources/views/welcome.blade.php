@@ -5,8 +5,9 @@
   <!-- ========== HERO SECTION ========== -->
   <section class="hero">
     <div class="container text-center">
-      <h1>Selamat Datang di Sekolah Minggu</h1>
-      <p>GBI Sungai Yordan</p>
+      <h1>Selamat Datang di GBI Sungai Yordan</h1>
+      {{-- <p>GBI Sungai Yordan</p> --}}
+      <p>Jl. Ratu Melati Blok D3, RT.7/RW.13, Duri Kepa, <br> Kec. Kb. Jeruk, Kota Jakarta Barat, Daerah Khusus Ibukota Jakarta 11510<br>Telp: 021-56960098 | Email: gbi.sungaiyordan.tamanratuindah@gmail.com</p>
     </div>
   </section>
 
@@ -115,26 +116,26 @@
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img 
-            src="https://picsum.photos/1920/1080?random=1" 
+            src="{{ asset('admintemp/img/landing-1.jpg') }}" 
             class="d-block w-100" 
             alt="Slide 1"
-            style="object-fit: cover; height: 400px;"
+            style="object-fit: fill; height: 500px;"
           >
         </div>
         <div class="carousel-item">
           <img 
-            src="https://picsum.photos/1920/1080?random=2" 
+            src="{{ asset('admintemp/img/landing-2.jpg') }}" 
             class="d-block w-100" 
             alt="Slide 2"
-            style="object-fit: cover; height: 400px;"
+            style="object-fit: fill; height: 500px;"
           >
         </div>
         <div class="carousel-item">
           <img 
-            src="https://picsum.photos/1920/1080?random=3" 
+            src="{{ asset('admintemp/img/landing-3.jpg') }}" 
             class="d-block w-100" 
             alt="Slide 3"
-            style="object-fit: cover; height: 400px;"
+            style="object-fit: fill; height: 500px;"
           >
         </div>
       </div>
@@ -226,7 +227,7 @@
   <div class="container my-5">
     <div class="row">
       <div class="col text-center">
-        <h2 class="mb-4" id="jadwal">Jadwal Sekolah Minggu</h2>
+        <h2 class="mb-4" id="jadwalkelas">Jadwal Sekolah Minggu</h2>
         <p>Berikut jadwal sekolah minggu GBI Sungai Yordan:</p>
       </div>
     </div>

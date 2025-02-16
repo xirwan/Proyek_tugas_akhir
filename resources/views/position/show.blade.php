@@ -46,7 +46,7 @@
 
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data posisi ini?');">Edit</button>
         </form>
 
                 @if($positions->status === 'Active')

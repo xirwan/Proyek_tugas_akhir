@@ -30,6 +30,7 @@
                             placeholder="Masukkan Tahun" 
                             :required="true" 
                             :value="request('year', now()->year)"  
+                            :readonly="true"
                         />
                     </div>
                     <div class="col-lg-6">
@@ -56,10 +57,10 @@
                 <!-- Penjadwalan Pembina -->
                 <div class="schedule-row mb-2">
                     <x-select-box-ver 
-                        label="Member" 
+                        label="Pembina" 
                         name="member_id" 
                         :options="$memberOptions" 
-                        placeholder="Pilih Member" 
+                        placeholder="Pilih Pembina" 
                         :required="true" 
                     />
                     <x-select-box-ver

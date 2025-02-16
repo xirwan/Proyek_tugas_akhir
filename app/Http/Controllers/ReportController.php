@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Report;
+use App\Models\User;
 use App\Models\MemberScheduleMonthly;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
+
 use Carbon\Carbon;
 
 
@@ -120,8 +123,12 @@ class ReportController extends Controller
             'description' => $request->input('description'),
             'file_path' => $filePath,
         ]);
-
-        return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil ditambahkan!');
+        $user = User::find(Auth::user()->id);
+        if ($user->hasRole('SuperAdmin')) {
+            return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil ditambahkan!');
+        } else {
+            return redirect()->route('mentor.reports.index')->with('success', 'Laporan berhasil ditambahkan!');
+        }
     }
     
     public function show($id)
@@ -162,8 +169,12 @@ class ReportController extends Controller
         }
 
         $report->save();
-
-        return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil diperbarui!');
+        $user = User::find(Auth::user()->id);
+        if ($user->hasRole('SuperAdmin')) {
+            return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil diperbarui!');
+        } else {
+            return redirect()->route('mentor.reports.index')->with('success', 'Laporan berhasil diperbarui!');
+        }
     }
 
 
@@ -204,8 +215,12 @@ class ReportController extends Controller
         }
 
         $report->delete();
-
-        return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil dihapus!');
+        $user = User::find(Auth::user()->id);
+        if ($user->hasRole('SuperAdmin')) {
+            return redirect()->route('admin.reports.index')->with('success', 'Laporan berhasil dihapus!');
+        } else {
+            return redirect()->route('mentor.reports.index')->with('success', 'Laporan berhasil dihapus!');
+        }
     }
 
     public function getValidWeeks($classId)

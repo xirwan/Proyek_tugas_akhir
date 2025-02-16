@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use illuminate\Auth\Middleware\Authorize;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ScheduleController;
@@ -31,10 +33,6 @@ use App\Http\Controllers\GenerateCertification;
 use App\Models\Schedule;
 use App\Models\SundaySchoolClass;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// })->name('home');
-
 Route::get('/', [LandingController::class, 'landing'])->name('landing');
 
 Route::get('/landing-activities', [LandingController::class, 'index'])->name('landing-activities.index');
@@ -42,6 +40,21 @@ Route::get('/landing-activities', [LandingController::class, 'index'])->name('la
 Route::get('/coba', function () {
     return view('coba');
 });
+
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/portal');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+ 
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Route::post('/payment/callback', [ActivityController::class, 'callback']);
 
@@ -61,6 +74,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('branch', BranchController::class);
             Route::post('/branch/{id}/activate', [BranchController::class, 'activate'])->name('branch.activate');
             Route::resource('role', RoleController::class);
+            Route::get('/member/report', [MemberController::class, 'generateReport'])->name('member.report');
             Route::resource('member', MemberController::class);
             Route::post('/member/{id}/active', [MemberController::class, 'active'])->name('member.active');
             Route::resource('news', NewsController::class);
@@ -84,14 +98,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:SuperAdmin|Admin')->group(function () {
         Route::get('/dashboard', function () {
             return view('dashboard');
-        })->name('dashboard');
+        })->name('dashboard')->middleware(CheckMemberStatus::class);;
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         Route::prefix('sunday-school')->group(function () {
             Route::resource('sunday-classes', SundaySchoolClassController::class);
             Route::post('/sunday-classes/{id}/active', [SundaySchoolClassController::class, 'active'])->name('sunday-classes.active');
-            Route::get('/sunday-classes/{classId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents');
+            Route::get('/sunday-classes/{encryptedId}/students', [SundaySchoolClassController::class, 'viewClassStudents'])->name('sundayschoolclass.viewClassStudents');
             Route::get('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'showAdjustClassForm'])->name('sundayschoolclass.showAdjustClassForm');
             Route::post('/sunday-classes/adjust-class/{childId}', [SundaySchoolClassController::class, 'adjustClass'])->name('sundayschoolclass.adjustClass');
             Route::get('/attendance/class', [AttendanceController::class, 'classList'])->name('attendance.classList');
@@ -105,6 +119,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/qr-code/children', [AttendanceController::class, 'listChildren'])->name('qr-code.children.list');
             Route::get('/qr-code/children/generate-qr/{id}', [AttendanceController::class, 'generateQrForChild'])->name('qr-code.children.generate.qr');
             Route::get('/qr-code/generate-all-qr', [AttendanceController::class,'generateQrForAllChildrenWithoutQr']) ->name('qr-code.generate.all.qr');
+            Route::get('/generate-nametag/{id}', [AttendanceController::class, 'generateNameTag'])->name('qr-code.children.generate.nametag');
             Route::get('/admin/add-child', [MemberController::class, 'createChildByAdmin'])->name('admin.addChild');
             Route::post('/admin/store-child', [MemberController::class, 'storeChildByAdmin'])->name('admin.storeChild');
             Route::prefix('reports')->group(function () {
@@ -139,15 +154,28 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Jemaat|JemaatRemaja')->group(function () {
         Route::get('/portal', function () {
             // Ambil data jadwal dengan relasi tipe dan kategori
-            $schedules = Schedule::with(['category', 'type'])->get();
-            $classes = SundaySchoolClass::with('schedules')->get();
+            $schedules = Schedule::where('status', 'Active')->with(['category', 'type'])->get();
+            $classes = SundaySchoolClass::where('status', 'Active')->with('schedules')->get();
             // Kirim data ke view userdashboard
             return view('userdashboard', compact('schedules', 'classes'));
-        })->name('portal')->middleware(CheckMemberStatus::class);
+        })->name('portal')->middleware([CheckMemberStatus::class, 'verified']);
         Route::prefix('member')->group(function (){
+            Route::get('/prayer-schedule', function () {
+                // Ambil data jadwal dengan relasi tipe dan kategori
+                $schedules = Schedule::where('status', 'Active')->with(['category', 'type'])->get();
+                // Kirim data ke view userdashboard
+                return view('userschedule', compact('schedules'));
+            })->name('prayer.schedule');
+            Route::get('/sunday-school-schedule', function () {
+                // Ambil data jadwal dengan relasi tipe dan kategori
+                $classes = SundaySchoolClass::where('status', 'Active')->with('schedules')->get();
+                // Kirim data ke view userdashboard
+                return view('usersundayschool', compact('classes'));
+            })->name('sunday.schedule');
             Route::get('/register-child', [MemberController::class, 'createChildForm'])->name('member.createChildForm')->middleware(['auth', 'verified']);
             Route::post('/store-child', [MemberController::class, 'storeChild'])->name('member.storeChild')->middleware(['auth', 'verified']);
             Route::get('/children', [MemberController::class, 'showChildrenList'])->name('member.childrenList')->middleware(['auth', 'verified']);
+            Route::get('/children/attendance', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
             Route::get('/{id}/create-child-account', [MemberController::class, 'createChildAccount'])->name('member.createChildAccount')->middleware(['auth', 'verified']);
             Route::post('/{id}/store-child-account', [MemberController::class, 'storeChildAccount'])->name('member.storeChildAccount')->middleware(['auth', 'verified']);
             Route::get('/children/{child}/edit', [MemberController::class, 'editChild'])->name('member.editChild');
@@ -166,7 +194,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/user/profile', [ProfileController::class, 'useredit'])->name('userprofile.edit');
         Route::patch('/user/profile', [ProfileController::class, 'userupdate'])->name('userprofile.update');
-        Route::get('/attendance/parent-view', [AttendanceController::class, 'parentViewAttendance'])->name('attendance.parentView');
+        
     });
 });
 

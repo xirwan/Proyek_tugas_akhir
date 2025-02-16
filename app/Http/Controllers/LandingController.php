@@ -14,8 +14,8 @@ class LandingController extends Controller
     {
         // Pastikan Model SundayClass dan relasinya sudah di-define:
         // SundayClass -> hasMany -> Schedule
-        $classes = SundaySchoolClass::with('schedules')->get();
-        $schedules = Schedule::with(['category', 'type'])->get();
+        $classes = SundaySchoolClass::where('status','Active')->with('schedules')->get();
+        $schedules = Schedule::where('status', 'Active')->with(['category', 'type'])->get();
         // Kirim data ini ke view landing.blade.php
         return view('welcome', compact('classes', 'schedules'));
     }

@@ -71,7 +71,7 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data jadwal ini?');">Edit</button>
             </form>
 
             <!-- Tombol Nonaktifkan atau Aktifkan -->
@@ -79,12 +79,12 @@
                 <form action="{{ route('schedule.destroy', encrypt($schedule->id)) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan jadwal ini?');">Nonaktifkan</button>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menonaktifkan data jadwal ini?');">Nonaktifkan</button>
                 </form>
             @else
                 <form action="{{ route('schedule.activate', encrypt($schedule->id)) }}" method="POST" style="display:inline;">
                     @csrf
-                    <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali jadwal ini?');">Aktifkan</button>
+                    <button type="submit" class="btn btn-secondary" onclick="return confirm('Apakah Anda yakin ingin mengaktifkan kembali data jadwal ini?');">Aktifkan</button>
                 </form>
             @endif
 

@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data penjadwalan ini?');">Simpan</button>
                 <a href="{{ route('scheduling.index') }}" class="btn btn-success">Kembali</a>
             </div>
         </section>

@@ -46,7 +46,7 @@
 
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data cabang ini?');">Edit</button>
         </form>
                 @if($branch->status === 'Active')
                     <form action="{{ route('branch.destroy', encrypt($branch->id)) }}" method="POST" style="display:inline;">

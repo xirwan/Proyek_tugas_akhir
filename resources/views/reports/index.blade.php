@@ -33,10 +33,16 @@
                         <td>{{ $report->description ?? '-' }}</td>
                         <td>
                             @if ($report->file_path)
-                                <a href="{{ route('admin.reports.download', $report->id) }}" target="_blank" class="btn btn-primary">
-                                    Download
-                                </a>
-                                <a href="{{ route('admin.reports.show', $report->id) }}" class="btn btn-success">Edit</a>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <a href="{{ route('admin.reports.download', $report->id) }}" target="_blank" class="btn btn-primary">
+                                        Download
+                                    </a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a href="{{ route('admin.reports.show', $report->id) }}" class="btn btn-success">Edit</a>
+                                </div>
+                            </div>
                             @else
                                 <span class="text-muted">Tidak ada file</span>
                             @endif

@@ -32,9 +32,10 @@
                         })" 
                         placeholder="Pilih Jadwal" 
                         :required="true" 
-                        :selected="$class->schedule_id" 
+                        :selected="$selectedSchedules" 
                         />        
                     </div>
+                    
                     <div class="col-lg-6">
                         <x-radio name="status" label="Status" :options="['Active' => 'Active', 'Inactive' => 'Inactive']" :value="$class->status" :required="true"/>
                     </div>
@@ -49,7 +50,7 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin mengubah data kelas ini?');">Edit</button>
             </form>
 
             <!-- Tombol Nonaktifkan dan Aktifkan -->

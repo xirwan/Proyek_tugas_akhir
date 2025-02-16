@@ -25,7 +25,7 @@ class ScheduleController extends Controller
         $filterStatus = $request->query('status');
 
         // Query jadwal dengan urutan hari
-        $query = Schedule::with(['type', 'category'])
+        $query = Schedule::where('status', 'Active')->with(['type', 'category'])
             ->orderByRaw("
                 CASE 
                     WHEN day = 'Senin' THEN 1

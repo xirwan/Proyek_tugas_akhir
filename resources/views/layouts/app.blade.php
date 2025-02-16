@@ -53,7 +53,7 @@
                         <x-side-link href="#" :active="request()->is('activities*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
                             ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
-                            ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
+                            // ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
@@ -65,11 +65,12 @@
                         <x-side-link1 href="#" :active="request()->is('master-data*')" icon="bx bx-data" class="nav-parent" :items="[
                             ['url' => url('master-data/branch'), 'label' => 'Cabang',],
                             ['url' => url('master-data/position'), 'label' => 'Posisi',],
-                            ['url' => url('#'), 'label' => 'Keanggotaan', 'items' => [
-                                    ['url' => url('master-data/member'), 'label' => 'Anggota',],
-                                    ['url' => url('master-data/certifications'), 'label' => 'Verifikasi Keanggotaan',],
-                                ],
-                            ],
+                            ['url' => url('master-data/member'), 'label' => 'Anggota',],
+                            // ['url' => url('#'), 'label' => 'Keanggotaan', 'items' => [
+                            //         ['url' => url('master-data/member'), 'label' => 'Anggota',],
+                            //         ['url' => url('master-data/certifications'), 'label' => 'Verifikasi Keanggotaan',],
+                            //     ],
+                            // ],
                             ['url' => url('#'), 'label' => 'Jadwal', 'items' => [
                                     ['url' => url('master-data/type'), 'label' => 'Tipe Jadwal',],
                                     ['url' => url('master-data/category'), 'label' => 'Kategori Jadwal',],
@@ -101,7 +102,7 @@
                         <x-side-link href="#" :active="request()->is('activities*') || request()->is('activity*')" class="nav-parent" :items="[
                             ['url' => url('activities'), 'label' => 'List Pengajuan'],
                             ['url' => route('listactivities.index'), 'label' => 'List Kegiatan'],
-                            ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
+                            // ['url' => route('listactivitiesmember.index'), 'label' => 'List Kegiatan Remaja'],
                         ]">
                             <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                             <span>Kegiatan</span>
@@ -110,7 +111,7 @@
                     @endif
                     {{-- joel --}}
 
-                    <x-side-link href="#" :active="request()->is('seminars*') || request()->is('attendance-seminars*') || request()->is('generate-seminar*')" class="nav-parent" :items="[
+                    {{-- <x-side-link href="#" :active="request()->is('seminars*') || request()->is('attendance-seminars*') || request()->is('generate-seminar*')" class="nav-parent" :items="[
                         ['url' => url('seminars'), 'label' => 'List Seminar'],
                         ['url' => url('attendance-seminars'), 'label' => 'List Peserta Seminar'],
                         ['url' => url('generate-seminar'), 'label' => 'List Setifikat Seminar'],
@@ -130,7 +131,7 @@
                     <x-side-link href="{{url ('/member-checklist')}}" :active="request()->is('member-checklist*') || request()->is('attendance-members*')">
                         <i class="bx bxs-check-square" aria-hidden="true"></i>
                         <span>Absensi Remaja</span>
-                    </x-side-link>
+                    </x-side-link> --}}
 
                 </x-sidebar>
 

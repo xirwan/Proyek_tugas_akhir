@@ -19,6 +19,7 @@ use App\Models\SundaySchoolClass;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MemberController extends Controller
 {
@@ -49,8 +50,9 @@ class MemberController extends Controller
 
         // Paginate hasil pencarian
         $members = $query->paginate(5);
+        $positions = Position::where('status', 'Active')->get();
 
-        return view('member.index', compact('members', 'filterStatus', 'search'));
+        return view('member.index', compact('members', 'filterStatus', 'search', 'positions'));
     }
 
 
@@ -95,13 +97,13 @@ class MemberController extends Controller
             'email' => $request->email,
             'name'  => $fullname,
             'password' => Hash::make($request->password),
+            'email_verified_at' => Carbon::now(),
         ]);
 
         // Tentukan role berdasarkan posisi yang dipilih
         $positionId = $request->position_id;
-
         // Tentukan role yang sesuai dengan posisi
-        if ($positionId == Position::where('name', 'Jemaat')->first()->id || $positionId == Position::where('name', 'Jemaat Tetap')->first()->id) {
+        if ($positionId == 2) {
             $roleName = 'Jemaat';
         } elseif ($positionId == Position::where('name', 'Jemaat Remaja')->first()->id) {
             $roleName = 'JemaatRemaja';
@@ -261,9 +263,9 @@ class MemberController extends Controller
 
             // Tentukan role berdasarkan posisi
             $positionId = $request->input('position_id');
-
+            dd($positionId);
             // Tentukan role berdasarkan posisi
-            if ($positionId == Position::where('name', 'Jemaat')->first()->id || $positionId == Position::where('name', 'Jemaat Tetap')->first()->id) {
+            if ($positionId == 2) {
                 $roleName = 'Jemaat';
             } elseif ($positionId == Position::where('name', 'Jemaat Remaja')->first()->id) {
                 $roleName = 'JemaatRemaja';
@@ -566,11 +568,14 @@ class MemberController extends Controller
 
         // Tentukan kelas berdasarkan usia
         if ($age >= 0 && $age < 3) {
-            $classId = SundaySchoolClass::where('name', 'Kelas Yakobus')->first()->id;
+            $class = SundaySchoolClass::where('name', 'Kelas Yakobus')->first();
+            $classId = $class ? $class->id : 2; // Jika kelas tidak ditemukan, gunakan ID 2
         } elseif ($age >= 3 && $age < 6) {
-            $classId = SundaySchoolClass::where('name', 'Kelas Petrus')->first()->id;
+            $class = SundaySchoolClass::where('name', 'Kelas Petrus')->first();
+            $classId = $class ? $class->id : 3; // Jika kelas tidak ditemukan, gunakan ID 3
         } elseif ($age >= 6 && $age <= 13) {
-            $classId = SundaySchoolClass::where('name', 'Kelas Yohanes')->first()->id;
+            $class = SundaySchoolClass::where('name', 'Kelas Yohanes')->first();
+            $classId = $class ? $class->id : 1; // Jika kelas tidak ditemukan, gunakan ID 1
         } else {
             $classId = null; // Tidak ada kelas yang cocok
         }
@@ -650,6 +655,48 @@ class MemberController extends Controller
         ]);
 
         return redirect()->route('portal')->with('success', 'Akun untuk anak berhasil dibuat dengan password tanggal lahir.');
+    }
+
+    public function generateReport (Request $request)
+    {   
+        // Ambil data posisi yang dipilih (semua jika tidak ada pilihan)
+        $positionId = $request->input('position_id', 'all');
+        
+        // Query untuk mengambil anggota, dengan join posisi
+        if ($positionId != 'all') {
+            // Jika posisi dipilih, filter berdasarkan position_id dan join ke tabel positions
+            $membersQuery = Member::where('position_id', $positionId)
+                ->join('positions', 'positions.id', '=', 'members.position_id')
+                ->select('members.*', 'positions.name as position_name')
+                ->orderBy('positions.name')  // Urutkan berdasarkan posisi
+                ->get();
+        } else {
+            // Jika tidak ada filter posisi, tetap join ke tabel positions
+            $membersQuery = Member::join('positions', 'positions.id', '=', 'members.position_id')
+                ->select('members.*', 'positions.name as position_name')
+                ->orderBy('positions.name')  // Urutkan berdasarkan posisi
+                ->get();
+        }
+
+        // Atur data dalam urutan orang tua -> anak
+        $members = [];
+        
+        foreach ($membersQuery as $member) {
+            // Periksa apakah anggota memiliki orang tua
+            if ($member->parents->isEmpty()) {
+                // Jika anggota ini adalah orang tua (tidak memiliki orang tua)
+                $members[] = $member;
+                // Tambahkan anak-anaknya setelah orang tua
+                foreach ($member->children as $child) {
+                    $members[] = $child;
+                }
+            }
+        }
+
+        // Generate PDF
+        $pdf = PDF::loadView('member.report', compact('members'));
+        
+        return $pdf->stream('laporan-anggota-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
 }

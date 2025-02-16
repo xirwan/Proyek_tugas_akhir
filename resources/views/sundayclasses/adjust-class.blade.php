@@ -20,7 +20,7 @@
                 </div>
             </div>
             <footer class="card-footer text-right">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Apakah Anda yakin ingin memindahkan kelas anak ini?');">Simpan</button>
                 <button type="reset" class="btn btn-default">Reset</button>
                 <a href="{{ route ('sunday-classes.index') }}" class="btn btn-success">Kembali</a>
             </footer>

@@ -11,6 +11,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
@@ -54,7 +56,7 @@ class AttendanceController extends Controller
             $relativePath = "/qr-code/checkin/{$child->id}";
 
             // Generate dan simpan QR code sebagai gambar PNG
-            QrCode::format('png')->size(300)->generate($relativePath, $filePath);
+            QrCode::format('png')->size(300)->margin(2)->generate($relativePath, $filePath);
 
             // Simpan nama file di database (hanya menyimpan path relatif)
             $child->update(['qr_code' => 'qr-codes/' . $fileName]);
@@ -389,5 +391,35 @@ class AttendanceController extends Controller
             'reports' => $reports,
         ]);
     }
+
+    public function generateNameTag($id)
+    {
+        $child = Member::findOrFail($id);
+
+        // Pastikan anak memiliki QR Code
+        if (!$child->qr_code) {
+            return redirect()->back()->with('error', 'QR Code belum di-generate untuk anak ini.');
+        }
+
+        // Path gambar
+        $logoPath = public_path('admintemp/img/logo.png');
+        $childImage = public_path('admintemp/img/boy.png');
+        $qrCodePath = public_path('storage/' . $child->qr_code);
+
+        // Data untuk PDF
+        $data = [
+            'child' => $child,
+            'logoPath' => $logoPath,
+            'childImage' => $childImage,
+            'qrCodePath' => $qrCodePath,
+        ];
+
+        // Render view menjadi PDF
+        $pdf = Pdf::loadView('attendance.nametag', $data)->setPaper([0, 0, 240, 280], 'portrait');
+
+        // Download langsung atau tampilkan di browser
+        return $pdf->stream("Nametag_{$child->firstname}.pdf");
+    }
+
 
 }

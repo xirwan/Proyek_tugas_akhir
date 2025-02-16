@@ -8,6 +8,17 @@
         <x-slot name="header">
             Daftar Murid di {{ $class->name }}
         </x-slot>
+        <form method="GET" action="{{ route('sundayschoolclass.viewClassStudents', ['encryptedId' => $encryptedClassId]) }}" class="mb-4">
+            <div class="row">
+                <div class="col-lg-4">
+                    <input type="text" name="search" class="form-control" placeholder="Cari nama anak" value="{{ request('search') }}">
+                </div>
+                <div class="col-lg-4">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{{ route('sundayschoolclass.viewClassStudents', ['encryptedId' => $encryptedClassId]) }}" class="btn btn-secondary">Reset</a>
+                </div>
+            </div>
+        </form>        
         <table class="table table-responsive-md mb-0 text-center">
             <thead>
                 <tr>

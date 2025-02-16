@@ -70,6 +70,9 @@
                                                         class="btn btn-primary">
                                                         Download PNG
                                                     </a>
+                                                    <a href="{{ route('qr-code.children.generate.nametag', $child->id) }}" target="_blank" class="btn btn-success">
+                                                        Generate Name Tag
+                                                    </a>
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 </div>
                                             </div>

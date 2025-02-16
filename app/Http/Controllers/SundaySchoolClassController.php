@@ -64,7 +64,8 @@ class SundaySchoolClassController extends Controller
         $id = decrypt($encryptedId);
         $class = SundaySchoolClass::findOrFail($id);
         $schedules = Schedule::all();
-        return view('sundayclasses.show', compact('class', 'schedules'));
+        $selectedSchedules = $class->schedules->first()->id;
+        return view('sundayclasses.show', compact('class', 'schedules', 'selectedSchedules'));
     }
 
     // 5. Menampilkan form untuk mengedit kelas
@@ -149,19 +150,41 @@ class SundaySchoolClassController extends Controller
     // 8. untuk menampilkan list anak yang terdaftar pada kelas
     public function viewClassStudents($encryptedId)
     {
+        // Dekripsi classId
         $classId = decrypt($encryptedId);
+
         // Dapatkan kelas berdasarkan ID
         $class = SundaySchoolClass::findOrFail($classId);
 
+        // Ambil parameter pencarian jika ada
+        $search = request('search');
+
         // Ambil semua murid yang terdaftar di kelas ini melalui relasi many-to-many
-        $students = $class->members()->paginate(10);
+        $studentsQuery = $class->members();
+
+        // Jika ada parameter pencarian, filter berdasarkan nama murid
+        if ($search) {
+            $studentsQuery->where(function ($q) use ($search) {
+                $q->where('firstname', 'LIKE', "%{$search}%")
+                    ->orWhere('lastname', 'LIKE', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('email', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
+
+        // Urutkan murid berdasarkan nama dan paginasi
+        $students = $studentsQuery->paginate(10);
 
         // Kembali ke view dengan data kelas dan murid
         return view('sundayclasses.class-students', [
             'class' => $class,
             'students' => $students,
+            'encryptedClassId' => $encryptedId, // Kirimkan ID ter-enkripsi ke view
         ]);
     }
+
+
 
     public function showAdjustClassForm($encryptedId)
     {

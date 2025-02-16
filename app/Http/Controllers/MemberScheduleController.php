@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\ScheduleAssigned;
+use Illuminate\Support\Facades\Mail;
 
 class MemberScheduleController extends Controller
 {
@@ -147,16 +149,21 @@ class MemberScheduleController extends Controller
                 return back()->withErrors(['member_id' => "Member sudah memiliki penjadwalan untuk tanggal $date."]);
             }
         }
-
         // Simpan data penjadwalan
+        $schedulesForEmail = [];  // Array untuk menampung semua jadwal bulan ini
         foreach ($dates as $date) {
-            MemberScheduleMonthly::create([
+            $schedule = MemberScheduleMonthly::create([
                 'monthly_schedule_id' => $monthlySchedule->id,
                 'schedules_sunday_school_class_id' => $scheduleClass->id,
                 'member_id' => $memberId,
                 'schedule_date' => $date
             ]);
+            $schedulesForEmail[] = $schedule;
         }
+        $memberemail = Member::find($memberId);
+        $email = $memberemail->user->email;
+        // Kirim email kepada member yang dijadwalkan
+        Mail::to($email)->send(new ScheduleAssigned($schedulesForEmail));
 
         return redirect()->route('scheduling.index')->with('success', 'Data Penjadwalan Berhasil Disimpan!');
     }
@@ -277,7 +284,6 @@ class MemberScheduleController extends Controller
         return view('scheduling.edit', compact('schedule', 'members'));
     }
 
-
     public function update(Request $request, $id)
     {
         $schedule = MemberScheduleMonthly::findOrFail($id);
@@ -293,10 +299,6 @@ class MemberScheduleController extends Controller
 
         return redirect()->route('scheduling.index')->with('success', 'Jadwal berhasil diperbarui!');
     }
-
-     
-
-
 
     public function mySchedule(Request $request)
     {

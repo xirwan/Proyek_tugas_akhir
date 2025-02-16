@@ -205,7 +205,12 @@
 
           {{-- SCROLL KE #jadwal DI LANDING --}}
           <li class="nav-item">
-            <a class="nav-link" href="{{ url('/') }}#jadwal">Jadwal Sekolah Minggu</a>
+            <a class="nav-link" href="{{ url('/') }}#jadwalkelas">Jadwal Sekolah Minggu</a>
+          </li>
+
+          {{-- SCROLL KE #visi DI LANDING --}}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url('/') }}#visi-misi">Visi & Misi</a>
           </li>
 
           {{-- HALAMAN ACTIVITY (LANDING ACTIVITIES) --}}
@@ -271,6 +276,10 @@
       </div>
     </div>
   </nav>
+  <!-- Tombol Scroll To Top -->
+  <button id="scrollToTopBtn" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 100;">
+    ↑
+  </button>
   {{-- =============== END NAVBAR =============== --}}
 
   {{-- =============== BAGIAN UTAMA =============== --}}
@@ -322,20 +331,22 @@
         <!-- Sosial Media -->
         <div class="col-md-4 mb-3">
           <h6>Ikuti Kami</h6>
-          <a href="#" class="footer-link text-white text-decoration-none d-inline-block mb-1">
+          <a href="https://web.facebook.com/gbisungaiyordan" target="_blank" class="footer-link text-white text-decoration-none d-inline-block mb-1">
             <i class="fa-brands fa-facebook-f me-2"></i> Facebook
           </a>
           <br>
-          <a href="#" class="footer-link text-white text-decoration-none d-inline-block mb-1">
+          <a href="https://www.instagram.com/gbisytri/?hl=id" target="_blank" class="footer-link text-white text-decoration-none d-inline-block mb-1">
             <i class="fa-brands fa-instagram me-2"></i> Instagram
           </a>
           <br>
-          <a href="#" class="footer-link text-white text-decoration-none d-inline-block mb-1">
+          <a href="https://www.youtube.com/channel/UCeEE0zpStU1JDRv1QZa--Dg/videos" target="_blank" class="footer-link text-white text-decoration-none d-inline-block mb-1">
             <i class="fa-brands fa-youtube me-2"></i> YouTube
-          </a>
+          </a>          
         </div>
       </div>
-  
+      <div class="row">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.7283794385667!2d106.76709897409556!3d-6.167116460436312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f7ad306f379d%3A0xda95a5201a9dbd93!2sGBI%20Sungai%20Yordan!5e0!3m2!1sid!2sid!4v1738830240732!5m2!1sid!2sid" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
       <div class="text-center mt-3">
         <hr class="footer-hr">
         <p class="mt-2 mb-0 small">
@@ -346,7 +357,28 @@
   </footer>
   {{-- ================ END FOOTER ================= --}}
 
+  <script>
+     // Menambahkan event listener saat pengguna menggulir
+    window.onscroll = function() {
+      toggleScrollButton();
+    };
 
+    // Fungsi untuk menampilkan atau menyembunyikan tombol scroll
+    function toggleScrollButton() {
+      var button = document.getElementById("scrollToTopBtn");
+
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        button.style.display = "block";  // Menampilkan tombol
+      } else {
+        button.style.display = "none";   // Menyembunyikan tombol
+      }
+    }
+
+    // Fungsi untuk scroll ke atas saat tombol diklik
+    document.getElementById("scrollToTopBtn").onclick = function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  </script>
   <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
   </script>

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('content');
-            $table->foreignId('news_category_id')->constrained('news_categories')->onDelete('cascade');
             $table->string('image')->nullable();
             $table->enum('status', ['published', 'draft'])->default('draft');
             $table->timestamps();

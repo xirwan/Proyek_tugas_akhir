@@ -16,16 +16,32 @@
                             </a>                        
                         </li>
                         @if (auth()->user()->hasRole('JemaatRemaja'))
-                            <x-side-link href="{{route ('activities.member.index')}}" :active="request()->is('activities-member*')">
+                            {{-- <x-side-link href="{{route ('activities.member.index')}}" :active="request()->is('activities-member*')">
                                 <i class="bx bxs-calendar-event" aria-hidden="true"></i>
                                 <span>Kegiatan</span>
-                            </x-side-link>
+                            </x-side-link> --}}
                             <x-side-link href="#" :active="request()->is('member-scan*')" class="nav-parent" :items="[
                                 ['url' => route('attendance.member.scan'), 'label' => 'Scan'],
                                 ['url' => route('attendance.memberView'), 'label' => 'Riwayat'],
                             ]">
                                 <i class="bx bxs-camera" aria-hidden="true"></i>
                                 <span>Absensi</span>
+                            </x-side-link>
+                            <x-side-link href="#" :active="request()->is('member-seminar*')" class="nav-parent" :items="[
+                                ['url' => route('seminars.indexmember'), 'label' => 'Daftar Seminar'],
+                                ['url' => route('seminars.certificate'), 'label' => 'Sertifikat Seminar'],
+                            ]">
+                                <i class="bx bx-bible" aria-hidden="true"></i>
+                                <span>Seminar</span>
+                            </x-side-link>
+                            
+                            <x-side-link href="#" :active="request()->is('member-baptist*')" class="nav-parent" :items="[
+                                ['url' => route('memberbaptist.index'), 'label' => 'Daftar Pembaptisan'],
+                                ['url' => route('memberbaptist.details'), 'label' => 'Kelas Pembaptisan'],
+                                ['url' => route('baptist.certificate'), 'label' => 'Sertifikat Pembaptisan'],
+                            ]">
+                                <i class="bx bx-droplet" aria-hidden="true"></i>
+                                <span>Pembaptisan</span>
                             </x-side-link>
                         @endif
                         @if (auth()->user()->hasRole('Jemaat'))

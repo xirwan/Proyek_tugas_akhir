@@ -111,7 +111,7 @@
                     @endif
                     {{-- joel --}}
 
-                    {{-- <x-side-link href="#" :active="request()->is('seminars*') || request()->is('attendance-seminars*') || request()->is('generate-seminar*')" class="nav-parent" :items="[
+                    <x-side-link href="#" :active="request()->is('seminars*') || request()->is('attendance-seminars*') || request()->is('generate-seminar*')" class="nav-parent" :items="[
                         ['url' => url('seminars'), 'label' => 'List Seminar'],
                         ['url' => url('attendance-seminars'), 'label' => 'List Peserta Seminar'],
                         ['url' => url('generate-seminar'), 'label' => 'List Setifikat Seminar'],
@@ -131,7 +131,7 @@
                     <x-side-link href="{{url ('/member-checklist')}}" :active="request()->is('member-checklist*') || request()->is('attendance-members*')">
                         <i class="bx bxs-check-square" aria-hidden="true"></i>
                         <span>Absensi Remaja</span>
-                    </x-side-link> --}}
+                    </x-side-link>
 
                 </x-sidebar>
 

@@ -242,7 +242,7 @@
             @endrole
 
             {{-- Jemaat --}}
-            @role('Jemaat')
+            @role('Jemaat'|'JemaatRemaja')
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('portal') }}">
                         <i class="fa-solid fa-door-open me-2"></i> Portal

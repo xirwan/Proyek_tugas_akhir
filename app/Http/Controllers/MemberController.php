@@ -263,7 +263,6 @@ class MemberController extends Controller
 
             // Tentukan role berdasarkan posisi
             $positionId = $request->input('position_id');
-            dd($positionId);
             // Tentukan role berdasarkan posisi
             if ($positionId == 2) {
                 $roleName = 'Jemaat';

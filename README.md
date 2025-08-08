@@ -84,3 +84,5 @@
 
 ![Front End](/img/admin/detailkegiatan.png)
 
+## Nametag
+![Front End](/img/nametag.jpg)

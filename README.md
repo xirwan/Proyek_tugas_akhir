@@ -1,66 +1,86 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website Sekolah Minggu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Landing Page
 
-## About Laravel
+![Front End](/img/landing.png)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Orang Tua
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Home
+![Front End](/img/orangtua/home.png)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Halaman Pendaftaran anak
+![Front End](/img/orangtua/daftaranak.png)
 
-## Learning Laravel
+### List Anak
+![Front End](/img/orangtua/indexanak.png)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Absensi Anak & Hasil Laporan Kegiatan
+![Front End](/img/orangtua/absensianak.png)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### List Kegiatan
+![Front End](/img/orangtua/kegiatan.png)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Pendaftaran Kegiatan
+![Front End](/img/orangtua/daftarkegiatan.png)
 
-## Laravel Sponsors
+### Detail Kegiatan
+![Front End](/img/orangtua/detailkegiatan.png)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Pembina
 
-### Premium Partners
+### Home
+![Front End](/img/pembina/dashboard.png)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### List Jadwal
+![Front End](/img/pembina/jadwal.png)
 
-## Contributing
+### List Anak Sekolah Minggu
+![Front End](/img/pembina/anak.png)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### List Kelas & Anggota
+![Front End](/img/pembina/kelas.png)
 
-## Code of Conduct
+![Front End](/img/pembina/murid.png)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+![Front End](/img/pembina/pindahkelas.png)
 
-## Security Vulnerabilities
+### Absensi & Laporan Kegiatan Kelas
+![Front End](/img/pembina/scan.png)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+![Front End](/img/pembina/kamera.png)
 
-## License
+![Front End](/img/pembina/manual.png)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+![Front End](/img/pembina/indexlaporan.png)
+
+![Front End](/img/pembina/tambahlaporan.png)
+
+### Kegiatan
+![Front End](/img/pembina/tambahpengajuankegiatan.png)
+
+![Front End](/img/pembina/indexkegiatan.png)
+
+![Front End](/img/pembina/pesertakegiatan.png)
+
+## Ketua
+
+### Home
+![Front End](/img/admin/dashboard.png)
+
+### Master Data & Penjadwalan
+![Front End](/img/admin/anggota.png)
+
+![Front End](/img/admin/cabang.png)
+
+![Front End](/img/admin/jadwal.png)
+
+![Front End](/img/admin/kelas.png)
+
+![Front End](/img/admin/penjadwalan.png)
+
+### Pengajuan Kegiatan
+![Front End](/img/admin/listpengajuan.png)
+
+![Front End](/img/admin/detailkegiatan.png)
+
